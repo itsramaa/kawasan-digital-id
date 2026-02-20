@@ -1,0 +1,63 @@
+export interface ShowcaseProject {
+  id: string;
+  title: string;
+  description: string | null;
+  thumbnail_url: string | null;
+  category: string | null;
+  tech_stack: string[];
+  demo_url: string | null;
+  is_published: boolean;
+  display_order: number;
+  created_at: string;
+}
+
+export interface ServiceTemplate {
+  id: string;
+  name: string;
+  description: string | null;
+  thumbnail_url: string | null;
+  category: string | null;
+  base_price: number;
+  estimated_days: number | null;
+  is_active: boolean;
+  display_order: number;
+  created_at: string;
+}
+
+export interface TemplateFeature {
+  id: string;
+  template_id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  is_included: boolean;
+  display_order: number;
+}
+
+export interface Order {
+  id: string;
+  order_number: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string | null;
+  customer_company: string | null;
+  template_id: string | null;
+  selected_features: Array<{ id: string; name: string; price: number }>;
+  notes: string | null;
+  subtotal: number;
+  total: number;
+  status: string;
+  payment_method: string | null;
+  payment_status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CheckoutFormData {
+  customer_name: string;
+  customer_email: string;
+  customer_phone?: string;
+  customer_company?: string;
+  notes?: string;
+  payment_method: 'manual' | 'online';
+}
