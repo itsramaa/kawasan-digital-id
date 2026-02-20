@@ -51,10 +51,10 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
 
           <div className="hidden md:flex items-center gap-3">
             <Link
-              to="/login"
+              to="/client"
               className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
-              Login
+              My Dashboard
             </Link>
             <Link
               to="/store/templates"
@@ -94,11 +94,11 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
               );
             })}
             <Link
-              to="/login"
+              to="/client"
               onClick={() => setMobileOpen(false)}
               className="block px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted"
             >
-              Login
+              My Dashboard
             </Link>
           </div>
         )}
