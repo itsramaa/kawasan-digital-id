@@ -20,8 +20,12 @@ export interface ServiceTemplate {
   base_price: number;
   estimated_days: number | null;
   is_active: boolean;
+  is_featured: boolean;
   display_order: number;
   created_at: string;
+  demo_url: string | null;
+  revision_limit: number | null;
+  gallery_images: string[];
 }
 
 export interface TemplateFeature {
@@ -32,6 +36,7 @@ export interface TemplateFeature {
   price: number;
   is_included: boolean;
   display_order: number;
+  category: string;
 }
 
 export interface Order {
