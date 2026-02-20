@@ -24,7 +24,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <Globe className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-bold text-lg tracking-tight">AgencyOS</span>
+            <span className="font-bold text-lg tracking-tight">Kawasan Digital</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">
@@ -130,10 +130,10 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
               <div className="w-6 h-6 rounded bg-primary flex items-center justify-center">
                 <Globe className="w-3 h-3 text-primary-foreground" />
               </div>
-              <span className="text-sm font-semibold">AgencyOS</span>
+              <span className="text-sm font-semibold">Kawasan Digital</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} AgencyOS. All rights reserved.
+              © {new Date().getFullYear()} Kawasan Digital. All rights reserved.
             </p>
           </div>
         </div>

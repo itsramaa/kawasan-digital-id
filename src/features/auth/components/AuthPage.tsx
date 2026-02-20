@@ -22,9 +22,9 @@ export function AuthPage() {
           <div className="w-16 h-16 rounded-2xl bg-sidebar-primary flex items-center justify-center mx-auto">
             <Globe className="w-8 h-8 text-sidebar-primary-foreground" />
           </div>
-          <h1 className="text-4xl font-bold text-sidebar-accent-foreground tracking-tight">AgencyOS</h1>
+          <h1 className="text-4xl font-bold text-sidebar-accent-foreground tracking-tight">Kawasan Digital</h1>
           <p className="text-sidebar-muted text-lg max-w-sm">
-            Internal Operations & Client Portal for Web Development Agencies
+            Internal Operations & Client Portal untuk Agensi Web Development
           </p>
           <div className="grid grid-cols-2 gap-4 mt-8 max-w-xs mx-auto text-left">
             {["CRM & Sales", "Project Delivery", "Finance & Invoicing", "Support & SLA"].map((item) => (
@@ -45,7 +45,7 @@ export function AuthPage() {
             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
               <Globe className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold">AgencyOS</span>
+            <span className="text-xl font-bold">Kawasan Digital</span>
           </div>
 
           <div className="text-center lg:text-left">
@@ -53,7 +53,7 @@ export function AuthPage() {
               {isLogin ? "Welcome back" : "Create account"}
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
-              {isLogin ? "Sign in to your AgencyOS portal" : "Set up your AgencyOS account"}
+              {isLogin ? "Sign in to your Kawasan Digital portal" : "Set up your Kawasan Digital account"}
             </p>
           </div>
 

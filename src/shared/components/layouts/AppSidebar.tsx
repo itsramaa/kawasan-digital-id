@@ -80,7 +80,7 @@ function LogoDropdown() {
           <Globe className="w-4 h-4 text-sidebar-primary-foreground" />
         </div>
         <div className="text-left flex-1">
-          <h1 className="text-sm font-bold text-sidebar-accent-foreground tracking-tight">AgencyOS</h1>
+          <h1 className="text-sm font-bold text-sidebar-accent-foreground tracking-tight">Kawasan Digital</h1>
           <p className="text-[10px] text-sidebar-muted uppercase tracking-widest">Operations Portal</p>
         </div>
         <ChevronDown className={cn("w-3.5 h-3.5 text-sidebar-muted transition-transform", open && "rotate-180")} />
@@ -202,7 +202,7 @@ export function AppSidebar() {
             <Globe className="w-4 h-4 text-sidebar-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-sm font-bold text-sidebar-accent-foreground tracking-tight">AgencyOS</h1>
+            <h1 className="text-sm font-bold text-sidebar-accent-foreground tracking-tight">Kawasan Digital</h1>
             <p className="text-[10px] text-sidebar-muted uppercase tracking-widest">Operations Portal</p>
           </div>
         </div>
