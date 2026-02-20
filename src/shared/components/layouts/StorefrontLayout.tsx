@@ -1,20 +1,46 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/shared/utils/utils";
 import { Globe, Menu, X, ShoppingCart } from "lucide-react";
-import { useState } from "react";
 import { useCart } from "@/features/storefront/hooks/useCart";
+import { supabase } from "@/integrations/supabase/client";
 
 const navLinks = [
   { label: "Home", path: "/store" },
-  { label: "Showcase", path: "/store/showcase" },
   { label: "Templates", path: "/store/templates" },
+  { label: "Custom Website", path: "/store/templates", hash: "#custom-section" },
+  { label: "How It Works", path: "/store", hash: "#how-it-works" },
+  { label: "Portfolio", path: "/store/showcase" },
+  { label: "Help / FAQ", path: "/store", hash: "#faq-section" },
 ];
 
 export function StorefrontLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { itemCount } = useCart();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const getNavTo = (link: typeof navLinks[number]) => {
+    if (link.hash && link.path === location.pathname) return link.hash;
+    if (link.hash) return link.path + link.hash;
+    return link.path;
+  };
+
+  const isActive = (link: typeof navLinks[number]) => {
+    if (link.hash) return false;
+    if (link.path === "/store") return location.pathname === "/store";
+    return location.pathname.startsWith(link.path);
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -28,48 +54,46 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => {
-              const active = link.path === "/store"
-                ? location.pathname === "/store"
-                : location.pathname.startsWith(link.path);
-              return (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={cn(
-                    "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-                    active
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  )}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+            {navLinks.map((link) => (
+              <Link
+                key={link.label}
+                to={getNavTo(link)}
+                className={cn(
+                  "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  isActive(link)
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
             <Link to="/store/cart" className="relative p-2 hover:bg-muted rounded-lg transition-colors">
               <ShoppingCart className="w-5 h-5 text-muted-foreground" />
               {itemCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 flex items-center justify-center text-[10px] font-bold bg-primary text-primary-foreground rounded-full min-w-[18px] h-[18px]">
+                <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center text-[10px] font-bold bg-primary text-primary-foreground rounded-full min-w-[18px] h-[18px]">
                   {itemCount}
                 </span>
               )}
             </Link>
-            <Link
-              to="/client"
-              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              My Dashboard
-            </Link>
-            <Link
-              to="/store/templates"
-              className="px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              Get Started
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                to="/client"
+                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                My Dashboard
+              </Link>
+            ) : (
+              <Link
+                to="/store/templates"
+                className="px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                Get Started
+              </Link>
+            )}
           </div>
 
           <div className="flex md:hidden items-center gap-2">
@@ -92,31 +116,36 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
 
         {mobileOpen && (
           <div className="md:hidden border-t border-border bg-card px-4 py-3 space-y-1">
-            {navLinks.map((link) => {
-              const active = link.path === "/store"
-                ? location.pathname === "/store"
-                : location.pathname.startsWith(link.path);
-              return (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    "block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                    active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
-                  )}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-            <Link
-              to="/client"
-              onClick={() => setMobileOpen(false)}
-              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted"
-            >
-              My Dashboard
-            </Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.label}
+                to={getNavTo(link)}
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  "block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                  isActive(link) ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+            {isLoggedIn ? (
+              <Link
+                to="/client"
+                onClick={() => setMobileOpen(false)}
+                className="block px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted"
+              >
+                My Dashboard
+              </Link>
+            ) : (
+              <Link
+                to="/store/templates"
+                onClick={() => setMobileOpen(false)}
+                className="block px-3 py-2.5 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                Get Started
+              </Link>
+            )}
           </div>
         )}
       </header>

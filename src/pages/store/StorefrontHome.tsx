@@ -193,7 +193,7 @@ function AddOnSection() {
 
 function HowItWorks() {
   return (
-    <section className="bg-muted/30 border-y border-border">
+    <section id="how-it-works" className="bg-muted/30 border-y border-border">
       <div className="max-w-6xl mx-auto px-4 lg:px-8 py-16">
         <h2 className="text-xl font-bold text-foreground text-center mb-10">Cara Kerja</h2>
         <div className="grid sm:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -287,7 +287,7 @@ function TestimonialsSection({ testimonials }: { testimonials: Testimonial[] }) 
 function FAQSection({ faqs }: { faqs: { id: string; question: string; answer: string }[] }) {
   if (faqs.length === 0) return null;
   return (
-    <section className="max-w-3xl mx-auto px-4 lg:px-8 py-12">
+    <section id="faq-section" className="max-w-3xl mx-auto px-4 lg:px-8 py-12">
       <h2 className="text-xl font-bold text-foreground text-center mb-8">Pertanyaan Umum</h2>
       <Accordion type="single" collapsible className="w-full">
         {faqs.map((faq) => (
