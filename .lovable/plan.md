@@ -1,172 +1,241 @@
 
 
-# Maksimalisasi Client Portal Berdasarkan Docs + Skills
+# Storefront Publik + Client Dashboard (Dual View)
 
 ## Ringkasan
 
-Refactor dan enhancement menyeluruh pada Client Portal agar sesuai dengan PRD, UI/UX Documentation, dan domain state machines. Mengikuti prinsip KISS, DRY, SOLID, dan SRP dengan memanfaatkan skills: `tailwind-patterns`, `react-patterns`, `clean-architecture`, dan `design-system-patterns`.
+Menambahkan **storefront publik** (tanpa login) di samping client dashboard yang sudah ada. Storefront berfungsi seperti website agency e-commerce: menampilkan portfolio project, katalog template, custom builder (pilih fitur), dan checkout (form order manual + opsi payment gateway).
 
 ---
 
-## Analisis Gap: Apa yang Ada vs Apa yang Dibutuhkan
+## Arsitektur Dual View
 
-| Fitur (dari PRD Section 2.2/5.2/7) | Status Saat Ini | Aksi |
+Client sekarang punya 2 entry point:
+
+| View | Route Prefix | Auth | Layout |
+|---|---|---|---|
+| **Storefront (Web Publik)** | `/store/*` | Tidak perlu login | `StorefrontLayout` (navbar + footer) |
+| **Dashboard (Portal)** | `/client/*` | Login required | `ClientLayout` (existing) |
+
+Navigasi antar kedua view: tombol "My Dashboard" di storefront header (jika sudah login), dan link "Browse Services" di client dashboard.
+
+---
+
+## Database Schema Baru
+
+### Tabel: `showcase_projects`
+Portfolio project agency yang ditampilkan ke publik.
+
+| Column | Type | Notes |
 |---|---|---|
-| Dashboard: Project summary, action items, invoice/payment, recent activity | Partial (ada KPI + pie chart tapi tidak ada action items & recent activity) | Enhance |
-| Projects: Milestones + client-visible tasks + progress timeline | Partial (ada milestones, belum ada client-visible tasks) | Enhance |
-| Invoices: Paid/outstanding + payment history + overdue indicators | Partial (tabel basic) | Enhance |
-| Support: Ticket CRUD + SLA countdown + ticket detail | Partial (ada tapi SLA visual kurang) | Enhance |
-| Account: Profile + notification preferences | Partial (ada profile, tidak ada notification prefs) | Minor enhance |
-| Contracts: View own contracts (PRD 6.0 row: Client = R) | Missing | Create baru |
-| Payments: View own payment history (PRD 6.0 row: Client = R) | Missing | Create baru |
-| Domains/Hosting: View own infra (PRD 6.0 row: Client = R) | Missing | Create baru |
+| id | uuid PK | |
+| title | text NOT NULL | |
+| description | text | |
+| thumbnail_url | text | |
+| category | text | e.g. "Web App", "Mobile", "Landing Page" |
+| tech_stack | text[] | e.g. ["React", "Node.js"] |
+| demo_url | text | Link ke demo |
+| is_published | boolean DEFAULT false | Internal control |
+| display_order | integer DEFAULT 0 | |
+| created_at | timestamptz | |
+
+RLS: SELECT publik (WHERE is_published = true), ALL untuk internal users.
+
+### Tabel: `service_templates`
+Template/paket layanan yang bisa di-order.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | uuid PK | |
+| name | text NOT NULL | |
+| description | text | |
+| thumbnail_url | text | |
+| category | text | e.g. "Website", "E-Commerce", "Landing Page" |
+| base_price | numeric NOT NULL | Harga dasar |
+| estimated_days | integer | Estimasi pengerjaan |
+| is_active | boolean DEFAULT true | |
+| display_order | integer DEFAULT 0 | |
+| created_at | timestamptz | |
+
+RLS: SELECT publik (WHERE is_active = true), ALL untuk internal users.
+
+### Tabel: `template_features`
+Fitur tambahan yang bisa dipilih saat custom builder.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | uuid PK | |
+| template_id | uuid FK -> service_templates | |
+| name | text NOT NULL | e.g. "SEO Optimization" |
+| description | text | |
+| price | numeric NOT NULL DEFAULT 0 | Harga tambahan |
+| is_included | boolean DEFAULT false | Sudah termasuk di base? |
+| display_order | integer DEFAULT 0 | |
+
+RLS: SELECT publik, ALL untuk internal users.
+
+### Tabel: `orders`
+Order dari checkout storefront.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | uuid PK | |
+| order_number | text UNIQUE NOT NULL | Auto-generated (ORD-001) |
+| customer_name | text NOT NULL | |
+| customer_email | text NOT NULL | |
+| customer_phone | text | |
+| customer_company | text | |
+| template_id | uuid FK -> service_templates | |
+| selected_features | jsonb DEFAULT '[]' | Array of feature IDs + names |
+| notes | text | Catatan custom dari customer |
+| subtotal | numeric NOT NULL | |
+| total | numeric NOT NULL | |
+| status | text DEFAULT 'Pending' | Pending, Confirmed, In Progress, Completed, Cancelled |
+| payment_method | text | 'manual' atau 'online' |
+| payment_status | text DEFAULT 'Unpaid' | Unpaid, Paid, Partial |
+| created_at | timestamptz | |
+| updated_at | timestamptz | |
+
+RLS: INSERT untuk anon (publik bisa checkout), SELECT/UPDATE/DELETE untuk internal users.
 
 ---
 
-## Rencana Implementasi
+## Halaman Storefront Baru
 
-### 1. Refactor Types (SRP - Single file per concern)
+### Layout: `StorefrontLayout.tsx`
+- Navbar: Logo, nav links (Home, Portfolio, Templates, Contact), tombol "My Dashboard" (jika sudah login)
+- Footer: Copyright, social links
+- Responsive, mobile-first
 
-Pecah `src/features/client/types/index.ts` menjadi types yang lebih jelas dan tambahkan types baru:
+### Halaman:
 
-- `ClientContract` - untuk contracts view
-- `ClientPayment` - untuk payment history
-- `ClientDomain` - untuk domain info
-- `ClientHosting` - untuk hosting info
-- Update existing types dengan field yang lebih lengkap sesuai PRD
+#### 1. `/store` - Landing/Home
+- Hero section dengan tagline agency
+- Featured showcase projects (3-4 cards)
+- Featured templates (3-4 cards)
+- CTA: "Browse All Templates" dan "View Our Work"
+- Stats section: jumlah project selesai, client puas, dll
 
-### 2. Buat Custom Hooks Baru (DRY - Reuse pattern)
+#### 2. `/store/portfolio` - Showcase Projects
+- Grid layout project cards dengan filter kategori
+- Card: thumbnail, title, category, tech stack badges
+- Click -> modal atau expand detail dengan description + demo link
 
-Semua hooks mengikuti pola yang sudah ada (`useClientProjects`, dll):
+#### 3. `/store/templates` - Template Catalog
+- Grid cards template dengan filter kategori
+- Card: thumbnail, name, base price, estimated days, category badge
+- Click -> `/store/templates/:id` detail page
 
-- `useClientContracts` - fetch contracts via `supabase.from("contracts")`
-- `useClientPayments` - fetch payments via join `invoices -> payments`
-- `useClientDomains` - fetch domains
-- `useClientHostings` - fetch hostings
-- `useClientActivity` - recent activity aggregator (gabung dari projects, invoices, tickets terbaru)
+#### 4. `/store/templates/:id` - Template Detail + Custom Builder
+- Template info: nama, deskripsi, base price, estimasi
+- **Feature Selector**: Checklist fitur (included = checked & disabled, optional = toggle on/off)
+- **Live price calculator**: base_price + sum(selected optional features)
+- **Order Summary sidebar**: template name, selected features, total price
+- CTA: "Proceed to Checkout"
 
-### 3. Halaman Baru
+#### 5. `/store/checkout` - Checkout Page
+- Form fields: nama, email, phone, company (Zod validated)
+- Order summary review
+- Pilih payment method: "Request Invoice (Manual)" atau "Pay Online"
+- Submit -> insert ke `orders` table
+- Success page / confirmation
 
-#### 3a. ClientContracts.tsx
-- Tabel kontrak aktif klien dengan kolom: Contract title, Status, Start date, End date, Total value
-- StatusBadge sesuai state machine (Draft, Signed, Active, Completed, Suspended, Terminated)
-- Reuse `DataTable` component (DRY)
+---
 
-#### 3b. ClientPayments.tsx
-- History pembayaran klien dengan kolom: Invoice #, Amount, Payment date, Method, Reference
-- Grouped by invoice (optional)
-- Reuse `DataTable` + `KPICard` component
+## Hooks Baru (SRP)
 
-#### 3c. ClientInfrastructure.tsx
-- Dua section: Domains + Hostings milik klien
-- Domain: domain_name, status, expiry_date dengan overdue indicators (red border jika < 30 hari)
-- Hosting: name, provider, status, expiry_date
-- Sesuai PRD section 10.5 Domain Expiration Alerts
+| Hook | Table | Deskripsi |
+|---|---|---|
+| `useShowcaseProjects` | showcase_projects | Fetch published projects |
+| `useServiceTemplates` | service_templates | Fetch active templates |
+| `useTemplateDetail` | service_templates + template_features | Fetch 1 template + fiturnya |
+| `useCreateOrder` | orders | Mutation untuk submit order |
 
-### 4. Enhancement Halaman Existing
+---
 
-#### 4a. ClientDashboard.tsx
-Tambahkan:
-- **Action Items widget**: Pending approvals dari milestones (status = "Submitted"), overdue invoices
-- **Recent Activity timeline**: 5 event terbaru gabungan dari projects/invoices/tickets
-- **Contract renewal alert**: Kontrak expiring < 60 hari
-- **Domain expiry alert**: Domain expiring < 30 hari
+## Struktur File
 
-#### 4b. ClientProjects.tsx
-Tambahkan:
-- **Client-visible tasks**: Tampilkan tasks dengan `is_client_visible = true` di bawah milestones
-- **Timeline indicator**: Visual deadline proximity (red jika overdue)
-- **Progress bar enhancement**: Warna berubah sesuai status (green jika on-track, red jika overdue)
+```text
+src/features/storefront/
+  types/index.ts
+  hooks/
+    useShowcaseProjects.ts
+    useServiceTemplates.ts
+    useTemplateDetail.ts
+    useCreateOrder.ts
+  components/
+    HeroSection.tsx
+    ProjectCard.tsx
+    TemplateCard.tsx
+    FeatureSelector.tsx
+    OrderSummary.tsx
+    CheckoutForm.tsx
 
-#### 4c. ClientInvoices.tsx
-Tambahkan:
-- **Overdue visual treatment**: Red left border + "X days overdue" text (sesuai UI/UX doc 10.2)
-- **Payment status column**: Tampilkan paid_at atau overdue days
-- **Sortable columns**: Due date ascending default (overdue di atas)
+src/shared/components/layouts/
+  StorefrontLayout.tsx    -- NEW
 
-#### 4d. ClientSupport.tsx
-Tambahkan:
-- **SLA visual indicator**: Countdown timer jika ada `sla_deadline`
-- **Priority color coding**: Sesuai UI/UX doc (Critical = red pulsing badge)
-- **Project selector**: Filter tickets by project saat membuat ticket baru (tambah field project_id di form)
-- Refactor: Pindahkan ticket creation logic ke `useClientTicketMutation` yang sudah ada (DRY - hapus duplikasi mutation di page)
+src/pages/store/
+  StorefrontHome.tsx      -- NEW
+  PortfolioPage.tsx       -- NEW
+  TemplatesPage.tsx       -- NEW
+  TemplateDetailPage.tsx  -- NEW
+  CheckoutPage.tsx        -- NEW
+  OrderSuccessPage.tsx    -- NEW
+```
 
-#### 4e. ClientAccount.tsx
-- Minor: Tambahkan company info dari `clients` table (read-only)
-- Tampilkan client company_name, industry, email
+---
 
-### 5. Update Navigation & Routing
+## Routing (App.tsx)
 
-#### 5a. ClientLayout.tsx
-Tambahkan nav items baru:
-- Contracts (`/client/contracts`)
-- Payments (`/client/payments`) 
-- Infrastructure (`/client/infrastructure`)
+```text
+/store              -> StorefrontHome       (public)
+/store/portfolio    -> PortfolioPage        (public)
+/store/templates    -> TemplatesPage        (public)
+/store/templates/:id -> TemplateDetailPage  (public)
+/store/checkout     -> CheckoutPage         (public)
+/store/order-success -> OrderSuccessPage    (public)
+```
 
-#### 5b. App.tsx
-Tambahkan routes:
-- `/client/contracts` -> `ClientContracts`
-- `/client/payments` -> `ClientPayments`
-- `/client/infrastructure` -> `ClientInfrastructure`
+Semua route storefront TIDAK dibungkus `ProtectedRoute`.
 
-### 6. Shared Component Enhancement
+---
 
-#### 6a. EmptyState component baru
-Sesuai UI/UX doc 12.9: Icon (64px) + headline + description + optional action button.
-Reusable across all client pages.
+## Integrasi dengan Sistem Existing
 
-#### 6b. AlertBanner component baru
-Sesuai UI/UX doc 10.1: Critical (red), Warning (yellow), Info (blue).
-Digunakan di Dashboard untuk overdue alerts dan domain expiry.
+1. **Client Dashboard**: Tambahkan link "Browse Services" di dashboard yang mengarah ke `/store`
+2. **Internal Portal**: Order yang masuk dari storefront bisa dilihat oleh tim Sales/Admin di halaman internal (future enhancement - bisa jadi halaman `/sales/orders`)
+3. **Order -> Inquiry pipeline**: Order baru bisa otomatis membuat entry di tabel `inquiries` yang sudah ada, sehingga masuk ke pipeline Sales CRM
 
 ---
 
 ## Detail Teknis
 
-### File Structure (sesuai project-structure.md)
+### Payment Gateway
+- Fase 1 (sekarang): Form order manual saja (`payment_method = 'manual'`, status 'Pending')
+- Fase 2 (nanti): Integrasi Stripe/Midtrans bisa ditambahkan ke CheckoutPage dengan edge function
 
+### Zod Validation untuk Checkout
 ```text
-src/features/client/
-  types/index.ts          -- Updated with new types
-  hooks/
-    useClientProjects.ts  -- Existing
-    useClientInvoices.ts  -- Existing
-    useClientTickets.ts   -- Existing (refactored)
-    useClientContracts.ts -- NEW
-    useClientPayments.ts  -- NEW
-    useClientDomains.ts   -- NEW
-    useClientHostings.ts  -- NEW
-    useClientActivity.ts  -- NEW (dashboard aggregator)
-    useClientProfileMutation.ts -- Existing
-  components/
-    EmptyState.tsx        -- NEW (reusable empty state)
-    AlertBanner.tsx       -- NEW (reusable alert)
-    ActivityTimeline.tsx  -- NEW (recent activity list)
-
-src/pages/client/
-  ClientDashboard.tsx     -- Enhanced
-  ClientProjects.tsx      -- Enhanced
-  ClientInvoices.tsx      -- Enhanced
-  ClientSupport.tsx       -- Refactored (remove duplicate mutation)
-  ClientAccount.tsx       -- Minor enhance
-  ClientContracts.tsx     -- NEW
-  ClientPayments.tsx      -- NEW
-  ClientInfrastructure.tsx -- NEW
+- customer_name: string, min 2, max 100
+- customer_email: string, valid email
+- customer_phone: string, optional
+- customer_company: string, optional, max 100
+- selected_features: array of UUIDs
+- notes: string, optional, max 500
 ```
 
-### Prinsip yang Diterapkan
+### RLS Policies
+- `showcase_projects`: anon SELECT WHERE is_published = true
+- `service_templates`: anon SELECT WHERE is_active = true
+- `template_features`: anon SELECT (semua, karena hanya fitur dari template aktif)
+- `orders`: anon INSERT (siapa saja bisa checkout), internal ALL
 
-- **KISS**: Setiap halaman baru mengikuti pola yang sudah terbukti (ClientLayout + DataTable/KPICard)
-- **DRY**: Reuse DataTable, StatusBadge, KPICard, FormDialog; Hapus duplikasi mutation di ClientSupport
-- **SOLID/SRP**: Setiap hook menangani satu entity. Setiap component punya satu tanggung jawab
-- **Tailwind patterns skill**: Semantic colors only, mobile-first responsive, consistent spacing (4/6/8/12/16), hover states on all interactive elements
-- **React patterns skill**: Custom hooks untuk logic, presentational components untuk UI, derived state tanpa useEffect
+### Order Number Generation
+Database function `generate_order_number()` yang auto-increment: ORD-0001, ORD-0002, dst.
 
-### Styling (dari tailwind-patterns rules)
-
-- Semua warna menggunakan semantic tokens (`bg-card`, `text-primary`, `border-border`)
-- Responsive: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`
-- Interactive states: `hover:shadow-md transition-shadow`, `hover:opacity-90`
-- Overdue rows: `border-l-4 border-l-status-error` (sudah ada pattern di ClientInvoices)
-- Touch targets minimum 44px
+### Prinsip
+- **KISS**: Setiap halaman storefront adalah presentational component sederhana
+- **DRY**: Reuse StatusBadge, EmptyState; shared TemplateCard di home + catalog
+- **SOLID/SRP**: Hook per entity, component per concern, layout terpisah dari content
+- **Mobile-first**: Grid responsive, touch-friendly cards (min 44px tap targets)
 
