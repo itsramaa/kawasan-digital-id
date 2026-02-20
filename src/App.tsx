@@ -21,7 +21,10 @@ import Infrastructure from "./pages/Infrastructure";
 import SettingsPage from "./pages/Settings";
 import ClientDashboard from "./pages/client/ClientDashboard";
 import ClientProjects from "./pages/client/ClientProjects";
+import ClientContracts from "./pages/client/ClientContracts";
 import ClientInvoices from "./pages/client/ClientInvoices";
+import ClientPayments from "./pages/client/ClientPayments";
+import ClientInfrastructure from "./pages/client/ClientInfrastructure";
 import ClientSupport from "./pages/client/ClientSupport";
 import ClientAccount from "./pages/client/ClientAccount";
 import NotFound from "./pages/NotFound";
@@ -56,7 +59,10 @@ const App = () => (
             {/* Client Portal Routes */}
             <Route path="/client" element={<ProtectedRoute><ClientDashboard /></ProtectedRoute>} />
             <Route path="/client/projects" element={<ProtectedRoute><ClientProjects /></ProtectedRoute>} />
+            <Route path="/client/contracts" element={<ProtectedRoute><ClientContracts /></ProtectedRoute>} />
             <Route path="/client/invoices" element={<ProtectedRoute><ClientInvoices /></ProtectedRoute>} />
+            <Route path="/client/payments" element={<ProtectedRoute><ClientPayments /></ProtectedRoute>} />
+            <Route path="/client/infrastructure" element={<ProtectedRoute><ClientInfrastructure /></ProtectedRoute>} />
             <Route path="/client/support" element={<ProtectedRoute><ClientSupport /></ProtectedRoute>} />
             <Route path="/client/account" element={<ProtectedRoute><ClientAccount /></ProtectedRoute>} />
 

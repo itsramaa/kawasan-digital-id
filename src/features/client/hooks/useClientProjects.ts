@@ -8,7 +8,7 @@ export const useClientProjects = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("projects")
-        .select("*, milestones(id, title, status, due_date, order_index), tasks(id, title, status, priority, is_client_visible)")
+        .select("*, milestones(id, title, status, due_date, order_index), tasks(id, title, status, priority, is_client_visible, due_date)")
         .order("created_at", { ascending: false });
       
       if (error) throw error;

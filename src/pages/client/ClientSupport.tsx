@@ -1,14 +1,16 @@
 import { useAuth } from "@/features/auth/AuthContext";
-import { supabase } from "@/lib/integrations/supabase/client";
 import { FormDialog } from "@/shared/components/common/FormDialog";
 import { StatusBadge } from "@/shared/components/common/StatusBadge";
+import { EmptyState } from "@/features/client/components/EmptyState";
 import { ValidatedInput, ValidatedTextarea, ValidatedSelect } from "@/shared/components/common/ValidatedInput";
 import { ClientLayout } from "@/shared/components/layouts/ClientLayout";
 import { ticketSchema, type TicketFormValues } from "@/shared/lib/validations";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Clock, Plus, MessageSquare } from "lucide-react";
+import { useClientTickets, useClientTicketMutation } from "@/features/client/hooks/useClientTickets";
+import { useClientProjects } from "@/features/client/hooks/useClientProjects";
+import { Clock, Plus, MessageSquare, AlertTriangle } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
+import { differenceInMinutes, parseISO } from "date-fns";
+import { cn } from "@/shared/utils/utils";
 
 const statusMap: Record<string, "info" | "success" | "error" | "neutral"> = {
   Open: "info", "In Progress": "info", Escalated: "error", Resolved: "success", Closed: "neutral",
@@ -17,38 +19,32 @@ const priorityMap: Record<string, "error" | "warning" | "neutral"> = {
   Critical: "error", High: "warning", Medium: "warning", Low: "neutral",
 };
 
+function SlaIndicator({ deadline }: { deadline: string }) {
+  const minutesLeft = differenceInMinutes(parseISO(deadline), new Date());
+  const hoursLeft = Math.floor(minutesLeft / 60);
+  const isBreached = minutesLeft <= 0;
+  const isUrgent = minutesLeft > 0 && minutesLeft <= 120;
+
+  return (
+    <span className={cn(
+      "inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded",
+      isBreached ? "bg-status-error/10 text-status-error" : isUrgent ? "bg-status-warning/10 text-status-warning animate-pulse" : "bg-muted text-muted-foreground"
+    )}>
+      <Clock className="w-3 h-3" />
+      {isBreached ? "SLA Breached" : hoursLeft > 0 ? `${hoursLeft}h left` : `${minutesLeft}m left`}
+    </span>
+  );
+}
+
 export default function ClientSupport() {
   const { profile } = useAuth();
-  const qc = useQueryClient();
+  const { data: tickets, isLoading } = useClientTickets();
+  const { data: projects } = useClientProjects();
+  const createTicket = useClientTicketMutation();
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState<TicketFormValues>({ subject: "", description: "", priority: "Medium" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
-
-  const { data: tickets, isLoading } = useQuery({
-    queryKey: ["client-tickets-full"],
-    queryFn: async () => {
-      const { data } = await supabase.from("support_tickets").select("*, projects(name)").order("created_at", { ascending: false });
-      return data ?? [];
-    },
-  });
-
-  const createTicket = useMutation({
-    mutationFn: async (values: TicketFormValues) => {
-      const ticketNumber = `TK-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 999) + 1).padStart(3, "0")}`;
-      const { error } = await supabase.from("support_tickets").insert([{
-        subject: values.subject,
-        description: values.description ?? "",
-        priority: values.priority,
-        ticket_number: ticketNumber,
-        client_id: profile?.client_id!,
-        created_by: profile?.user_id,
-      }]);
-      if (error) throw error;
-    },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["client-tickets-full"] }); toast.success("Ticket created!"); setFormOpen(false); setSelectedTicket(null); },
-    onError: (e: any) => toast.error(e.message),
-  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +56,7 @@ export default function ClientSupport() {
       return;
     }
     setErrors({});
-    createTicket.mutate(result.data);
+    createTicket.mutate({ subject: result.data.subject!, description: result.data.description!, priority: result.data.priority! }, { onSuccess: () => setFormOpen(false) });
   };
 
   const openCount = tickets?.filter(t => ["Open", "In Progress"].includes(t.status)).length ?? 0;
@@ -80,31 +76,29 @@ export default function ClientSupport() {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          {/* Ticket List */}
           <div className="xl:col-span-2">
             {isLoading ? (
               <div className="text-center py-12 text-muted-foreground">Loading...</div>
             ) : !tickets?.length ? (
-              <div className="text-center py-12 text-muted-foreground bg-card rounded-lg border border-border">
-                <MessageSquare className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-                <p>No support tickets yet.</p>
-                <p className="text-xs mt-1">Create a ticket to get help from our team.</p>
-              </div>
+              <EmptyState icon={MessageSquare} headline="No support tickets" description="Create a ticket to get help from our team." action={{ label: "New Ticket", onClick: () => setFormOpen(true) }} />
             ) : (
               <div className="space-y-3">
                 {tickets.map((ticket: any) => (
                   <div
                     key={ticket.id}
                     onClick={() => setSelectedTicket(ticket)}
-                    className={`bg-card rounded-lg border p-4 cursor-pointer hover:shadow-md transition-shadow ${
-                      ticket.status === "Escalated" ? "border-l-4 border-l-destructive border-destructive/20" :
-                      selectedTicket?.id === ticket.id ? "border-primary/40 bg-primary/5" : "border-border"
-                    }`}
+                    className={cn(
+                      "bg-card rounded-lg border p-4 cursor-pointer hover:shadow-md transition-shadow",
+                      ticket.priority === "Critical" && "border-l-4 border-l-status-error",
+                      ticket.status === "Escalated" && "border-l-4 border-l-destructive border-destructive/20",
+                      selectedTicket?.id === ticket.id && "border-primary/40 bg-primary/5"
+                    )}
                   >
                     <div className="flex items-center gap-2 flex-wrap mb-1.5">
                       <span className="font-mono text-xs text-primary font-medium">{ticket.ticket_number}</span>
-                      <StatusBadge status={ticket.priority} variant={priorityMap[ticket.priority] ?? "neutral"} />
+                      <StatusBadge status={ticket.priority} variant={priorityMap[ticket.priority] ?? "neutral"} className={ticket.priority === "Critical" ? "animate-pulse" : ""} />
                       <StatusBadge status={ticket.status} variant={statusMap[ticket.status] ?? "neutral"} />
+                      {ticket.sla_deadline && !["Resolved", "Closed"].includes(ticket.status) && <SlaIndicator deadline={ticket.sla_deadline} />}
                     </div>
                     <h3 className="font-medium">{ticket.subject}</h3>
                     {ticket.description && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{ticket.description}</p>}
@@ -118,7 +112,6 @@ export default function ClientSupport() {
             )}
           </div>
 
-          {/* Ticket Detail */}
           <div>
             {selectedTicket ? (
               <div className="bg-card rounded-lg border border-border p-5 space-y-4 sticky top-6">
@@ -129,30 +122,15 @@ export default function ClientSupport() {
                 <div className="flex gap-2 flex-wrap">
                   <StatusBadge status={selectedTicket.status} variant={statusMap[selectedTicket.status] ?? "neutral"} />
                   <StatusBadge status={selectedTicket.priority} variant={priorityMap[selectedTicket.priority] ?? "neutral"} />
+                  {selectedTicket.sla_deadline && !["Resolved", "Closed"].includes(selectedTicket.status) && <SlaIndicator deadline={selectedTicket.sla_deadline} />}
                 </div>
                 {selectedTicket.description && (
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Description</p>
-                    <p className="text-sm">{selectedTicket.description}</p>
-                  </div>
+                  <div><p className="text-xs text-muted-foreground mb-1">Description</p><p className="text-sm">{selectedTicket.description}</p></div>
                 )}
                 <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div>
-                    <p className="text-muted-foreground">Created</p>
-                    <p className="font-medium">{new Date(selectedTicket.created_at).toLocaleDateString("id-ID")}</p>
-                  </div>
-                  {selectedTicket.resolved_at && (
-                    <div>
-                      <p className="text-muted-foreground">Resolved</p>
-                      <p className="font-medium">{new Date(selectedTicket.resolved_at).toLocaleDateString("id-ID")}</p>
-                    </div>
-                  )}
-                  {selectedTicket.projects?.name && (
-                    <div>
-                      <p className="text-muted-foreground">Project</p>
-                      <p className="font-medium">{selectedTicket.projects.name}</p>
-                    </div>
-                  )}
+                  <div><p className="text-muted-foreground">Created</p><p className="font-medium">{new Date(selectedTicket.created_at).toLocaleDateString("id-ID")}</p></div>
+                  {selectedTicket.resolved_at && <div><p className="text-muted-foreground">Resolved</p><p className="font-medium">{new Date(selectedTicket.resolved_at).toLocaleDateString("id-ID")}</p></div>}
+                  {selectedTicket.projects?.name && <div><p className="text-muted-foreground">Project</p><p className="font-medium">{selectedTicket.projects.name}</p></div>}
                 </div>
               </div>
             ) : (
@@ -168,18 +146,10 @@ export default function ClientSupport() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <ValidatedInput label="Subject" required value={form.subject} onChange={e => setForm({...form, subject: e.target.value})} error={errors.subject} placeholder="Brief description of your issue" />
           <ValidatedTextarea label="Description" rows={4} value={form.description ?? ""} onChange={e => setForm({...form, description: e.target.value})} error={errors.description} placeholder="Provide details..." />
-          <ValidatedSelect
-            label="Priority"
-            value={form.priority}
-            onChange={e => setForm({...form, priority: e.target.value as any})}
-            error={errors.priority}
-            options={[
-              { value: "Low", label: "Low" },
-              { value: "Medium", label: "Medium" },
-              { value: "High", label: "High" },
-              { value: "Critical", label: "Critical" },
-            ]}
-          />
+          <ValidatedSelect label="Priority" value={form.priority} onChange={e => setForm({...form, priority: e.target.value as any})} error={errors.priority} options={[{ value: "Low", label: "Low" }, { value: "Medium", label: "Medium" }, { value: "High", label: "High" }, { value: "Critical", label: "Critical" }]} />
+          {projects && projects.length > 0 && (
+            <ValidatedSelect label="Project (optional)" value={(form as any).project_id ?? ""} onChange={e => setForm({...form, project_id: e.target.value} as any)} options={[{ value: "", label: "— None —" }, ...projects.map(p => ({ value: p.id, label: p.name }))]} />
+          )}
           <div className="flex justify-end gap-2 pt-2">
             <button type="button" onClick={() => setFormOpen(false)} className="px-4 py-2 text-sm border border-border rounded-md hover:bg-muted">Cancel</button>
             <button type="submit" disabled={createTicket.isPending} className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:opacity-90 disabled:opacity-50">Submit Ticket</button>
