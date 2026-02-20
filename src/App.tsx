@@ -28,6 +28,12 @@ import ClientInfrastructure from "./pages/client/ClientInfrastructure";
 import ClientSupport from "./pages/client/ClientSupport";
 import ClientAccount from "./pages/client/ClientAccount";
 import NotFound from "./pages/NotFound";
+import StorefrontHome from "./pages/store/StorefrontHome";
+import PortfolioPage from "./pages/store/PortfolioPage";
+import TemplatesPage from "./pages/store/TemplatesPage";
+import TemplateDetailPage from "./pages/store/TemplateDetailPage";
+import CheckoutPage from "./pages/store/CheckoutPage";
+import OrderSuccessPage from "./pages/store/OrderSuccessPage";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +71,14 @@ const App = () => (
             <Route path="/client/infrastructure" element={<ProtectedRoute><ClientInfrastructure /></ProtectedRoute>} />
             <Route path="/client/support" element={<ProtectedRoute><ClientSupport /></ProtectedRoute>} />
             <Route path="/client/account" element={<ProtectedRoute><ClientAccount /></ProtectedRoute>} />
+
+            {/* Storefront Routes (Public) */}
+            <Route path="/store" element={<StorefrontHome />} />
+            <Route path="/store/portfolio" element={<PortfolioPage />} />
+            <Route path="/store/templates" element={<TemplatesPage />} />
+            <Route path="/store/templates/:id" element={<TemplateDetailPage />} />
+            <Route path="/store/checkout" element={<CheckoutPage />} />
+            <Route path="/store/order-success" element={<OrderSuccessPage />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

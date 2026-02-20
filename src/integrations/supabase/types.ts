@@ -359,6 +359,71 @@ export type Database = {
           },
         ]
       }
+      orders: {
+        Row: {
+          created_at: string
+          customer_company: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string | null
+          id: string
+          notes: string | null
+          order_number: string
+          payment_method: string | null
+          payment_status: string
+          selected_features: Json | null
+          status: string
+          subtotal: number
+          template_id: string | null
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_company?: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone?: string | null
+          id?: string
+          notes?: string | null
+          order_number: string
+          payment_method?: string | null
+          payment_status?: string
+          selected_features?: Json | null
+          status?: string
+          subtotal?: number
+          template_id?: string | null
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_company?: string | null
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string | null
+          id?: string
+          notes?: string | null
+          order_number?: string
+          payment_method?: string | null
+          payment_status?: string
+          selected_features?: Json | null
+          status?: string
+          subtotal?: number
+          template_id?: string | null
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "service_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -552,6 +617,84 @@ export type Database = {
           },
         ]
       }
+      service_templates: {
+        Row: {
+          base_price: number
+          category: string | null
+          created_at: string
+          description: string | null
+          display_order: number | null
+          estimated_days: number | null
+          id: string
+          is_active: boolean | null
+          name: string
+          thumbnail_url: string | null
+        }
+        Insert: {
+          base_price?: number
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          estimated_days?: number | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          thumbnail_url?: string | null
+        }
+        Update: {
+          base_price?: number
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          estimated_days?: number | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          thumbnail_url?: string | null
+        }
+        Relationships: []
+      }
+      showcase_projects: {
+        Row: {
+          category: string | null
+          created_at: string
+          demo_url: string | null
+          description: string | null
+          display_order: number | null
+          id: string
+          is_published: boolean | null
+          tech_stack: string[] | null
+          thumbnail_url: string | null
+          title: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          demo_url?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_published?: boolean | null
+          tech_stack?: string[] | null
+          thumbnail_url?: string | null
+          title: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          demo_url?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_published?: boolean | null
+          tech_stack?: string[] | null
+          thumbnail_url?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       support_tickets: {
         Row: {
           assigned_to: string | null
@@ -674,6 +817,44 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      template_features: {
+        Row: {
+          description: string | null
+          display_order: number | null
+          id: string
+          is_included: boolean | null
+          name: string
+          price: number
+          template_id: string
+        }
+        Insert: {
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_included?: boolean | null
+          name: string
+          price?: number
+          template_id: string
+        }
+        Update: {
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_included?: boolean | null
+          name?: string
+          price?: number
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_features_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "service_templates"
             referencedColumns: ["id"]
           },
         ]
