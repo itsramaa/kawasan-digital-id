@@ -1,4 +1,4 @@
-import { AppLayout } from "@/components/layout/AppLayout";
+import { AppLayout } from "@/shared/components/layouts/AppLayout";
 import { Settings as SettingsIcon, User, Bell, Shield, Database } from "lucide-react";
 
 export default function SettingsPage() {

@@ -1,22 +1,14 @@
-import { AppLayout } from "@/components/layout/AppLayout";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { DataTable } from "@/components/shared/DataTable";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { AppLayout } from "@/shared/components/layouts/AppLayout";
+import { StatusBadge } from "@/shared/components/common/StatusBadge";
+import { DataTable } from "@/shared/components/common/DataTable";
+import { useQuotations } from "@/features/sales/hooks/useQuotations";
 
 const statusMap: Record<string, "info" | "warning" | "success" | "error" | "neutral"> = {
   Draft: "neutral", Sent: "info", Accepted: "success", Rejected: "error", Expired: "warning",
 };
 
 export default function QuotationsPage() {
-  const { data: quotations, isLoading } = useQuery({
-    queryKey: ["quotations"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("quotations").select("*, clients(name), inquiries(title)").order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
+  const { data: quotations, isLoading } = useQuotations();
 
   return (
     <AppLayout>

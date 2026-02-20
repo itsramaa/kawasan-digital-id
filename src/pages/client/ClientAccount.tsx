@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { ClientLayout } from "@/components/layout/ClientLayout";
+import { ClientLayout } from "@/shared/components/layouts/ClientLayout";
 import { useAuth } from "@/features/auth/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useClientProfileMutation } from "@/features/client/hooks/useClientProfileMutation";
 import { User, Mail, Phone } from "lucide-react";
 
 export default function ClientAccount() {
@@ -11,15 +10,12 @@ export default function ClientAccount() {
     full_name: profile?.full_name ?? "",
     phone: profile?.phone ?? "",
   });
-  const [saving, setSaving] = useState(false);
+  
+  const { updateProfile, saving } = useClientProfileMutation();
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
-    const { error } = await supabase.from("profiles").update(form).eq("user_id", user!.id);
-    if (error) toast.error(error.message);
-    else toast.success("Profile updated");
-    setSaving(false);
+    await updateProfile(form);
   };
 
   return (

@@ -1,17 +1,9 @@
-import { AppLayout } from "@/components/layout/AppLayout";
-import { DataTable } from "@/components/shared/DataTable";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { AppLayout } from "@/shared/components/layouts/AppLayout";
+import { DataTable } from "@/shared/components/common/DataTable";
+import { usePayments } from "@/features/finance/hooks/usePayments";
 
 export default function PaymentsPage() {
-  const { data: payments, isLoading } = useQuery({
-    queryKey: ["payments"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("payments").select("*, invoices(invoice_number, clients(name))").order("payment_date", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
+  const { data: payments, isLoading } = usePayments();
 
   return (
     <AppLayout>

@@ -1,7 +1,6 @@
-import { AppLayout } from "@/components/layout/AppLayout";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { AppLayout } from "@/shared/components/layouts/AppLayout";
+import { StatusBadge } from "@/shared/components/common/StatusBadge";
+import { useTasks } from "@/features/projects/hooks/useTasks";
 
 const statusCols: Record<string, { label: string; variant: "neutral" | "info" | "warning" | "success" }> = {
   "To Do": { label: "To Do", variant: "neutral" },
@@ -15,14 +14,7 @@ const priorityVariant: Record<string, "error" | "warning" | "neutral"> = {
 };
 
 export default function TasksPage() {
-  const { data: tasks, isLoading } = useQuery({
-    queryKey: ["tasks"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("tasks").select("*, projects(name)").order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
+  const { data: tasks, isLoading } = useTasks();
 
   const columns = Object.entries(statusCols);
 

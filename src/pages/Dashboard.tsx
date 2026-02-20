@@ -1,14 +1,18 @@
-import { AppLayout } from "@/components/layout/AppLayout";
+import { AppLayout } from "@/shared/components/layouts/AppLayout";
 import { useAuth } from "@/features/auth/AuthContext";
-import { StatusBadge, KPICard } from "@/components/shared/StatusBadge";
+import { StatusBadge, KPICard } from "@/shared/components/common/StatusBadge";
 import {
   TrendingUp, FolderKanban, Receipt, HeadphonesIcon,
-  DollarSign, Clock, AlertTriangle, CheckCircle,
-  Users, ListTodo, Globe, Server,
+  DollarSign, Clock, AlertTriangle,
+  ListTodo, Globe
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Navigate } from "react-router-dom";
+
+import { useProjectStats } from "@/features/projects/hooks/useProjectStats";
+import { useSupportStats } from "@/features/support/hooks/useSupportStats";
+import { useFinanceStats } from "@/features/finance/hooks/useFinanceStats";
+import { useSalesStats } from "@/features/sales/hooks/useSalesStats";
+import { useInfrastructureStats } from "@/features/infrastructure/hooks/useInfrastructureStats";
 
 export default function Dashboard() {
   const { profile, roles, isClient, isInternal } = useAuth();
@@ -18,72 +22,11 @@ export default function Dashboard() {
     return <Navigate to="/client" replace />;
   }
 
-  const { data: projectCount } = useQuery({
-    queryKey: ["projects-count"],
-    queryFn: async () => {
-      const { count } = await supabase.from("projects").select("*", { count: "exact", head: true }).in("status", ["Planning", "In Progress", "On Hold"]);
-      return count ?? 0;
-    },
-  });
-
-  const { data: openTickets } = useQuery({
-    queryKey: ["tickets-count"],
-    queryFn: async () => {
-      const { count } = await supabase.from("support_tickets").select("*", { count: "exact", head: true }).in("status", ["Open", "In Progress", "Escalated"]);
-      return count ?? 0;
-    },
-  });
-
-  const { data: invoices } = useQuery({
-    queryKey: ["invoices-dashboard"],
-    queryFn: async () => {
-      const { data } = await supabase.from("invoices").select("amount, status, due_date");
-      return data ?? [];
-    },
-  });
-
-  const { data: recentInquiries } = useQuery({
-    queryKey: ["recent-inquiries"],
-    queryFn: async () => {
-      const { data } = await supabase.from("inquiries").select("id, title, status, created_at, clients(name)").order("created_at", { ascending: false }).limit(5);
-      return data ?? [];
-    },
-  });
-
-  const { data: recentTasks } = useQuery({
-    queryKey: ["recent-tasks"],
-    queryFn: async () => {
-      const { data } = await supabase.from("tasks").select("id, title, status, priority, due_date, projects(name)").in("status", ["In Progress", "To Do", "Review"]).order("created_at", { ascending: false }).limit(8);
-      return data ?? [];
-    },
-  });
-
-  const { data: recentTickets } = useQuery({
-    queryKey: ["recent-tickets-dashboard"],
-    queryFn: async () => {
-      const { data } = await supabase.from("support_tickets").select("id, ticket_number, subject, status, priority, sla_deadline, clients(name)").in("status", ["Open", "In Progress", "Escalated"]).order("created_at", { ascending: false }).limit(5);
-      return data ?? [];
-    },
-  });
-
-  const { data: domains } = useQuery({
-    queryKey: ["expiring-domains"],
-    queryFn: async () => {
-      const { data } = await (supabase.from as any)("domains").select("domain_name, expiry_date, status, clients(name)").in("status", ["Expiring Soon", "Expired"]).order("expiry_date", { ascending: true }).limit(5);
-      return data ?? [];
-    },
-  });
-
-  const outstanding = invoices?.filter((i) => ["Sent", "Viewed", "Overdue"].includes(i.status)).reduce((sum, i) => sum + Number(i.amount), 0) ?? 0;
-  const overdue = invoices?.filter((i) => i.status === "Overdue") ?? [];
-  const collected = invoices?.filter((i) => i.status === "Paid").reduce((sum, i) => sum + Number(i.amount), 0) ?? 0;
-
-  const pipelineSummary = [
-    { stage: "New Inquiries", count: recentInquiries?.filter(i => i.status === "New").length ?? 0, color: "info" as const },
-    { stage: "Qualified", count: recentInquiries?.filter(i => i.status === "Qualified").length ?? 0, color: "warning" as const },
-    { stage: "Proposal Sent", count: recentInquiries?.filter(i => i.status === "Proposal Sent").length ?? 0, color: "hold" as const },
-    { stage: "Won", count: recentInquiries?.filter(i => i.status === "Won").length ?? 0, color: "success" as const },
-  ];
+  const { projectCount, recentTasks } = useProjectStats();
+  const { openTickets, recentTickets } = useSupportStats();
+  const { outstanding, overdue, collected } = useFinanceStats();
+  const { recentInquiries, pipelineSummary } = useSalesStats();
+  const { domains } = useInfrastructureStats();
 
   const primaryRole = roles[0] ?? "super_admin";
   const showSales = ["super_admin", "sales"].includes(primaryRole);

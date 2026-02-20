@@ -1,7 +1,6 @@
-import { ClientLayout } from "@/components/layout/ClientLayout";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { ClientLayout } from "@/shared/components/layouts/ClientLayout";
+import { StatusBadge } from "@/shared/components/common/StatusBadge";
+import { useClientProjects } from "@/features/client/hooks/useClientProjects";
 import { Calendar, ListTodo } from "lucide-react";
 
 const statusVariant: Record<string, "info" | "warning" | "hold" | "success" | "neutral"> = {
@@ -9,13 +8,7 @@ const statusVariant: Record<string, "info" | "warning" | "hold" | "success" | "n
 };
 
 export default function ClientProjects() {
-  const { data: projects, isLoading } = useQuery({
-    queryKey: ["client-projects-full"],
-    queryFn: async () => {
-      const { data } = await supabase.from("projects").select("*, milestones(id, title, status, due_date, order_index), tasks(id, title, status, priority, is_client_visible)").order("created_at", { ascending: false });
-      return data ?? [];
-    },
-  });
+  const { data: projects, isLoading } = useClientProjects();
 
   if (isLoading) return <ClientLayout><div className="text-center py-12 text-muted-foreground">Loading...</div></ClientLayout>;
 

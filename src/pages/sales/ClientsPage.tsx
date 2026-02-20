@@ -1,22 +1,21 @@
 import { useState } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { DataTable } from "@/components/shared/DataTable";
-import { FormDialog } from "@/components/shared/FormDialog";
-import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
-import { useSupabaseQuery, useSupabaseInsert, useSupabaseUpdate, useSupabaseDelete } from "@/hooks/useSupabaseCrud";
+import { AppLayout } from "@/shared/components/layouts/AppLayout";
+import { StatusBadge } from "@/shared/components/common/StatusBadge";
+import { DataTable } from "@/shared/components/common/DataTable";
+import { FormDialog } from "@/shared/components/common/FormDialog";
+import { ConfirmDialog } from "@/shared/components/common/ConfirmDialog";
+import { useClients } from "@/features/clients/hooks/useClients";
+import { useClientMutations } from "@/features/clients/hooks/useClientMutations";
 import { Plus, MoreHorizontal, Building2, Pencil, Trash2 } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/components/ui/dropdown-menu";
 
 const statusMap: Record<string, "success" | "neutral" | "warning" | "error"> = {
   Active: "success", Inactive: "neutral", Suspended: "error", Archived: "neutral",
 };
 
 export default function ClientsPage() {
-  const { data: clients, isLoading } = useSupabaseQuery("clients", ["clients"], { select: "*" });
-  const insertMut = useSupabaseInsert("clients", [["clients"]]);
-  const updateMut = useSupabaseUpdate("clients", [["clients"]]);
-  const deleteMut = useSupabaseDelete("clients", [["clients"]]);
+  const { data: clients, isLoading } = useClients();
+  const { insertMut, updateMut, deleteMut } = useClientMutations();
 
   const [formOpen, setFormOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);

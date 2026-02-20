@@ -1,10 +1,11 @@
-import { ClientLayout } from "@/components/layout/ClientLayout";
+import { ClientLayout } from "@/shared/components/layouts/ClientLayout";
 import { useAuth } from "@/features/auth/AuthContext";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { KPICard } from "@/components/shared/StatusBadge";
+import { StatusBadge } from "@/shared/components/common/StatusBadge";
+import { KPICard } from "@/shared/components/common/StatusBadge";
 import { FolderKanban, Receipt, HeadphonesIcon, Clock } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useClientProjects } from "@/features/client/hooks/useClientProjects";
+import { useClientInvoices } from "@/features/client/hooks/useClientInvoices";
+import { useClientTickets } from "@/features/client/hooks/useClientTickets";
 
 const statusVariant: Record<string, "info" | "warning" | "hold" | "success" | "neutral"> = {
   Planning: "warning", "In Progress": "info", "On Hold": "hold", Completed: "success", Cancelled: "neutral",
@@ -13,29 +14,9 @@ const statusVariant: Record<string, "info" | "warning" | "hold" | "success" | "n
 export default function ClientDashboard() {
   const { profile } = useAuth();
 
-  const { data: projects } = useQuery({
-    queryKey: ["client-projects"],
-    queryFn: async () => {
-      const { data } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
-      return data ?? [];
-    },
-  });
-
-  const { data: invoices } = useQuery({
-    queryKey: ["client-invoices"],
-    queryFn: async () => {
-      const { data } = await supabase.from("invoices").select("*").order("created_at", { ascending: false });
-      return data ?? [];
-    },
-  });
-
-  const { data: tickets } = useQuery({
-    queryKey: ["client-tickets"],
-    queryFn: async () => {
-      const { data } = await supabase.from("support_tickets").select("*").order("created_at", { ascending: false });
-      return data ?? [];
-    },
-  });
+  const { data: projects } = useClientProjects();
+  const { data: invoices } = useClientInvoices();
+  const { data: tickets } = useClientTickets();
 
   const activeProjects = projects?.filter(p => ["Planning", "In Progress"].includes(p.status)).length ?? 0;
   const outstandingAmt = invoices?.filter(i => ["Sent", "Viewed", "Overdue"].includes(i.status)).reduce((s, i) => s + Number(i.amount), 0) ?? 0;

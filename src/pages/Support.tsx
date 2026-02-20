@@ -1,28 +1,18 @@
-import { AppLayout } from "@/components/layout/AppLayout";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { Search, Plus, Filter, MoreHorizontal, Clock, AlertTriangle, User } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { AppLayout } from "@/shared/components/layouts/AppLayout";
+import { StatusBadge } from "@/shared/components/common/StatusBadge";
+import { Search, Plus, Filter, MoreHorizontal, Clock } from "lucide-react";
+import { useTickets } from "@/features/support/hooks/useTickets";
 
 const priorityVariantMap: Record<string, "error" | "warning" | "neutral"> = {
   Critical: "error", High: "warning", Medium: "warning", Low: "neutral",
 };
+
 const statusVariantMap: Record<string, "info" | "error" | "success" | "neutral"> = {
   Open: "info", "In Progress": "info", Escalated: "error", Resolved: "success", Closed: "neutral",
 };
 
 export default function Support() {
-  const { data: tickets, isLoading } = useQuery({
-    queryKey: ["support-tickets"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("support_tickets")
-        .select("*, clients(name)")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
+  const { data: tickets, isLoading } = useTickets();
 
   const openCount = tickets?.filter(t => t.status === "Open").length ?? 0;
   const inProgressCount = tickets?.filter(t => t.status === "In Progress").length ?? 0;

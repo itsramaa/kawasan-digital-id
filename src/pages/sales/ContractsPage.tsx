@@ -1,22 +1,14 @@
-import { AppLayout } from "@/components/layout/AppLayout";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { DataTable } from "@/components/shared/DataTable";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { AppLayout } from "@/shared/components/layouts/AppLayout";
+import { StatusBadge } from "@/shared/components/common/StatusBadge";
+import { DataTable } from "@/shared/components/common/DataTable";
+import { useContracts } from "@/features/sales/hooks/useContracts";
 
 const statusMap: Record<string, "info" | "warning" | "success" | "error" | "neutral"> = {
   Draft: "neutral", Sent: "info", Active: "success", Completed: "success", Terminated: "error", Signed: "success",
 };
 
 export default function ContractsPage() {
-  const { data: contracts, isLoading } = useQuery({
-    queryKey: ["contracts"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("contracts").select("*, clients(name)").order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
+  const { data: contracts, isLoading } = useContracts();
 
   return (
     <AppLayout>

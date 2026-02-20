@@ -1,6 +1,6 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/shared/components/ui/toaster";
+import { Toaster as Sonner } from "@/shared/components/ui/sonner";
+import { TooltipProvider } from "@/shared/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/features/auth/AuthContext";
@@ -12,6 +12,7 @@ import ClientsPage from "./pages/sales/ClientsPage";
 import QuotationsPage from "./pages/sales/QuotationsPage";
 import ContractsPage from "./pages/sales/ContractsPage";
 import Projects from "./pages/Projects";
+import ProjectDetails from "./pages/ProjectDetails";
 import TasksPage from "./pages/projects/TasksPage";
 import Finance from "./pages/Finance";
 import PaymentsPage from "./pages/finance/PaymentsPage";
@@ -43,7 +44,8 @@ const App = () => (
             <Route path="/sales/clients" element={<ProtectedRoute requireInternal><ClientsPage /></ProtectedRoute>} />
             <Route path="/sales/quotations" element={<ProtectedRoute requireInternal><QuotationsPage /></ProtectedRoute>} />
             <Route path="/sales/contracts" element={<ProtectedRoute requireInternal><ContractsPage /></ProtectedRoute>} />
-            <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
+              <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
+            <Route path="/projects/:id" element={<ProtectedRoute><ProjectDetails /></ProtectedRoute>} />
             <Route path="/projects/tasks" element={<ProtectedRoute><TasksPage /></ProtectedRoute>} />
             <Route path="/finance" element={<ProtectedRoute><Finance /></ProtectedRoute>} />
             <Route path="/finance/payments" element={<ProtectedRoute><PaymentsPage /></ProtectedRoute>} />

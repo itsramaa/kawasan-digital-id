@@ -1,26 +1,14 @@
-import { AppLayout } from "@/components/layout/AppLayout";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { KPICard } from "@/components/shared/StatusBadge";
+import { AppLayout } from "@/shared/components/layouts/AppLayout";
+import { StatusBadge, KPICard } from "@/shared/components/common/StatusBadge";
 import { Search, Plus, Filter, MoreHorizontal, DollarSign, TrendingUp, AlertTriangle, CheckCircle } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useInvoices } from "@/features/finance/hooks/useInvoices";
 
 const statusVariantMap: Record<string, "info" | "warning" | "success" | "error" | "neutral"> = {
   Draft: "neutral", Sent: "info", Viewed: "info", Paid: "success", Overdue: "error", Void: "neutral", "Bad Debt": "error",
 };
 
 export default function Finance() {
-  const { data: invoices, isLoading } = useQuery({
-    queryKey: ["invoices"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("invoices")
-        .select("*, clients(name), projects(name)")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
+  const { data: invoices, isLoading } = useInvoices();
 
   const totalBilled = invoices?.reduce((s, i) => s + Number(i.amount), 0) ?? 0;
   const collected = invoices?.filter(i => i.status === "Paid").reduce((s, i) => s + Number(i.amount), 0) ?? 0;

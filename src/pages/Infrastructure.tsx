@@ -1,35 +1,19 @@
 import { useState } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { DataTable } from "@/components/shared/DataTable";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { AppLayout } from "@/shared/components/layouts/AppLayout";
+import { StatusBadge, KPICard } from "@/shared/components/common/StatusBadge";
+import { DataTable } from "@/shared/components/common/DataTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
 import { Globe, Server, AlertTriangle, Shield } from "lucide-react";
-import { KPICard } from "@/components/shared/StatusBadge";
+import { useDomains } from "@/features/infrastructure/hooks/useDomains";
+import { useHostings } from "@/features/infrastructure/hooks/useHostings";
 
 const domainStatusMap: Record<string, "success" | "warning" | "error" | "neutral"> = {
   Active: "success", "Expiring Soon": "warning", Expired: "error", Suspended: "neutral",
 };
 
 export default function Infrastructure() {
-  const { data: domains, isLoading: domainsLoading } = useQuery({
-    queryKey: ["domains"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("domains").select("*, clients(name)").order("expiry_date", { ascending: true });
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: hostings, isLoading: hostingsLoading } = useQuery({
-    queryKey: ["hostings"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("hostings").select("*, clients(name)").order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
+  const { data: domains, isLoading: domainsLoading } = useDomains();
+  const { data: hostings, isLoading: hostingsLoading } = useHostings();
 
   const expiringDomains = domains?.filter(d => d.status === "Expiring Soon" || d.status === "Expired").length ?? 0;
   const totalDomains = domains?.length ?? 0;

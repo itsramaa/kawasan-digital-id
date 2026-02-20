@@ -1,25 +1,14 @@
-import { AppLayout } from "@/components/layout/AppLayout";
-import { StatusBadge } from "@/components/shared/StatusBadge";
+import { AppLayout } from "@/shared/components/layouts/AppLayout";
+import { StatusBadge } from "@/shared/components/common/StatusBadge";
 import { Search, Plus, Filter, MoreHorizontal, Building2 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useInquiries } from "@/features/sales/hooks/useInquiries";
 
 const statusVariantMap: Record<string, "info" | "warning" | "hold" | "success" | "neutral" | "error"> = {
   New: "info", Qualified: "warning", "Proposal Sent": "hold", "Contract Pending": "success", Won: "success", Lost: "neutral", Rejected: "error",
 };
 
 export default function Sales() {
-  const { data: inquiries, isLoading } = useQuery({
-    queryKey: ["inquiries"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("inquiries")
-        .select("*, clients(name)")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
+  const { data: inquiries, isLoading } = useInquiries();
 
   return (
     <AppLayout>

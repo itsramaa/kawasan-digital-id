@@ -1,9 +1,8 @@
-import { ClientLayout } from "@/components/layout/ClientLayout";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { KPICard } from "@/components/shared/StatusBadge";
-import { DataTable } from "@/components/shared/DataTable";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { ClientLayout } from "@/shared/components/layouts/ClientLayout";
+import { StatusBadge } from "@/shared/components/common/StatusBadge";
+import { KPICard } from "@/shared/components/common/StatusBadge";
+import { DataTable } from "@/shared/components/common/DataTable";
+import { useClientInvoices } from "@/features/client/hooks/useClientInvoices";
 import { Receipt, CheckCircle, AlertTriangle } from "lucide-react";
 
 const statusMap: Record<string, "info" | "success" | "error" | "neutral"> = {
@@ -11,13 +10,7 @@ const statusMap: Record<string, "info" | "success" | "error" | "neutral"> = {
 };
 
 export default function ClientInvoices() {
-  const { data: invoices, isLoading } = useQuery({
-    queryKey: ["client-invoices-full"],
-    queryFn: async () => {
-      const { data } = await supabase.from("invoices").select("*, projects(name)").order("created_at", { ascending: false });
-      return data ?? [];
-    },
-  });
+  const { data: invoices, isLoading } = useClientInvoices();
 
   const outstanding = invoices?.filter(i => ["Sent", "Overdue"].includes(i.status)).reduce((s, i) => s + Number(i.amount), 0) ?? 0;
   const paid = invoices?.filter(i => i.status === "Paid").reduce((s, i) => s + Number(i.amount), 0) ?? 0;
