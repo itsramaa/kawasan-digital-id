@@ -663,39 +663,48 @@ export type Database = {
           base_price: number
           category: string | null
           created_at: string
+          demo_url: string | null
           description: string | null
           display_order: number | null
           estimated_days: number | null
+          gallery_images: Json | null
           id: string
           is_active: boolean | null
           is_featured: boolean
           name: string
+          revision_limit: number | null
           thumbnail_url: string | null
         }
         Insert: {
           base_price?: number
           category?: string | null
           created_at?: string
+          demo_url?: string | null
           description?: string | null
           display_order?: number | null
           estimated_days?: number | null
+          gallery_images?: Json | null
           id?: string
           is_active?: boolean | null
           is_featured?: boolean
           name: string
+          revision_limit?: number | null
           thumbnail_url?: string | null
         }
         Update: {
           base_price?: number
           category?: string | null
           created_at?: string
+          demo_url?: string | null
           description?: string | null
           display_order?: number | null
           estimated_days?: number | null
+          gallery_images?: Json | null
           id?: string
           is_active?: boolean | null
           is_featured?: boolean
           name?: string
+          revision_limit?: number | null
           thumbnail_url?: string | null
         }
         Relationships: []
@@ -894,6 +903,7 @@ export type Database = {
       }
       template_features: {
         Row: {
+          category: string | null
           description: string | null
           display_order: number | null
           id: string
@@ -903,6 +913,7 @@ export type Database = {
           template_id: string
         }
         Insert: {
+          category?: string | null
           description?: string | null
           display_order?: number | null
           id?: string
@@ -912,6 +923,7 @@ export type Database = {
           template_id: string
         }
         Update: {
+          category?: string | null
           description?: string | null
           display_order?: number | null
           id?: string
