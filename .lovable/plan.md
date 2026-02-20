@@ -1,126 +1,159 @@
 
-# Redesain Homepage Store: Marketplace Style
+
+# Upgrade Templates Page (PLP) dan Template Detail Page (PDP)
 
 ## Ringkasan
 
-Mengubah `/store` dari tampilan e-commerce sederhana menjadi **homepage marketplace lengkap** dengan 10 section sesuai permintaan. Beberapa section membutuhkan tabel database baru (testimonials, FAQ), dan beberapa menggunakan data statis/hardcoded.
-
----
-
-## Struktur Halaman Baru
-
-```text
-1. Hero Section (headline + search + 2 CTA)
-2. Category Shortcut (grid 6 kategori)
-3. Best Selling Templates (grid 6-8 template + badge)
-4. Custom Website Highlight (section terpisah + CTA)
-5. Add-On Preview (4 add-on card)
-6. How It Works (5 langkah e-commerce flow)
-7. Showcase Preview (3-6 project dari DB)
-8. Testimonials (dari DB baru)
-9. FAQ Preview (5 pertanyaan, accordion)
-10. Final CTA ("Start Your Website Today")
-```
+Dua halaman utama storefront akan di-upgrade secara signifikan:
+- **Templates Page** (PLP): dari grid sederhana menjadi marketplace browsing page dengan sidebar filter, sorting, dan result count
+- **Template Detail Page** (PDP): dari layout minimal menjadi full product detail page dengan image gallery, package includes, scope/infra add-ons terpisah, price breakdown, FAQ, dan related templates
 
 ---
 
 ## Perubahan Database
 
-### Tabel baru: `testimonials`
+### 1. Tambah kolom di `service_templates`
 
-| Kolom | Tipe | Keterangan |
-|-------|------|------------|
-| id | uuid | PK |
-| client_name | text | Nama klien |
-| client_company | text | nullable |
-| avatar_url | text | nullable |
-| content | text | Isi testimoni |
-| rating | integer | 1-5 |
-| is_published | boolean | default true |
-| display_order | integer | default 0 |
-| created_at | timestamptz | |
+| Kolom | Tipe | Default | Keterangan |
+|-------|------|---------|------------|
+| demo_url | text | null | Link live demo |
+| revision_limit | integer | null | Batas revisi (e.g. 2) |
+| gallery_images | jsonb | '[]' | Array URL gambar gallery |
 
-RLS: SELECT untuk anon (publik).
+### 2. Tambah kolom `category` di `template_features`
 
-### Tabel baru: `store_faqs`
+| Kolom | Tipe | Default | Keterangan |
+|-------|------|---------|------------|
+| category | text | 'scope' | Nilai: 'scope' (add-on biasa) atau 'infra' (domain, hosting, maintenance) |
 
-| Kolom | Tipe | Keterangan |
-|-------|------|------------|
-| id | uuid | PK |
-| question | text | Pertanyaan |
-| answer | text | Jawaban |
-| display_order | integer | default 0 |
-| is_published | boolean | default true |
-| created_at | timestamptz | |
-
-RLS: SELECT untuk anon (publik).
-
-### Update `service_templates`: tambah kolom `is_featured`
-
-Kolom boolean (default false) untuk menandai template "Best Seller" yang tampil di homepage.
+Ini memungkinkan pemisahan visual antara **Scope Customization** (extra page, SEO, copywriting) dan **Infrastructure Add-Ons** (domain, hosting, maintenance plan) di PDP.
 
 ---
 
-## Detail Implementasi per Section
+## Templates Page (PLP) - Detail Implementasi
 
-### 1. Hero Section
-- Headline: "Order Website Siap Pakai atau Custom"
-- Subheadline value proposition
-- Search bar (input pencarian, scroll ke section template grid)
-- CTA 1: "Browse Templates" (link ke `/store/templates`)
-- CTA 2: "Custom Website" (link/scroll ke custom section)
-- Background: gradient/pattern subtle, bukan hero image besar
+### Layout
 
-### 2. Category Shortcut
-- Grid 2x3 (mobile) / 6 kolom (desktop)
-- Kategori: Ecommerce, Company Profile, Landing Page, Portfolio, Blog, UMKM
-- Setiap card: icon + label
-- Klik navigasi ke `/store/templates?category=xxx`
+```text
+[Top Bar: Result count + Sort dropdown (Popular/Newest/Price)]
+[Left Sidebar (desktop)]     [Main Grid 2-3 kolom]
+  - Price Range (slider)       - Template cards
+  - Category filter             
+  - Delivery Time               
+  - Feature Tags                
+```
 
-### 3. Best Selling Templates
-- Query `service_templates` WHERE `is_featured = true`, limit 8
-- Grid 2-4 kolom responsive
-- Card: thumbnail, nama, starting price, delivery time, badge "Best Seller"
-- Link ke `/store/templates/:id`
-- Tombol "Lihat Semua" ke `/store/templates`
+- Mobile: sidebar menjadi collapsible filter drawer (tombol "Filter" di top bar)
+- Desktop: sidebar fixed di kiri, grid di kanan
 
-### 4. Custom Website Highlight
-- Section dengan background berbeda (muted/accent)
-- Headline + deskripsi singkat tentang layanan custom
-- CTA: "Mulai Project Custom" (ke form kontak/inquiry)
-- Visualnya terpisah jelas dari template grid
+### Filter Sidebar
 
-### 5. Add-On Preview
-- Data statis (hardcoded array): SEO Setup, Extra Page, Speed Optimization, Maintenance Plan
-- Grid 4 kolom (2x2 mobile)
-- Setiap card: icon, nama, deskripsi singkat
-- Info saja (nanti bisa diklik saat checkout di PDP)
+| Filter | Tipe UI | Sumber Data |
+|--------|---------|-------------|
+| Price Range | Dual slider / min-max input | Computed dari template data |
+| Category | Checkbox list | Dari template categories |
+| Delivery Time | Radio/checkbox (< 7 hari, 7-14 hari, 14-30 hari, 30+ hari) | Computed dari estimated_days |
+| Feature Tags | Checkbox | Dari template_features yang is_included=true, deduplicated |
 
-### 6. How It Works
-- 5 langkah horizontal (mobile: vertikal)
-- Steps: Pilih Template/Custom, Sesuaikan Paket, Checkout, Kirim Requirement, Review dan Launch
-- Numbered steps dengan icon dan deskripsi singkat
+### Template Card (upgrade)
 
-### 7. Showcase Preview
-- Data dari tabel `showcase_projects` (existing), limit 6
-- Grid 3 kolom, card dengan thumbnail + judul
-- Link "Lihat Semua" ke `/store/showcase`
+Setiap card menampilkan:
+- Thumbnail image
+- Template name
+- Category badge
+- Starting price (Rp format)
+- Delivery time (X hari)
+- Tombol "Quick View" (modal preview singkat) dan "View Details" (navigasi ke PDP)
 
-### 8. Testimonials
-- Data dari tabel `testimonials` (baru)
-- Grid/carousel 3 card
-- Card: avatar, nama, perusahaan, rating bintang, isi testimoni
-- Jika data kosong, section tidak ditampilkan
+### Top Bar
 
-### 9. FAQ Preview
-- Data dari tabel `store_faqs` (baru), limit 5
-- Menggunakan komponen Accordion (sudah ada di project)
-- Jika data kosong, section tidak ditampilkan
+- Result count: "Showing X templates"
+- Sort dropdown: Popular (display_order), Newest (created_at desc), Price Low-High, Price High-Low
 
-### 10. Final CTA
-- Background primary/accent
-- Headline "Start Your Website Today"
-- CTA button ke `/store/templates`
+### State Management
+
+```text
+- searchQuery (string) -- dari query params jika ada
+- categoryFilter (string[]) -- multi-select
+- priceRange ([min, max])
+- deliveryTimeFilter (string[])
+- featureTagFilter (string[])
+- sortBy ('popular' | 'newest' | 'price-asc' | 'price-desc')
+```
+
+Filtering dilakukan client-side karena jumlah template biasanya tidak banyak (< 100).
+
+---
+
+## Template Detail Page (PDP) - Detail Implementasi
+
+### A. Preview Section (Top)
+
+```text
+[Image Gallery (left)]           [Info Panel (right)]
+  - Main image besar               - Template name
+  - Thumbnail strip di bawah       - Starting price
+  - Placeholder jika kosong         - Delivery time
+                                    - Revision limit
+  [Live Demo Link]                  - CTA: Add to Cart / Buy Now
+  [Device Toggle: Desktop/Mobile]
+```
+
+- Gallery menggunakan `gallery_images` dari DB (jsonb array)
+- Jika kosong, fallback ke `thumbnail_url` atau placeholder
+- Live demo link dari `demo_url` (buka di tab baru)
+- Device preview toggle: icon desktop/mobile, mengubah aspect ratio preview (simulasi saja, bukan iframe)
+
+### B. Package Includes
+
+Menampilkan semua features dengan `is_included = true` dalam format checklist yang rapi:
+- Icon check hijau + nama fitur + deskripsi
+- Contoh: "5 Pages", "Basic SEO", "CMS Setup", "Contact Form", "2 Revisions"
+
+### C. Scope Customization (Add-Ons)
+
+Features dengan `is_included = false` DAN `category = 'scope'`:
+- Checkbox + nama + harga
+- Contoh: "+1 Page", "Extra Revision", "Copywriting", "SEO Advanced"
+- Harga update realtime di price breakdown
+
+### D. Infrastructure Add-Ons
+
+Features dengan `is_included = false` DAN `category = 'infra'`:
+- Section terpisah secara visual (background berbeda)
+- Checkbox + nama + harga
+- Contoh: "Domain (.com)", "Hosting 1 Year", "Maintenance Plan"
+
+### E. Price Breakdown (Sticky Sidebar)
+
+```text
+Order Summary
+-----------------------
+Template Base        Rp X
+Scope Add-Ons
+  - Item 1           Rp X
+  - Item 2           Rp X
+Infrastructure
+  - Domain            Rp X
+-----------------------
+Total               Rp X
+
+[Add to Cart]
+[Buy Now]
+```
+
+### F. FAQ Khusus Template
+
+- Query `store_faqs` (tabel existing) -- tampilkan 3-5 FAQ umum
+- Menggunakan komponen Accordion yang sudah ada
+- Section hanya tampil jika ada data FAQ
+
+### G. Related Templates
+
+- Query `service_templates` WHERE `category = current_template.category` AND `id != current_id`, limit 4
+- Grid horizontal 4 card kecil
+- Card: thumbnail, nama, harga
+- Link ke PDP masing-masing
 
 ---
 
@@ -128,20 +161,21 @@ Kolom boolean (default false) untuk menandai template "Best Seller" yang tampil 
 
 | File | Aksi |
 |------|------|
-| `supabase/migrations/xxx.sql` | Buat tabel testimonials, store_faqs, tambah kolom is_featured |
-| `src/pages/store/StorefrontHome.tsx` | Rewrite total dengan 10 section |
-| `src/features/storefront/hooks/useTestimonials.ts` | Hook baru |
-| `src/features/storefront/hooks/useFAQs.ts` | Hook baru |
-| `src/features/storefront/hooks/useFeaturedTemplates.ts` | Hook baru |
-| `src/features/storefront/types/index.ts` | Tambah interface Testimonial, FAQ |
+| Migration SQL | Tambah kolom demo_url, revision_limit, gallery_images di service_templates; tambah category di template_features |
+| `src/pages/store/TemplatesPage.tsx` | Rewrite total: sidebar filter + grid + sorting + result count |
+| `src/pages/store/TemplateDetailPage.tsx` | Rewrite total: gallery, package includes, scope/infra add-ons, price breakdown, FAQ, related |
+| `src/features/storefront/types/index.ts` | Update ServiceTemplate (tambah demo_url, revision_limit, gallery_images) dan TemplateFeature (tambah category) |
+| `src/features/storefront/hooks/useRelatedTemplates.ts` | Hook baru: query related templates by category |
 
 ---
 
 ## Catatan Teknis
 
-- Semua section menggunakan semantic HTML (`section`, `h2`)
-- Responsive: mobile-first dengan Tailwind breakpoints (sm, md, lg)
-- FAQ menggunakan komponen `Accordion` yang sudah ada
-- Category shortcut menggunakan query params untuk navigasi ke templates page
-- Data statis (add-ons, how it works, categories) di-hardcode di komponen karena jarang berubah
-- Section dengan data DB (testimonials, FAQ, showcase) otomatis hidden jika data kosong
+- Semua filter di PLP dilakukan client-side (useMemo) karena volume data kecil
+- Quick View di PLP menggunakan Dialog/Sheet dari Radix (sudah tersedia)
+- Gallery di PDP menggunakan state `selectedImageIndex` sederhana, tidak perlu library carousel
+- Device toggle di PDP hanya mengubah container width/aspect ratio sebagai simulasi visual
+- Price breakdown menggunakan kalkulasi yang sudah ada (base_price + selected features), hanya dipecah per kategori
+- Mobile responsive: sidebar filter menjadi Sheet/Drawer, gallery menjadi swipeable thumbnails
+- URL query params digunakan di PLP untuk deep-linking filter (e.g. `/store/templates?category=Ecommerce`)
+
