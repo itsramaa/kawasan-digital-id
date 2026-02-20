@@ -2,13 +2,16 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { StorefrontLayout } from "@/shared/components/layouts/StorefrontLayout";
 import { useTemplateDetail } from "@/features/storefront/hooks/useTemplateDetail";
+import { useCart } from "@/features/storefront/hooks/useCart";
 import { Checkbox } from "@/shared/components/ui/checkbox";
-import { Check, Clock, ArrowRight, Sparkles } from "lucide-react";
+import { Check, Clock, ArrowRight, Sparkles, ShoppingCart } from "lucide-react";
+import { toast } from "sonner";
 
 export default function TemplateDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { template, features, isLoading } = useTemplateDetail(id);
+  const { addItem } = useCart();
   const [selectedFeatureIds, setSelectedFeatureIds] = useState<Set<string>>(new Set());
 
   if (isLoading) {
@@ -55,7 +58,18 @@ export default function TemplateDetailPage() {
   const additionalCost = selectedOptional.reduce((sum, f) => sum + f.price, 0);
   const totalPrice = template.base_price + additionalCost;
 
-  const handleProceed = () => {
+  const handleAddToCart = async () => {
+    await addItem({
+      template_id: template.id,
+      template_name: template.name,
+      base_price: template.base_price,
+      selected_features: selectedOptional.map((f) => ({ id: f.id, name: f.name, price: f.price })),
+      category: template.category,
+    });
+    toast.success("Added to cart!");
+  };
+
+  const handleProceedCheckout = () => {
     const params = new URLSearchParams({
       template_id: template.id,
       features: Array.from(selectedFeatureIds).join(","),
@@ -66,7 +80,6 @@ export default function TemplateDetailPage() {
   return (
     <StorefrontLayout>
       <div className="max-w-6xl mx-auto px-4 lg:px-8 py-12 space-y-8">
-        {/* Header */}
         <div className="space-y-2">
           <span className="text-xs font-medium text-secondary bg-secondary/10 px-2 py-0.5 rounded-full">
             {template.category || "Template"}
@@ -86,9 +99,7 @@ export default function TemplateDetailPage() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Feature Selector */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Included */}
             {includedFeatures.length > 0 && (
               <div className="space-y-3">
                 <h2 className="text-lg font-semibold text-foreground">Included Features</h2>
@@ -107,7 +118,6 @@ export default function TemplateDetailPage() {
               </div>
             )}
 
-            {/* Optional */}
             {optionalFeatures.length > 0 && (
               <div className="space-y-3">
                 <h2 className="text-lg font-semibold text-foreground">Optional Add-ons</h2>
@@ -136,7 +146,6 @@ export default function TemplateDetailPage() {
             )}
           </div>
 
-          {/* Order Summary Sidebar */}
           <div className="lg:sticky lg:top-24 self-start">
             <div className="rounded-xl border border-border bg-card p-5 space-y-4">
               <h3 className="font-semibold text-foreground">Order Summary</h3>
@@ -156,12 +165,20 @@ export default function TemplateDetailPage() {
                 <span>Total</span>
                 <span className="text-primary">Rp {totalPrice.toLocaleString("id-ID")}</span>
               </div>
-              <button
-                onClick={handleProceed}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors"
-              >
-                Proceed to Checkout <ArrowRight className="w-4 h-4" />
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border border-primary text-primary font-semibold hover:bg-primary/5 transition-colors"
+                >
+                  <ShoppingCart className="w-4 h-4" /> Add to Cart
+                </button>
+                <button
+                  onClick={handleProceedCheckout}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors"
+                >
+                  Checkout Now <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         </div>

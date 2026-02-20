@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/integrations/supabase/client";
 import { toast } from "sonner";
 
 export function useAuthForm() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get("redirect");
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -33,7 +35,7 @@ export function useAuthForm() {
         });
         if (error) throw error;
         toast.success("Login successful!");
-        navigate("/");
+        navigate(redirectTo || "/");
       } else {
         const { error } = await supabase.auth.signUp({
           email: form.email,

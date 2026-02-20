@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import { NavLink } from "@/shared/components/common/NavLink";
 import { useAuth } from "@/features/auth/AuthContext";
-import { LayoutDashboard, FolderKanban, Receipt, HeadphonesIcon, User, Globe, LogOut, Menu, X, FileText, CreditCard, Server } from "lucide-react";
+import { LayoutDashboard, FolderKanban, Receipt, HeadphonesIcon, User, Globe, LogOut, Menu, X, FileText, CreditCard, Server, ShoppingBag } from "lucide-react";
 import { cn } from "@/shared/utils/utils";
 import { useState } from "react";
 
@@ -13,6 +13,7 @@ interface ClientLayoutProps {
 const navItems = [
   { label: "Dashboard", path: "/client", icon: LayoutDashboard },
   { label: "Projects", path: "/client/projects", icon: FolderKanban },
+  { label: "Orders", path: "/client/orders", icon: ShoppingBag },
   { label: "Contracts", path: "/client/contracts", icon: FileText },
   { label: "Invoices", path: "/client/invoices", icon: Receipt },
   { label: "Payments", path: "/client/payments", icon: CreditCard },
