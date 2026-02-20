@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AppLayout } from "@/shared/components/layouts/AppLayout";
+import { PageHeader } from "@/shared/components/common/PageHeader";
 import { Search, Filter, FolderKanban } from "lucide-react";
 import { useProjects } from "@/features/projects/hooks/useProjects";
 import { ProjectCard } from "@/features/projects/components/ProjectCard";
@@ -22,13 +23,11 @@ export default function Projects() {
   return (
     <AppLayout>
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
-            <p className="text-sm text-muted-foreground mt-1">Track project delivery and milestones</p>
-          </div>
-          <CreateProjectDialog />
-        </div>
+        <PageHeader
+          title="Projects"
+          subtitle={`Track project delivery and milestones · ${projects?.length ?? 0} total`}
+          actions={<CreateProjectDialog />}
+        />
 
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1 max-w-sm">
@@ -70,14 +69,10 @@ export default function Projects() {
             <h3 className="text-lg font-medium">No projects found</h3>
             <p className="text-muted-foreground max-w-sm mx-auto mt-1 mb-4">
               {search || statusFilter !== "all" 
-                ? "Try adjusting your search or filters to find what you're looking for."
-                : "Get started by creating your first project to track progress and milestones."}
+                ? "Try adjusting your search or filters."
+                : "Get started by creating your first project."}
             </p>
-            {(!search && statusFilter === "all") && (
-              <div className="inline-block">
-                <CreateProjectDialog />
-              </div>
-            )}
+            {(!search && statusFilter === "all") && <CreateProjectDialog />}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">

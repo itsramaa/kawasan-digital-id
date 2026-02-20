@@ -3,26 +3,9 @@ import { useLocation } from "react-router-dom";
 import { NavLink } from "@/shared/components/common/NavLink";
 import { useAuth } from "@/features/auth/AuthContext";
 import {
-  LayoutDashboard,
-  TrendingUp,
-  FolderKanban,
-  Receipt,
-  HeadphonesIcon,
-  Settings,
-  ChevronDown,
-  ChevronRight,
-  Users,
-  FileText,
-  Handshake,
-  ListTodo,
-  Milestone as MilestoneIcon,
-  CreditCard,
-  TicketIcon,
-  Globe,
-  Server,
-  Menu,
-  X,
-  LogOut,
+  LayoutDashboard, TrendingUp, FolderKanban, Receipt,
+  HeadphonesIcon, Settings, ChevronDown, ChevronRight,
+  Users, Globe, Server, Menu, X, LogOut, Bell,
 } from "lucide-react";
 import { cn } from "@/shared/utils/utils";
 
@@ -55,6 +38,8 @@ interface NavItem {
   label: string;
   path: string;
   icon: React.ElementType;
+  /** Roles that can see this item. Empty = all */
+  allowedRoles?: string[];
   children?: { label: string; path: string }[];
 }
 
@@ -64,6 +49,7 @@ const navItems: NavItem[] = [
     label: "Sales",
     path: "/sales",
     icon: TrendingUp,
+    allowedRoles: ["super_admin", "sales"],
     children: [
       { label: "Pipeline", path: "/sales" },
       { label: "Clients", path: "/sales/clients" },
@@ -75,6 +61,7 @@ const navItems: NavItem[] = [
     label: "Projects",
     path: "/projects",
     icon: FolderKanban,
+    allowedRoles: ["super_admin", "project_manager", "developer"],
     children: [
       { label: "All Projects", path: "/projects" },
       { label: "Tasks", path: "/projects/tasks" },
@@ -84,6 +71,7 @@ const navItems: NavItem[] = [
     label: "Finance",
     path: "/finance",
     icon: Receipt,
+    allowedRoles: ["super_admin", "finance"],
     children: [
       { label: "Invoices", path: "/finance" },
       { label: "Payments", path: "/finance/payments" },
@@ -93,19 +81,24 @@ const navItems: NavItem[] = [
     label: "Support",
     path: "/support",
     icon: HeadphonesIcon,
+    allowedRoles: ["super_admin", "support"],
   },
   {
     label: "Infrastructure",
     path: "/infrastructure",
     icon: Server,
+    allowedRoles: ["super_admin", "infra"],
   },
-  { label: "Settings", path: "/settings", icon: Settings },
+  { label: "Settings", path: "/settings", icon: Settings, allowedRoles: ["super_admin"] },
 ];
 
 export function AppSidebar() {
   const location = useLocation();
+  const { roles } = useAuth();
   const [expandedGroups, setExpandedGroups] = useState<string[]>(["Sales", "Projects", "Finance"]);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const primaryRole = roles[0] ?? "super_admin";
 
   const toggleGroup = (label: string) => {
     setExpandedGroups((prev) =>
@@ -117,6 +110,12 @@ export function AppSidebar() {
     if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path);
   };
+
+  // Filter nav items by role (per PRD Section 6 Permission Matrix)
+  const visibleItems = navItems.filter((item) => {
+    if (!item.allowedRoles) return true;
+    return item.allowedRoles.includes(primaryRole);
+  });
 
   const sidebarContent = (
     <>
@@ -133,7 +132,7 @@ export function AppSidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
-        {navItems.map((item) => {
+        {visibleItems.map((item) => {
           const Icon = item.icon;
           const expanded = expandedGroups.includes(item.label);
           const active = isActive(item.path);

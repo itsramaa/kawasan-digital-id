@@ -1,11 +1,12 @@
-import { useState } from "react";
 import { AppLayout } from "@/shared/components/layouts/AppLayout";
+import { PageHeader } from "@/shared/components/common/PageHeader";
 import { StatusBadge, KPICard } from "@/shared/components/common/StatusBadge";
 import { DataTable } from "@/shared/components/common/DataTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
 import { Globe, Server, AlertTriangle, Shield } from "lucide-react";
 import { useDomains } from "@/features/infrastructure/hooks/useDomains";
 import { useHostings } from "@/features/infrastructure/hooks/useHostings";
+import { differenceInDays } from "date-fns";
 
 const domainStatusMap: Record<string, "success" | "warning" | "error" | "neutral"> = {
   Active: "success", "Expiring Soon": "warning", Expired: "error", Suspended: "neutral",
@@ -22,10 +23,10 @@ export default function Infrastructure() {
   return (
     <AppLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Infrastructure</h1>
-          <p className="text-sm text-muted-foreground mt-1">Domain registrations, hosting, and server management</p>
-        </div>
+        <PageHeader
+          title="Infrastructure"
+          subtitle="Domain registrations, hosting, and server management"
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           <KPICard title="Total Domains" value={String(totalDomains)} icon={Globe} />
@@ -43,12 +44,19 @@ export default function Infrastructure() {
           <TabsContent value="domains">
             <DataTable
               columns={[
-                { key: "domain", header: "Domain", render: (d: any) => <span className="font-medium font-mono text-xs">{d.domain_name}</span> },
+                { key: "domain", header: "Domain", sortable: true, sortValue: (d: any) => d.domain_name, render: (d: any) => <span className="font-medium font-mono text-xs">{d.domain_name}</span> },
                 { key: "client", header: "Client", render: (d: any) => <span className="text-muted-foreground">{d.clients?.name ?? "—"}</span> },
                 { key: "registrar", header: "Registrar", render: (d: any) => <span className="text-muted-foreground">{d.registrar ?? "—"}</span> },
-                { key: "expiry", header: "Expiry", render: (d: any) => {
-                  const isExpired = new Date(d.expiry_date) < new Date();
-                  return <span className={`text-xs ${isExpired ? "text-status-error font-medium" : "text-muted-foreground"}`}>{d.expiry_date}</span>;
+                { key: "expiry", header: "Expiry", sortable: true, sortValue: (d: any) => d.expiry_date, render: (d: any) => {
+                  const days = differenceInDays(new Date(d.expiry_date), new Date());
+                  const isExpired = days < 0;
+                  const isSoon = days >= 0 && days <= 30;
+                  return (
+                    <div>
+                      <span className={`text-xs ${isExpired ? "text-destructive font-medium" : isSoon ? "text-status-warning" : "text-muted-foreground"}`}>{d.expiry_date}</span>
+                      {(isExpired || isSoon) && <p className={`text-[10px] ${isExpired ? "text-destructive" : "text-status-warning"}`}>{isExpired ? `${Math.abs(days)} days overdue` : `${days} days left`}</p>}
+                    </div>
+                  );
                 }},
                 { key: "auto_renew", header: "Auto Renew", render: (d: any) => <span className="text-xs">{d.auto_renew ? "✓ Yes" : "✕ No"}</span> },
                 { key: "status", header: "Status", render: (d: any) => <StatusBadge status={d.status} variant={domainStatusMap[d.status] ?? "neutral"} /> },
@@ -64,7 +72,7 @@ export default function Infrastructure() {
           <TabsContent value="hostings">
             <DataTable
               columns={[
-                { key: "name", header: "Server Name", render: (h: any) => <span className="font-medium">{h.name}</span> },
+                { key: "name", header: "Server Name", sortable: true, sortValue: (h: any) => h.name, render: (h: any) => <span className="font-medium">{h.name}</span> },
                 { key: "client", header: "Client", render: (h: any) => <span className="text-muted-foreground">{h.clients?.name ?? "—"}</span> },
                 { key: "provider", header: "Provider", render: (h: any) => <span className="text-muted-foreground">{h.provider ?? "—"}</span> },
                 { key: "type", header: "Type", render: (h: any) => <StatusBadge status={h.server_type ?? "—"} variant="info" /> },

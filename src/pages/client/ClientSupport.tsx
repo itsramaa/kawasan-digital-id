@@ -80,7 +80,7 @@ export default function ClientSupport() {
       </div>
 
       <FormDialog open={formOpen} onOpenChange={setFormOpen} title="New Support Ticket" description="Describe your issue and we'll get back to you.">
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={(e) => { e.preventDefault(); createTicket.mutate(form); }} className="space-y-4">
           <div className="space-y-1.5">
             <label className="text-sm font-medium">Subject *</label>
             <input required value={form.subject} onChange={e => setForm({...form, subject: e.target.value})} className="w-full px-3 py-2 bg-card border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring" placeholder="Brief description of your issue" />
