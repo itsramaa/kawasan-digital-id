@@ -32,7 +32,7 @@ export default function Finance() {
   ].filter(d => d.value > 0);
 
   const handleTransition = (id: string, newStatus: string) => {
-    const updates: Record<string, any> = { id, status: newStatus };
+    const updates: Record<string, any> & { id: string } = { id, status: newStatus };
     if (newStatus === "Paid") updates.paid_at = new Date().toISOString();
     if (newStatus === "Sent") updates.issued_at = new Date().toISOString();
     updateMut.mutate(updates);
