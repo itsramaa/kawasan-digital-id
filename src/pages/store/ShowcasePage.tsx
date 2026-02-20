@@ -4,7 +4,7 @@ import { useShowcaseProjects } from "@/features/storefront/hooks/useShowcaseProj
 import { FolderKanban, ExternalLink } from "lucide-react";
 import { cn } from "@/shared/utils/utils";
 
-export default function PortfolioPage() {
+export default function ShowcasePage() {
   const { data: projects, isLoading } = useShowcaseProjects();
   const [filter, setFilter] = useState<string>("All");
 
@@ -15,7 +15,7 @@ export default function PortfolioPage() {
     <StorefrontLayout>
       <div className="max-w-6xl mx-auto px-4 lg:px-8 py-12 space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Our Portfolio</h1>
+          <h1 className="text-3xl font-bold text-foreground">Our Showcase</h1>
           <p className="text-muted-foreground mt-1">Projects we've delivered for our clients</p>
         </div>
 
