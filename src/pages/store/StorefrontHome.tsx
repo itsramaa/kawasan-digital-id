@@ -181,7 +181,7 @@ export default function StorefrontHome() {
           </div>
         )}
 
-        {/* Portfolio Compact */}
+        {/* Showcase Compact */}
         {showcaseProjects.length > 0 && (
           <>
             <hr className="border-border" />
@@ -189,7 +189,7 @@ export default function StorefrontHome() {
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-bold text-foreground">Hasil Kerja Kami</h2>
                 <Link
-                  to="/store/portfolio"
+                  to="/store/showcase"
                   className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
                 >
                   Lihat Semua <ArrowRight className="w-3.5 h-3.5" />

@@ -7,7 +7,7 @@ import { useCart } from "@/features/storefront/hooks/useCart";
 
 const navLinks = [
   { label: "Home", path: "/store" },
-  { label: "Portfolio", path: "/store/portfolio" },
+  { label: "Showcase", path: "/store/showcase" },
   { label: "Templates", path: "/store/templates" },
 ];
 
