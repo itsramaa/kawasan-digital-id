@@ -668,6 +668,7 @@ export type Database = {
           estimated_days: number | null
           id: string
           is_active: boolean | null
+          is_featured: boolean
           name: string
           thumbnail_url: string | null
         }
@@ -680,6 +681,7 @@ export type Database = {
           estimated_days?: number | null
           id?: string
           is_active?: boolean | null
+          is_featured?: boolean
           name: string
           thumbnail_url?: string | null
         }
@@ -692,6 +694,7 @@ export type Database = {
           estimated_days?: number | null
           id?: string
           is_active?: boolean | null
+          is_featured?: boolean
           name?: string
           thumbnail_url?: string | null
         }
@@ -733,6 +736,33 @@ export type Database = {
           tech_stack?: string[] | null
           thumbnail_url?: string | null
           title?: string
+        }
+        Relationships: []
+      }
+      store_faqs: {
+        Row: {
+          answer: string
+          created_at: string
+          display_order: number
+          id: string
+          is_published: boolean
+          question: string
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_published?: boolean
+          question: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_published?: boolean
+          question?: string
         }
         Relationships: []
       }
@@ -899,6 +929,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      testimonials: {
+        Row: {
+          avatar_url: string | null
+          client_company: string | null
+          client_name: string
+          content: string
+          created_at: string
+          display_order: number
+          id: string
+          is_published: boolean
+          rating: number
+        }
+        Insert: {
+          avatar_url?: string | null
+          client_company?: string | null
+          client_name: string
+          content: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_published?: boolean
+          rating?: number
+        }
+        Update: {
+          avatar_url?: string | null
+          client_company?: string | null
+          client_name?: string
+          content?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_published?: boolean
+          rating?: number
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
