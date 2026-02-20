@@ -53,6 +53,27 @@ export interface Order {
   updated_at: string;
 }
 
+export interface Testimonial {
+  id: string;
+  client_name: string;
+  client_company: string | null;
+  avatar_url: string | null;
+  content: string;
+  rating: number;
+  is_published: boolean;
+  display_order: number;
+  created_at: string;
+}
+
+export interface StoreFAQ {
+  id: string;
+  question: string;
+  answer: string;
+  display_order: number;
+  is_published: boolean;
+  created_at: string;
+}
+
 export interface CheckoutFormData {
   customer_name: string;
   customer_email: string;
