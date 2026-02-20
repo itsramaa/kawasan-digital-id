@@ -1,18 +1,26 @@
 import { AppLayout } from "@/components/layout/AppLayout";
 import { StatusBadge } from "@/components/shared/StatusBadge";
-import { Search, Plus, Filter, MoreHorizontal, Calendar, Users } from "lucide-react";
+import { Search, Plus, Filter, Calendar, Users } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
-const projects = [
-  { id: "PRJ-001", name: "E-Commerce Revamp", client: "PT Maju Jaya", pm: "Diana", status: "In Progress", statusVariant: "info" as const, progress: 65, deadline: "2026-03-15", team: 4 },
-  { id: "PRJ-002", name: "SaaS Dashboard", client: "CV Mandiri Tech", pm: "Diana", status: "In Progress", statusVariant: "info" as const, progress: 40, deadline: "2026-04-01", team: 3 },
-  { id: "PRJ-003", name: "Corporate Portal", client: "PT Sentosa Group", pm: "Eko", status: "Planning", statusVariant: "warning" as const, progress: 10, deadline: "2026-05-10", team: 2 },
-  { id: "PRJ-004", name: "Mobile Landing Page", client: "CV Digital Nusantara", pm: "Diana", status: "On Hold", statusVariant: "hold" as const, progress: 30, deadline: "2026-03-20", team: 2 },
-  { id: "PRJ-005", name: "Booking System", client: "PT Indo Digital", pm: "Eko", status: "In Progress", statusVariant: "info" as const, progress: 82, deadline: "2026-02-28", team: 5 },
-  { id: "PRJ-006", name: "Blog & Portfolio", client: "CV Kreatif Media", pm: "Diana", status: "Completed", statusVariant: "success" as const, progress: 100, deadline: "2026-02-10", team: 2 },
-  { id: "PRJ-007", name: "Inventory System", client: "PT Abadi Sejahtera", pm: "Eko", status: "In Progress", statusVariant: "info" as const, progress: 55, deadline: "2026-03-30", team: 4 },
-];
+const statusVariantMap: Record<string, "info" | "warning" | "hold" | "success" | "neutral"> = {
+  Planning: "warning", "In Progress": "info", "On Hold": "hold", Completed: "success", Cancelled: "neutral",
+};
 
 export default function Projects() {
+  const { data: projects, isLoading } = useQuery({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("*, clients(name)")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
   return (
     <AppLayout>
       <div className="space-y-6">
@@ -22,70 +30,63 @@ export default function Projects() {
             <p className="text-sm text-muted-foreground mt-1">Track project delivery and milestones</p>
           </div>
           <button className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-md text-sm font-medium hover:opacity-90 transition-opacity">
-            <Plus className="w-4 h-4" />
-            New Project
+            <Plus className="w-4 h-4" /> New Project
           </button>
         </div>
 
-        {/* Filters */}
         <div className="flex items-center gap-3 flex-wrap">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search projects..."
-              className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-md text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            />
+            <input type="text" placeholder="Search projects..." className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-md text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
           </div>
           <button className="inline-flex items-center gap-2 px-3 py-2 bg-card border border-border rounded-md text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <Filter className="w-4 h-4" />
-            Filter
+            <Filter className="w-4 h-4" /> Filter
           </button>
         </div>
 
-        {/* Project Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {projects.map((project) => (
-            <div key={project.id} className="bg-card rounded-lg border border-border p-5 hover:shadow-md transition-shadow cursor-pointer group">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <p className="font-mono text-[11px] text-muted-foreground">{project.id}</p>
-                  <h3 className="font-semibold text-card-foreground mt-0.5 group-hover:text-primary transition-colors">{project.name}</h3>
-                  <p className="text-sm text-muted-foreground">{project.client}</p>
+        {isLoading ? (
+          <div className="text-center py-12 text-muted-foreground">Loading projects...</div>
+        ) : !projects?.length ? (
+          <div className="text-center py-12 bg-card rounded-lg border border-border">
+            <FolderIcon className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+            <p className="text-muted-foreground">No projects yet. Create your first project to get started.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {projects.map((project: any) => (
+              <div key={project.id} className="bg-card rounded-lg border border-border p-5 hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="font-semibold text-card-foreground group-hover:text-primary transition-colors">{project.name}</h3>
+                    <p className="text-sm text-muted-foreground">{project.clients?.name ?? "—"}</p>
+                  </div>
+                  <StatusBadge status={project.status} variant={statusVariantMap[project.status] ?? "neutral"} />
                 </div>
-                <StatusBadge status={project.status} variant={project.statusVariant} />
+                <div className="space-y-1.5 mb-4">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-muted-foreground">Progress</span>
+                    <span className="font-mono font-medium">{project.progress}%</span>
+                  </div>
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${project.progress}%` }} />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>{project.deadline ?? "No deadline"}</span>
+                  </div>
+                  <span className="capitalize">{project.status}</span>
+                </div>
               </div>
-
-              {/* Progress */}
-              <div className="space-y-1.5 mb-4">
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Progress</span>
-                  <span className="font-mono font-medium">{project.progress}%</span>
-                </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-primary transition-all"
-                    style={{ width: `${project.progress}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Meta */}
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>{project.deadline}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Users className="w-3.5 h-3.5" />
-                  <span>{project.team} members</span>
-                </div>
-                <span>PM: {project.pm}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </AppLayout>
   );
+}
+
+function FolderIcon({ className }: { className?: string }) {
+  return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>;
 }
