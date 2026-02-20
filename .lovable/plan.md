@@ -1,241 +1,81 @@
 
 
-# Storefront Publik + Client Dashboard (Dual View)
+# Redesain Store: Dari Landing Page ke E-Commerce App
 
-## Ringkasan
+## Masalah Saat Ini
 
-Menambahkan **storefront publik** (tanpa login) di samping client dashboard yang sudah ada. Storefront berfungsi seperti website agency e-commerce: menampilkan portfolio project, katalog template, custom builder (pilih fitur), dan checkout (form order manual + opsi payment gateway).
+Halaman `/store` saat ini terlihat seperti **landing page marketing** dengan:
+- Hero section besar dengan tagline
+- Stats bar (50+ Projects, 30+ Clients, dll)
+- Showcase projects section
+- CTA "Ready to Get Started?"
 
----
-
-## Arsitektur Dual View
-
-Client sekarang punya 2 entry point:
-
-| View | Route Prefix | Auth | Layout |
-|---|---|---|---|
-| **Storefront (Web Publik)** | `/store/*` | Tidak perlu login | `StorefrontLayout` (navbar + footer) |
-| **Dashboard (Portal)** | `/client/*` | Login required | `ClientLayout` (existing) |
-
-Navigasi antar kedua view: tombol "My Dashboard" di storefront header (jika sudah login), dan link "Browse Services" di client dashboard.
+Padahal ini adalah **bagian dari aplikasi**, bukan website terpisah. Perlu diubah menjadi tampilan e-commerce yang langsung menampilkan produk/layanan.
 
 ---
 
-## Database Schema Baru
+## Perubahan yang Dilakukan
 
-### Tabel: `showcase_projects`
-Portfolio project agency yang ditampilkan ke publik.
+### 1. Redesain `StorefrontHome.tsx` - Gaya E-Commerce
 
-| Column | Type | Notes |
-|---|---|---|
-| id | uuid PK | |
-| title | text NOT NULL | |
-| description | text | |
-| thumbnail_url | text | |
-| category | text | e.g. "Web App", "Mobile", "Landing Page" |
-| tech_stack | text[] | e.g. ["React", "Node.js"] |
-| demo_url | text | Link ke demo |
-| is_published | boolean DEFAULT false | Internal control |
-| display_order | integer DEFAULT 0 | |
-| created_at | timestamptz | |
+Hapus semua elemen landing page (hero besar, stats, CTA section) dan ganti dengan layout e-commerce:
 
-RLS: SELECT publik (WHERE is_published = true), ALL untuk internal users.
+**Layout baru:**
+- **Search bar** di bagian atas untuk mencari template
+- **Category sidebar/filter** (atau horizontal filter pills di mobile)
+- **Grid produk (templates)** sebagai konten utama -- langsung tampil semua template dengan harga
+- **Section "Portfolio"** tetap ada tapi lebih compact, sebagai referensi saja (bukan hero)
+- Banner kecil di atas (opsional) -- bukan hero full-width, tapi slim promotional banner
 
-### Tabel: `service_templates`
-Template/paket layanan yang bisa di-order.
-
-| Column | Type | Notes |
-|---|---|---|
-| id | uuid PK | |
-| name | text NOT NULL | |
-| description | text | |
-| thumbnail_url | text | |
-| category | text | e.g. "Website", "E-Commerce", "Landing Page" |
-| base_price | numeric NOT NULL | Harga dasar |
-| estimated_days | integer | Estimasi pengerjaan |
-| is_active | boolean DEFAULT true | |
-| display_order | integer DEFAULT 0 | |
-| created_at | timestamptz | |
-
-RLS: SELECT publik (WHERE is_active = true), ALL untuk internal users.
-
-### Tabel: `template_features`
-Fitur tambahan yang bisa dipilih saat custom builder.
-
-| Column | Type | Notes |
-|---|---|---|
-| id | uuid PK | |
-| template_id | uuid FK -> service_templates | |
-| name | text NOT NULL | e.g. "SEO Optimization" |
-| description | text | |
-| price | numeric NOT NULL DEFAULT 0 | Harga tambahan |
-| is_included | boolean DEFAULT false | Sudah termasuk di base? |
-| display_order | integer DEFAULT 0 | |
-
-RLS: SELECT publik, ALL untuk internal users.
-
-### Tabel: `orders`
-Order dari checkout storefront.
-
-| Column | Type | Notes |
-|---|---|---|
-| id | uuid PK | |
-| order_number | text UNIQUE NOT NULL | Auto-generated (ORD-001) |
-| customer_name | text NOT NULL | |
-| customer_email | text NOT NULL | |
-| customer_phone | text | |
-| customer_company | text | |
-| template_id | uuid FK -> service_templates | |
-| selected_features | jsonb DEFAULT '[]' | Array of feature IDs + names |
-| notes | text | Catatan custom dari customer |
-| subtotal | numeric NOT NULL | |
-| total | numeric NOT NULL | |
-| status | text DEFAULT 'Pending' | Pending, Confirmed, In Progress, Completed, Cancelled |
-| payment_method | text | 'manual' atau 'online' |
-| payment_status | text DEFAULT 'Unpaid' | Unpaid, Paid, Partial |
-| created_at | timestamptz | |
-| updated_at | timestamptz | |
-
-RLS: INSERT untuk anon (publik bisa checkout), SELECT/UPDATE/DELETE untuk internal users.
-
----
-
-## Halaman Storefront Baru
-
-### Layout: `StorefrontLayout.tsx`
-- Navbar: Logo, nav links (Home, Portfolio, Templates, Contact), tombol "My Dashboard" (jika sudah login)
-- Footer: Copyright, social links
-- Responsive, mobile-first
-
-### Halaman:
-
-#### 1. `/store` - Landing/Home
-- Hero section dengan tagline agency
-- Featured showcase projects (3-4 cards)
-- Featured templates (3-4 cards)
-- CTA: "Browse All Templates" dan "View Our Work"
-- Stats section: jumlah project selesai, client puas, dll
-
-#### 2. `/store/portfolio` - Showcase Projects
-- Grid layout project cards dengan filter kategori
-- Card: thumbnail, title, category, tech stack badges
-- Click -> modal atau expand detail dengan description + demo link
-
-#### 3. `/store/templates` - Template Catalog
-- Grid cards template dengan filter kategori
-- Card: thumbnail, name, base price, estimated days, category badge
-- Click -> `/store/templates/:id` detail page
-
-#### 4. `/store/templates/:id` - Template Detail + Custom Builder
-- Template info: nama, deskripsi, base price, estimasi
-- **Feature Selector**: Checklist fitur (included = checked & disabled, optional = toggle on/off)
-- **Live price calculator**: base_price + sum(selected optional features)
-- **Order Summary sidebar**: template name, selected features, total price
-- CTA: "Proceed to Checkout"
-
-#### 5. `/store/checkout` - Checkout Page
-- Form fields: nama, email, phone, company (Zod validated)
-- Order summary review
-- Pilih payment method: "Request Invoice (Manual)" atau "Pay Online"
-- Submit -> insert ke `orders` table
-- Success page / confirmation
-
----
-
-## Hooks Baru (SRP)
-
-| Hook | Table | Deskripsi |
-|---|---|---|
-| `useShowcaseProjects` | showcase_projects | Fetch published projects |
-| `useServiceTemplates` | service_templates | Fetch active templates |
-| `useTemplateDetail` | service_templates + template_features | Fetch 1 template + fiturnya |
-| `useCreateOrder` | orders | Mutation untuk submit order |
-
----
-
-## Struktur File
-
+**Struktur halaman baru:**
 ```text
-src/features/storefront/
-  types/index.ts
-  hooks/
-    useShowcaseProjects.ts
-    useServiceTemplates.ts
-    useTemplateDetail.ts
-    useCreateOrder.ts
-  components/
-    HeroSection.tsx
-    ProjectCard.tsx
-    TemplateCard.tsx
-    FeatureSelector.tsx
-    OrderSummary.tsx
-    CheckoutForm.tsx
-
-src/shared/components/layouts/
-  StorefrontLayout.tsx    -- NEW
-
-src/pages/store/
-  StorefrontHome.tsx      -- NEW
-  PortfolioPage.tsx       -- NEW
-  TemplatesPage.tsx       -- NEW
-  TemplateDetailPage.tsx  -- NEW
-  CheckoutPage.tsx        -- NEW
-  OrderSuccessPage.tsx    -- NEW
+[Slim Banner / Promo Strip]                    -- 1-2 baris, bisa di-dismiss
+[Search Bar + Sort Dropdown]                   -- pencarian template
+[Category Filter Pills]                        -- All | Website | E-Commerce | Landing Page | ...
+[Template Grid - 3 kolom]                      -- produk utama, langsung tampil
+  - Card: thumbnail, nama, harga, kategori badge, tombol "View Details"
+[Divider]
+[Portfolio Showcase - compact row]             -- 3-4 card horizontal, link "View All"
 ```
 
----
+### 2. Perubahan pada `StorefrontLayout.tsx`
 
-## Routing (App.tsx)
+- Ubah navigasi: "Home" ganti menjadi label yang lebih sesuai e-commerce (misal tetap "Home" tapi konteksnya berubah)
+- Navbar sudah sesuai (ada cart, dashboard link)
+- Tidak ada perubahan besar di layout
 
-```text
-/store              -> StorefrontHome       (public)
-/store/portfolio    -> PortfolioPage        (public)
-/store/templates    -> TemplatesPage        (public)
-/store/templates/:id -> TemplateDetailPage  (public)
-/store/checkout     -> CheckoutPage         (public)
-/store/order-success -> OrderSuccessPage    (public)
-```
+### 3. Tidak ada perubahan di halaman lain
 
-Semua route storefront TIDAK dibungkus `ProtectedRoute`.
-
----
-
-## Integrasi dengan Sistem Existing
-
-1. **Client Dashboard**: Tambahkan link "Browse Services" di dashboard yang mengarah ke `/store`
-2. **Internal Portal**: Order yang masuk dari storefront bisa dilihat oleh tim Sales/Admin di halaman internal (future enhancement - bisa jadi halaman `/sales/orders`)
-3. **Order -> Inquiry pipeline**: Order baru bisa otomatis membuat entry di tabel `inquiries` yang sudah ada, sehingga masuk ke pipeline Sales CRM
+`TemplatesPage.tsx`, `PortfolioPage.tsx`, `TemplateDetailPage.tsx`, dll tetap sama. Hanya `StorefrontHome.tsx` yang di-redesain total.
 
 ---
 
 ## Detail Teknis
 
-### Payment Gateway
-- Fase 1 (sekarang): Form order manual saja (`payment_method = 'manual'`, status 'Pending')
-- Fase 2 (nanti): Integrasi Stripe/Midtrans bisa ditambahkan ke CheckoutPage dengan edge function
+### File yang diubah: `src/pages/store/StorefrontHome.tsx`
 
-### Zod Validation untuk Checkout
-```text
-- customer_name: string, min 2, max 100
-- customer_email: string, valid email
-- customer_phone: string, optional
-- customer_company: string, optional, max 100
-- selected_features: array of UUIDs
-- notes: string, optional, max 500
-```
+Rewrite halaman dengan struktur:
 
-### RLS Policies
-- `showcase_projects`: anon SELECT WHERE is_published = true
-- `service_templates`: anon SELECT WHERE is_active = true
-- `template_features`: anon SELECT (semua, karena hanya fitur dari template aktif)
-- `orders`: anon INSERT (siapa saja bisa checkout), internal ALL
+1. **Slim promo banner** (optional) -- satu baris dengan background primary/10, bisa berisi teks promo singkat
+2. **Search + Sort bar** -- input search untuk filter template by nama, dropdown sort (harga rendah-tinggi, terbaru)
+3. **Category filter pills** -- menggunakan kategori dari data templates, sama seperti di `TemplatesPage.tsx`
+4. **Template product grid** -- grid 2-3 kolom, semua template langsung tampil dengan:
+   - Thumbnail
+   - Nama template
+   - Kategori badge
+   - Harga (Rp format)
+   - Estimasi hari
+   - Tombol "Lihat Detail" atau card clickable ke `/store/templates/:id`
+5. **Portfolio section (compact)** -- di bawah grid template, section kecil "Lihat Hasil Kerja Kami" dengan 3 card project dan link "View All Portfolio"
 
-### Order Number Generation
-Database function `generate_order_number()` yang auto-increment: ORD-0001, ORD-0002, dst.
+### State management di halaman:
+- `searchQuery` -- string untuk filter template by name
+- `categoryFilter` -- string untuk filter by category
+- `sortBy` -- "price-asc" | "price-desc" | "newest"
+- Data dari `useServiceTemplates()` dan `useShowcaseProjects()` (existing hooks)
 
-### Prinsip
-- **KISS**: Setiap halaman storefront adalah presentational component sederhana
-- **DRY**: Reuse StatusBadge, EmptyState; shared TemplateCard di home + catalog
-- **SOLID/SRP**: Hook per entity, component per concern, layout terpisah dari content
-- **Mobile-first**: Grid responsive, touch-friendly cards (min 44px tap targets)
-
+### Yang dihapus:
+- Hero section besar (text 6xl, blur background)
+- Stats section (50+ Projects, 30+ Clients, dll)
+- CTA section "Ready to Get Started?"
+- Embla carousel (langsung grid saja)
