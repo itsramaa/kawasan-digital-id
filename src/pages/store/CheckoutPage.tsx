@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { StorefrontLayout } from "@/shared/components/layouts/StorefrontLayout";
 import { useTemplateDetail } from "@/features/storefront/hooks/useTemplateDetail";
 import { useCreateOrder } from "@/features/storefront/hooks/useCreateOrder";
+import { useCart } from "@/features/storefront/hooks/useCart";
+import { useAuth } from "@/features/auth/AuthContext";
 import { Input } from "@/shared/components/ui/input";
-import { Loader2 } from "lucide-react";
+import { Loader2, LogIn } from "lucide-react";
 
 const checkoutSchema = z.object({
   customer_name: z.string().trim().min(2, "Name min 2 chars").max(100),
@@ -23,6 +25,9 @@ type CheckoutValues = z.infer<typeof checkoutSchema>;
 export default function CheckoutPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { user, profile, isLoading: authLoading } = useAuth();
+  const { clearCart } = useCart();
+
   const templateId = searchParams.get("template_id") ?? "";
   const featureIds = searchParams.get("features")?.split(",").filter(Boolean) ?? [];
   const { template, features, isLoading } = useTemplateDetail(templateId || undefined);
@@ -39,6 +44,15 @@ export default function CheckoutPage() {
     defaultValues: { payment_method: "manual" },
   });
 
+  // Pre-fill from profile
+  useEffect(() => {
+    if (profile) {
+      setValue("customer_name", profile.full_name || "");
+      setValue("customer_email", profile.email || "");
+      if (profile.phone) setValue("customer_phone", profile.phone);
+    }
+  }, [profile, setValue]);
+
   const paymentMethod = watch("payment_method");
 
   const selectedFeatures = features.filter((f) => f.is_included || featureIds.includes(f.id));
@@ -47,8 +61,30 @@ export default function CheckoutPage() {
   const subtotal = (template?.base_price ?? 0) + additionalCost;
   const total = subtotal;
 
+  // Auth gate: must be logged in
+  if (!authLoading && !user) {
+    const redirectUrl = `/store/checkout?${searchParams.toString()}`;
+    return (
+      <StorefrontLayout>
+        <div className="max-w-md mx-auto px-4 py-20 text-center space-y-6">
+          <LogIn className="w-12 h-12 mx-auto text-primary" />
+          <h1 className="text-2xl font-bold text-foreground">Login Required</h1>
+          <p className="text-muted-foreground">
+            You need to log in to complete your order. Your cart items will be preserved.
+          </p>
+          <Link
+            to={`/login?redirect=${encodeURIComponent(redirectUrl)}`}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors"
+          >
+            Login to Continue
+          </Link>
+        </div>
+      </StorefrontLayout>
+    );
+  }
+
   const onSubmit = async (values: CheckoutValues) => {
-    if (!template) return;
+    if (!template || !user) return;
     try {
       await createOrder.mutateAsync({
         customer_name: values.customer_name,
@@ -61,14 +97,16 @@ export default function CheckoutPage() {
         subtotal,
         total,
         payment_method: values.payment_method,
+        user_id: user.id,
       });
+      await clearCart();
       navigate("/store/order-success");
     } catch (e) {
       // error handled by mutation
     }
   };
 
-  if (isLoading) {
+  if (isLoading || authLoading) {
     return (
       <StorefrontLayout>
         <div className="max-w-4xl mx-auto px-4 py-12 animate-pulse space-y-6">
@@ -95,33 +133,27 @@ export default function CheckoutPage() {
         <h1 className="text-2xl font-bold text-foreground mb-8">Checkout</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="grid lg:grid-cols-5 gap-8">
-          {/* Form */}
           <div className="lg:col-span-3 space-y-5">
             <div className="space-y-4">
               <h2 className="font-semibold text-foreground">Contact Information</h2>
-
               <div>
                 <label className="text-sm font-medium text-foreground">Name *</label>
                 <Input {...register("customer_name")} placeholder="Your full name" className="mt-1" />
                 {errors.customer_name && <p className="text-xs text-destructive mt-1">{errors.customer_name.message}</p>}
               </div>
-
               <div>
                 <label className="text-sm font-medium text-foreground">Email *</label>
                 <Input {...register("customer_email")} type="email" placeholder="you@email.com" className="mt-1" />
                 {errors.customer_email && <p className="text-xs text-destructive mt-1">{errors.customer_email.message}</p>}
               </div>
-
               <div>
                 <label className="text-sm font-medium text-foreground">Phone</label>
                 <Input {...register("customer_phone")} placeholder="+62..." className="mt-1" />
               </div>
-
               <div>
                 <label className="text-sm font-medium text-foreground">Company</label>
                 <Input {...register("customer_company")} placeholder="Company name" className="mt-1" />
               </div>
-
               <div>
                 <label className="text-sm font-medium text-foreground">Notes</label>
                 <textarea
@@ -133,7 +165,6 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Payment Method */}
             <div className="space-y-3">
               <h2 className="font-semibold text-foreground">Payment Method</h2>
               <div className="grid grid-cols-2 gap-3">
@@ -149,12 +180,7 @@ export default function CheckoutPage() {
                         : "border-border hover:border-primary/30"
                     }`}
                   >
-                    <input
-                      type="radio"
-                      value={opt.value}
-                      {...register("payment_method")}
-                      className="sr-only"
-                    />
+                    <input type="radio" value={opt.value} {...register("payment_method")} className="sr-only" />
                     <p className="text-sm font-medium text-foreground">{opt.label}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
                   </label>
@@ -178,7 +204,6 @@ export default function CheckoutPage() {
             )}
           </div>
 
-          {/* Summary */}
           <div className="lg:col-span-2">
             <div className="rounded-xl border border-border bg-card p-5 space-y-4 lg:sticky lg:top-24">
               <h3 className="font-semibold text-foreground">Order Summary</h3>

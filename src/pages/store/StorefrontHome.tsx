@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, Users, FolderKanban } from "lucide-react";
+import { ArrowRight, Sparkles, FolderKanban, ChevronLeft, ChevronRight } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
+import { useCallback } from "react";
 import { StorefrontLayout } from "@/shared/components/layouts/StorefrontLayout";
 import { useShowcaseProjects } from "@/features/storefront/hooks/useShowcaseProjects";
 import { useServiceTemplates } from "@/features/storefront/hooks/useServiceTemplates";
@@ -62,9 +64,13 @@ function TemplateCard({ template }: { template: ServiceTemplate }) {
 export default function StorefrontHome() {
   const { data: projects } = useShowcaseProjects();
   const { data: templates } = useServiceTemplates();
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start", slidesToScroll: 1 });
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   const featuredProjects = projects?.slice(0, 3) ?? [];
-  const featuredTemplates = templates?.slice(0, 3) ?? [];
+  const allTemplates = templates ?? [];
 
   return (
     <StorefrontLayout>
@@ -132,20 +138,34 @@ export default function StorefrontHome() {
         </section>
       )}
 
-      {/* Featured Templates */}
-      {featuredTemplates.length > 0 && (
+      {/* Featured Templates Carousel */}
+      {allTemplates.length > 0 && (
         <section className="max-w-6xl mx-auto px-4 lg:px-8 py-16 space-y-8">
           <div className="flex items-end justify-between">
             <div>
               <h2 className="text-2xl font-bold text-foreground">Popular Templates</h2>
               <p className="text-muted-foreground mt-1">Start building with our ready-made solutions</p>
             </div>
-            <Link to="/store/templates" className="text-sm font-medium text-primary hover:underline flex items-center gap-1">
-              View All <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            <div className="flex items-center gap-2">
+              <button onClick={scrollPrev} className="p-2 rounded-lg border border-border hover:bg-muted transition-colors">
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button onClick={scrollNext} className="p-2 rounded-lg border border-border hover:bg-muted transition-colors">
+                <ChevronRight className="w-4 h-4" />
+              </button>
+              <Link to="/store/templates" className="text-sm font-medium text-primary hover:underline flex items-center gap-1 ml-2">
+                View All <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredTemplates.map((t) => <TemplateCard key={t.id} template={t} />)}
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex gap-6">
+              {allTemplates.map((t) => (
+                <div key={t.id} className="flex-[0_0_100%] sm:flex-[0_0_48%] lg:flex-[0_0_31.5%] min-w-0">
+                  <TemplateCard template={t} />
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       )}

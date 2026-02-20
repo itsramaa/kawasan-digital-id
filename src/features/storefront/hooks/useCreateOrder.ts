@@ -12,6 +12,7 @@ interface CreateOrderPayload {
   subtotal: number;
   total: number;
   payment_method: string;
+  user_id?: string;
 }
 
 export function useCreateOrder() {
@@ -31,6 +32,7 @@ export function useCreateOrder() {
           subtotal: payload.subtotal,
           total: payload.total,
           payment_method: payload.payment_method,
+          user_id: payload.user_id || null,
         })
         .select()
         .single();
