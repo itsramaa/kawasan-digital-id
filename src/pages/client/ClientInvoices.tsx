@@ -4,6 +4,7 @@ import { KPICard } from "@/shared/components/common/StatusBadge";
 import { DataTable } from "@/shared/components/common/DataTable";
 import { useClientInvoices } from "@/features/client/hooks/useClientInvoices";
 import { Receipt, CheckCircle, AlertTriangle } from "lucide-react";
+import { differenceInDays, parseISO } from "date-fns";
 
 const statusMap: Record<string, "info" | "success" | "error" | "neutral"> = {
   Draft: "neutral", Sent: "info", Paid: "success", Overdue: "error", Void: "neutral",
@@ -15,6 +16,14 @@ export default function ClientInvoices() {
   const outstanding = invoices?.filter(i => ["Sent", "Overdue"].includes(i.status)).reduce((s, i) => s + Number(i.amount), 0) ?? 0;
   const paid = invoices?.filter(i => i.status === "Paid").reduce((s, i) => s + Number(i.amount), 0) ?? 0;
   const overdueCount = invoices?.filter(i => i.status === "Overdue").length ?? 0;
+
+  // Sort: overdue first, then by due_date ascending
+  const sortedInvoices = [...(invoices ?? [])].sort((a, b) => {
+    if (a.status === "Overdue" && b.status !== "Overdue") return -1;
+    if (b.status === "Overdue" && a.status !== "Overdue") return 1;
+    if (a.due_date && b.due_date) return a.due_date.localeCompare(b.due_date);
+    return 0;
+  });
 
   return (
     <ClientLayout>
@@ -33,9 +42,20 @@ export default function ClientInvoices() {
             { key: "project", header: "Project", render: (i: any) => <span className="text-muted-foreground">{i.projects?.name ?? "—"}</span> },
             { key: "amount", header: "Amount", className: "text-right", render: (i: any) => <span className="font-mono text-xs font-medium">Rp {Number(i.amount).toLocaleString("id-ID")}</span> },
             { key: "status", header: "Status", render: (i: any) => <StatusBadge status={i.status} variant={statusMap[i.status] ?? "neutral"} /> },
-            { key: "due", header: "Due Date", render: (i: any) => <span className="text-xs text-muted-foreground">{i.due_date ?? "—"}</span> },
+            { key: "due", header: "Due Date", sortable: true, sortValue: (i: any) => i.due_date ?? "", render: (i: any) => {
+              const overdueDays = i.due_date && i.status === "Overdue" ? differenceInDays(new Date(), parseISO(i.due_date)) : 0;
+              return (
+                <div>
+                  <span className="text-xs text-muted-foreground">{i.due_date ?? "—"}</span>
+                  {overdueDays > 0 && <span className="ml-2 text-[10px] text-status-error font-medium">{overdueDays}d overdue</span>}
+                </div>
+              );
+            }},
+            { key: "payment", header: "Paid", render: (i: any) => (
+              <span className="text-xs text-muted-foreground">{i.paid_at ? new Date(i.paid_at).toLocaleDateString("id-ID") : "—"}</span>
+            )},
           ]}
-          data={invoices ?? []}
+          data={sortedInvoices}
           isLoading={isLoading}
           emptyMessage="No invoices yet."
           searchField={(i: any) => `${i.invoice_number} ${i.projects?.name}`}
