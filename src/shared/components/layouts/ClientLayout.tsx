@@ -40,7 +40,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
               <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
                 <Globe className="w-3.5 h-3.5 text-primary-foreground" />
               </div>
-              <span className="font-bold text-sm">AgencyOS</span>
+              <span className="font-bold text-sm">Kawasan Digital</span>
               <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded uppercase tracking-wider">Client</span>
             </div>
           </div>
