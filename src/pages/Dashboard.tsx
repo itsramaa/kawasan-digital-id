@@ -5,12 +5,12 @@ import { StatusBadge, KPICard } from "@/shared/components/common/StatusBadge";
 import {
   TrendingUp, FolderKanban, Receipt, HeadphonesIcon,
   DollarSign, Clock, AlertTriangle,
-  ListTodo, Globe
+  ListTodo, Globe, Users, ArrowUpRight
 } from "lucide-react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line, Legend,
+  PieChart, Pie, Cell, LineChart, Line, Legend, AreaChart, Area,
 } from "recharts";
 
 import { useProjectStats } from "@/features/projects/hooks/useProjectStats";
@@ -18,8 +18,9 @@ import { useSupportStats } from "@/features/support/hooks/useSupportStats";
 import { useFinanceStats } from "@/features/finance/hooks/useFinanceStats";
 import { useSalesStats } from "@/features/sales/hooks/useSalesStats";
 import { useInfrastructureStats } from "@/features/infrastructure/hooks/useInfrastructureStats";
+import { useDashboardRevenueTrend } from "@/features/finance/hooks/useDashboardRevenueTrend";
 
-const CHART_COLORS = ["hsl(216, 51%, 48%)", "hsl(189, 100%, 50%)", "hsl(160, 60%, 45%)", "hsl(38, 92%, 50%)", "hsl(0, 84%, 60%)", "hsl(263, 70%, 58%)"];
+const CHART_COLORS = ["hsl(160, 60%, 45%)", "hsl(216, 51%, 48%)", "hsl(0, 84%, 60%)", "hsl(38, 92%, 50%)", "hsl(263, 70%, 58%)", "hsl(189, 100%, 50%)"];
 
 export default function Dashboard() {
   const { profile, roles, isClient, isInternal } = useAuth();
@@ -30,9 +31,10 @@ export default function Dashboard() {
 
   const { projectCount, recentTasks } = useProjectStats();
   const { openTickets, recentTickets } = useSupportStats();
-  const { outstanding, overdue, collected } = useFinanceStats();
+  const { outstanding, overdue, collected, invoices: finInvoices } = useFinanceStats();
   const { recentInquiries, pipelineSummary } = useSalesStats();
   const { domains } = useInfrastructureStats();
+  const { data: revenueTrend } = useDashboardRevenueTrend();
 
   const primaryRole = roles[0] ?? "super_admin";
   const showSales = ["super_admin", "sales"].includes(primaryRole);
@@ -49,16 +51,19 @@ export default function Dashboard() {
     "To Do": "neutral", "In Progress": "info", Review: "warning", Done: "success",
   };
 
-  // Chart data
+  // Pipeline pie data
   const pipelineChartData = pipelineSummary.map((s) => ({ name: s.stage, value: s.count }));
-  const revenueData = [
-    { name: "Jan", revenue: 45, target: 50 },
-    { name: "Feb", revenue: 62, target: 55 },
-    { name: "Mar", revenue: 58, target: 60 },
-    { name: "Apr", revenue: 71, target: 65 },
-    { name: "May", revenue: 85, target: 70 },
-    { name: "Jun", revenue: collected / 1e6 || 78, target: 75 },
-  ];
+
+  // Invoice status distribution for pie chart
+  const invoiceStatusData = [
+    { name: "Paid", value: finInvoices?.filter(i => i.status === "Paid").length ?? 0 },
+    { name: "Outstanding", value: finInvoices?.filter(i => ["Sent", "Viewed"].includes(i.status)).length ?? 0 },
+    { name: "Overdue", value: finInvoices?.filter(i => i.status === "Overdue").length ?? 0 },
+    { name: "Draft", value: finInvoices?.filter(i => i.status === "Draft").length ?? 0 },
+  ].filter(d => d.value > 0);
+
+  const totalBilled = finInvoices?.reduce((s, i) => s + Number(i.amount), 0) ?? 0;
+  const collectionRate = totalBilled > 0 ? Math.round((collected / totalBilled) * 100) : 0;
 
   return (
     <AppLayout>
@@ -73,7 +78,7 @@ export default function Dashboard() {
           {(isAdmin || showProjects) && <KPICard title="Active Projects" value={String(projectCount ?? 0)} icon={FolderKanban} />}
           {(isAdmin || showFinance) && (
             <KPICard
-              title="Outstanding Invoices"
+              title="Outstanding"
               value={`Rp ${(outstanding / 1e6).toFixed(0)}M`}
               change={`${overdue.length} overdue`}
               changeType={overdue.length > 0 ? "negative" : "neutral"}
@@ -81,53 +86,95 @@ export default function Dashboard() {
             />
           )}
           {(isAdmin || showSupport) && <KPICard title="Open Tickets" value={String(openTickets ?? 0)} icon={HeadphonesIcon} />}
-          {(isAdmin || showFinance) && <KPICard title="Revenue Collected" value={`Rp ${(collected / 1e6).toFixed(0)}M`} icon={DollarSign} />}
-          {(isAdmin || showSales) && !showFinance && <KPICard title="Pipeline Value" value={`${recentInquiries?.length ?? 0} leads`} icon={TrendingUp} />}
+          {(isAdmin || showFinance) && (
+            <KPICard
+              title="Collection Rate"
+              value={`${collectionRate}%`}
+              change={`Rp ${(collected / 1e6).toFixed(0)}M collected`}
+              changeType={collectionRate >= 70 ? "positive" : "negative"}
+              icon={DollarSign}
+            />
+          )}
+          {(isAdmin || showSales) && !showFinance && <KPICard title="Pipeline" value={`${recentInquiries?.length ?? 0} leads`} icon={TrendingUp} />}
         </div>
 
         {/* Charts Row */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          {/* Revenue Trend Chart */}
+          {/* Revenue Trend Area Chart */}
           {(isAdmin || showFinance) && (
             <div className="bg-card rounded-lg border border-border p-5">
-              <h2 className="text-sm font-semibold text-card-foreground mb-4 flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-primary" /> Revenue Trend (M)
-              </h2>
-              <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={revenueData}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-card-foreground flex items-center gap-2">
+                  <DollarSign className="w-4 h-4 text-primary" /> Monthly Revenue (Rp M)
+                </h2>
+                <Link to="/finance" className="text-xs text-primary hover:underline flex items-center gap-1">View All <ArrowUpRight className="w-3 h-3" /></Link>
+              </div>
+              <ResponsiveContainer width="100%" height={260}>
+                <AreaChart data={revenueTrend ?? []}>
+                  <defs>
+                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
-                  <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }}
-                  />
-                  <Legend />
-                  <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ fill: "hsl(var(--primary))" }} />
-                  <Line type="monotone" dataKey="target" stroke="hsl(var(--muted-foreground))" strokeWidth={1} strokeDasharray="5 5" dot={false} />
-                </LineChart>
+                  <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                  <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                  <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
+                  <Area type="monotone" dataKey="collected" stroke="hsl(var(--primary))" fillOpacity={1} fill="url(#colorRevenue)" strokeWidth={2} name="Collected" />
+                  <Area type="monotone" dataKey="billed" stroke="hsl(var(--muted-foreground))" fill="none" strokeWidth={1} strokeDasharray="5 5" name="Billed" />
+                </AreaChart>
               </ResponsiveContainer>
             </div>
           )}
 
-          {/* Pipeline Funnel */}
-          {(isAdmin || showSales) && pipelineChartData.length > 0 && (
+          {/* Sales Pipeline or Invoice Pie */}
+          {(isAdmin || showSales) && pipelineChartData.length > 0 ? (
             <div className="bg-card rounded-lg border border-border p-5">
-              <h2 className="text-sm font-semibold text-card-foreground mb-4 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-primary" /> Sales Pipeline
-              </h2>
-              <ResponsiveContainer width="100%" height={250}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-card-foreground flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-primary" /> Sales Pipeline
+                </h2>
+                <Link to="/sales" className="text-xs text-primary hover:underline flex items-center gap-1">View All <ArrowUpRight className="w-3 h-3" /></Link>
+              </div>
+              <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={pipelineChartData} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis type="number" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                  <XAxis type="number" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
                   <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" width={100} />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }}
-                  />
-                  <Bar dataKey="value" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
+                  <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
+                  <Bar dataKey="value" fill="hsl(var(--primary))" radius={[0, 6, 6, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          )}
+          ) : (isAdmin || showFinance) && invoiceStatusData.length > 0 ? (
+            <div className="bg-card rounded-lg border border-border p-5">
+              <h2 className="text-sm font-semibold text-card-foreground mb-4 flex items-center gap-2">
+                <Receipt className="w-4 h-4 text-primary" /> Invoice Distribution
+              </h2>
+              <div className="flex items-center gap-6">
+                <ResponsiveContainer width="50%" height={200}>
+                  <PieChart>
+                    <Pie data={invoiceStatusData} cx="50%" cy="50%" innerRadius={50} outerRadius={75} paddingAngle={3} dataKey="value">
+                      {invoiceStatusData.map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
+                    </Pie>
+                    <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="flex-1 space-y-2">
+                  {invoiceStatusData.map((d, i) => (
+                    <div key={d.name} className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
+                        <span className="text-sm">{d.name}</span>
+                      </div>
+                      <span className="text-sm font-mono font-medium">{d.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : null}
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -155,9 +202,12 @@ export default function Dashboard() {
           {/* Active Tasks */}
           {(isAdmin || showProjects) && (
             <div className="bg-card rounded-lg border border-border p-5">
-              <h2 className="text-sm font-semibold text-card-foreground mb-4 flex items-center gap-2">
-                <ListTodo className="w-4 h-4 text-primary" /> Active Tasks
-              </h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-card-foreground flex items-center gap-2">
+                  <ListTodo className="w-4 h-4 text-primary" /> Active Tasks
+                </h2>
+                <Link to="/projects/tasks" className="text-xs text-primary hover:underline flex items-center gap-1">Board <ArrowUpRight className="w-3 h-3" /></Link>
+              </div>
               {!recentTasks?.length ? (
                 <p className="text-sm text-muted-foreground">No active tasks</p>
               ) : (
@@ -183,9 +233,12 @@ export default function Dashboard() {
           {/* Support Tickets */}
           {(isAdmin || showSupport) && (
             <div className="bg-card rounded-lg border border-border p-5">
-              <h2 className="text-sm font-semibold text-card-foreground mb-4 flex items-center gap-2">
-                <HeadphonesIcon className="w-4 h-4 text-primary" /> Open Tickets
-              </h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-card-foreground flex items-center gap-2">
+                  <HeadphonesIcon className="w-4 h-4 text-primary" /> Open Tickets
+                </h2>
+                <Link to="/support" className="text-xs text-primary hover:underline flex items-center gap-1">View All <ArrowUpRight className="w-3 h-3" /></Link>
+              </div>
               {!recentTickets?.length ? (
                 <p className="text-sm text-muted-foreground">No open tickets</p>
               ) : (
@@ -212,7 +265,7 @@ export default function Dashboard() {
                 <Globe className="w-4 h-4 text-primary" /> Domain Alerts
               </h2>
               {!domains?.length ? (
-                <p className="text-sm text-muted-foreground">All domains are healthy ✓</p>
+                <p className="text-sm text-muted-foreground">All domains healthy ✓</p>
               ) : (
                 <div className="space-y-2">
                   {domains.map((d: any, i: number) => (
@@ -232,9 +285,12 @@ export default function Dashboard() {
           {/* Recent Inquiries */}
           {(isAdmin || showSales) && (
             <div className="bg-card rounded-lg border border-border p-5">
-              <h2 className="text-sm font-semibold text-card-foreground mb-4 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-primary" /> Recent Inquiries
-              </h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-card-foreground flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-primary" /> Recent Inquiries
+                </h2>
+                <Link to="/sales" className="text-xs text-primary hover:underline flex items-center gap-1">Pipeline <ArrowUpRight className="w-3 h-3" /></Link>
+              </div>
               {(!recentInquiries || recentInquiries.length === 0) ? (
                 <p className="text-sm text-muted-foreground">No inquiries yet</p>
               ) : (
