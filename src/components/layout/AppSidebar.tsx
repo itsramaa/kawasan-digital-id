@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import { useAuth } from "@/features/auth/AuthContext";
 import {
   LayoutDashboard,
   TrendingUp,
@@ -20,8 +21,34 @@ import {
   Server,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+function UserSection() {
+  const { profile, roles, signOut } = useAuth();
+  const initials = profile?.full_name
+    ? profile.full_name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()
+    : "??";
+  const roleLabel = roles.length > 0 ? roles[0].replace(/_/g, " ") : "User";
+
+  return (
+    <div className="border-t border-sidebar-border px-4 py-4">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-full bg-sidebar-primary/20 flex items-center justify-center text-xs font-bold text-sidebar-primary">
+          {initials}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-sidebar-accent-foreground truncate">{profile?.full_name || "User"}</p>
+          <p className="text-[11px] text-sidebar-muted truncate capitalize">{roleLabel}</p>
+        </div>
+        <button onClick={signOut} className="p-1.5 hover:bg-sidebar-accent rounded-md text-sidebar-muted hover:text-sidebar-accent-foreground" title="Sign out">
+          <LogOut className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 interface NavItem {
   label: string;
@@ -168,17 +195,7 @@ export function AppSidebar() {
       </nav>
 
       {/* User */}
-      <div className="border-t border-sidebar-border px-4 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-sidebar-primary/20 flex items-center justify-center text-xs font-bold text-sidebar-primary">
-            SA
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-sidebar-accent-foreground truncate">Super Admin</p>
-            <p className="text-[11px] text-sidebar-muted truncate">admin@agency.com</p>
-          </div>
-        </div>
-      </div>
+      <UserSection />
     </>
   );
 
