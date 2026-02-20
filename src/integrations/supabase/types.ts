@@ -110,6 +110,100 @@ export type Database = {
           },
         ]
       }
+      domains: {
+        Row: {
+          auto_renew: boolean | null
+          client_id: string
+          created_at: string
+          domain_name: string
+          expiry_date: string
+          id: string
+          registrar: string | null
+          registration_date: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          auto_renew?: boolean | null
+          client_id: string
+          created_at?: string
+          domain_name: string
+          expiry_date: string
+          id?: string
+          registrar?: string | null
+          registration_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          auto_renew?: boolean | null
+          client_id?: string
+          created_at?: string
+          domain_name?: string
+          expiry_date?: string
+          id?: string
+          registrar?: string | null
+          registration_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "domains_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hostings: {
+        Row: {
+          client_id: string
+          created_at: string
+          expiry_date: string | null
+          id: string
+          ip_address: string | null
+          name: string
+          provider: string | null
+          server_type: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          ip_address?: string | null
+          name: string
+          provider?: string | null
+          server_type?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          ip_address?: string | null
+          name?: string
+          provider?: string | null
+          server_type?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hostings_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inquiries: {
         Row: {
           assigned_to: string | null

@@ -10,6 +10,7 @@ interface Profile {
   full_name: string;
   email: string;
   avatar_url: string | null;
+  phone: string | null;
   client_id: string | null;
   is_active: boolean;
 }

@@ -93,6 +93,11 @@ const navItems: NavItem[] = [
     path: "/support",
     icon: HeadphonesIcon,
   },
+  {
+    label: "Infrastructure",
+    path: "/infrastructure",
+    icon: Server,
+  },
   { label: "Settings", path: "/settings", icon: Settings },
 ];
 
