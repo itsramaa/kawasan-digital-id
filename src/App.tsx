@@ -8,11 +8,21 @@ import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import LoginPage from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Sales from "./pages/Sales";
+import ClientsPage from "./pages/sales/ClientsPage";
+import QuotationsPage from "./pages/sales/QuotationsPage";
+import ContractsPage from "./pages/sales/ContractsPage";
 import Projects from "./pages/Projects";
+import TasksPage from "./pages/projects/TasksPage";
 import Finance from "./pages/Finance";
+import PaymentsPage from "./pages/finance/PaymentsPage";
 import Support from "./pages/Support";
+import Infrastructure from "./pages/Infrastructure";
 import SettingsPage from "./pages/Settings";
 import ClientDashboard from "./pages/client/ClientDashboard";
+import ClientProjects from "./pages/client/ClientProjects";
+import ClientInvoices from "./pages/client/ClientInvoices";
+import ClientSupport from "./pages/client/ClientSupport";
+import ClientAccount from "./pages/client/ClientAccount";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,17 +40,23 @@ const App = () => (
             {/* Internal Portal Routes */}
             <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/sales" element={<ProtectedRoute requireInternal><Sales /></ProtectedRoute>} />
-            <Route path="/sales/*" element={<ProtectedRoute requireInternal><Sales /></ProtectedRoute>} />
+            <Route path="/sales/clients" element={<ProtectedRoute requireInternal><ClientsPage /></ProtectedRoute>} />
+            <Route path="/sales/quotations" element={<ProtectedRoute requireInternal><QuotationsPage /></ProtectedRoute>} />
+            <Route path="/sales/contracts" element={<ProtectedRoute requireInternal><ContractsPage /></ProtectedRoute>} />
             <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
-            <Route path="/projects/*" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
+            <Route path="/projects/tasks" element={<ProtectedRoute><TasksPage /></ProtectedRoute>} />
             <Route path="/finance" element={<ProtectedRoute><Finance /></ProtectedRoute>} />
-            <Route path="/finance/*" element={<ProtectedRoute><Finance /></ProtectedRoute>} />
+            <Route path="/finance/payments" element={<ProtectedRoute><PaymentsPage /></ProtectedRoute>} />
             <Route path="/support" element={<ProtectedRoute><Support /></ProtectedRoute>} />
+            <Route path="/infrastructure" element={<ProtectedRoute requireInternal><Infrastructure /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute requireInternal><SettingsPage /></ProtectedRoute>} />
 
             {/* Client Portal Routes */}
             <Route path="/client" element={<ProtectedRoute><ClientDashboard /></ProtectedRoute>} />
-            <Route path="/client/*" element={<ProtectedRoute><ClientDashboard /></ProtectedRoute>} />
+            <Route path="/client/projects" element={<ProtectedRoute><ClientProjects /></ProtectedRoute>} />
+            <Route path="/client/invoices" element={<ProtectedRoute><ClientInvoices /></ProtectedRoute>} />
+            <Route path="/client/support" element={<ProtectedRoute><ClientSupport /></ProtectedRoute>} />
+            <Route path="/client/account" element={<ProtectedRoute><ClientAccount /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
