@@ -2,8 +2,7 @@ import { ReactNode, useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavLink } from "@/shared/components/common/NavLink";
 import { useAuth } from "@/features/auth/AuthContext";
-import { LayoutDashboard, FolderKanban, Receipt, HeadphonesIcon, Globe, Menu, X, FileText, CreditCard, Server, ShoppingBag, Search, ChevronDown, User, LogOut, MessageSquare } from "lucide-react";
-import { useUnreadCount } from "@/features/client/hooks/useClientMessages";
+import { LayoutDashboard, FolderKanban, Receipt, HeadphonesIcon, Globe, Menu, X, Server, ShoppingBag, Search, ChevronDown, User, LogOut } from "lucide-react";
 import { cn } from "@/shared/utils/utils";
 
 interface ClientLayoutProps {
@@ -14,12 +13,9 @@ const navItems = [
   { label: "Dasbor", path: "/dashboard", icon: LayoutDashboard },
   { label: "Proyek", path: "/dashboard/projects", icon: FolderKanban },
   { label: "Pesanan", path: "/dashboard/orders", icon: ShoppingBag },
-  { label: "Kontrak", path: "/dashboard/contracts", icon: FileText },
-  { label: "Invoice", path: "/dashboard/invoices", icon: Receipt },
-  { label: "Pembayaran", path: "/dashboard/payments", icon: CreditCard },
+  { label: "Keuangan", path: "/dashboard/invoices", icon: Receipt, activePaths: ["/dashboard/invoices", "/dashboard/payments"] },
   { label: "Infrastruktur", path: "/dashboard/infrastructure", icon: Server },
   { label: "Bantuan", path: "/dashboard/support", icon: HeadphonesIcon },
-  { label: "Pesan", path: "/dashboard/messages", icon: MessageSquare },
 ];
 
 export function ClientLayout({ children }: ClientLayoutProps) {
@@ -29,7 +25,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { data: unreadCount = 0 } = useUnreadCount();
+  
 
   const initials = profile?.full_name
     ?.split(" ")
@@ -117,13 +113,17 @@ export function ClientLayout({ children }: ClientLayoutProps) {
         {/* Desktop Nav */}
         <nav className="hidden lg:flex gap-1 -mb-px" aria-label="Navigasi utama">
           {navItems.map((item) => {
-            const active = item.path === "/dashboard" ? location.pathname === "/dashboard" : location.pathname.startsWith(item.path);
+            const active = item.path === "/dashboard"
+              ? location.pathname === "/dashboard"
+              : (item as any).activePaths
+                ? (item as any).activePaths.some((p: string) => location.pathname.startsWith(p))
+                : location.pathname.startsWith(item.path);
             return (
               <NavLink
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors relative",
+                  "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors",
                   active
                     ? "border-primary text-primary"
                     : "border-transparent text-muted-foreground hover:text-foreground"
@@ -131,11 +131,6 @@ export function ClientLayout({ children }: ClientLayoutProps) {
               >
                 <item.icon className="w-4 h-4" />
                 {item.label}
-                {item.path === "/dashboard/messages" && unreadCount > 0 && (
-                  <span className="absolute -top-0.5 right-1 w-4 h-4 rounded-full bg-destructive text-destructive-foreground text-[10px] flex items-center justify-center font-bold">
-                    {unreadCount > 9 ? "9+" : unreadCount}
-                  </span>
-                )}
               </NavLink>
             );
           })}
@@ -146,24 +141,23 @@ export function ClientLayout({ children }: ClientLayoutProps) {
       {mobileOpen && (
         <div className="lg:hidden border-b border-border bg-card px-4 py-2 space-y-1">
           {navItems.map((item) => {
-            const active = item.path === "/dashboard" ? location.pathname === "/dashboard" : location.pathname.startsWith(item.path);
+            const active = item.path === "/dashboard"
+              ? location.pathname === "/dashboard"
+              : (item as any).activePaths
+                ? (item as any).activePaths.some((p: string) => location.pathname.startsWith(p))
+                : location.pathname.startsWith(item.path);
             return (
               <NavLink
                 key={item.path}
                 to={item.path}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors relative",
+                  "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
                   active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
                 )}
               >
                 <item.icon className="w-4 h-4" />
                 {item.label}
-                {item.path === "/dashboard/messages" && unreadCount > 0 && (
-                  <span className="ml-auto w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-[10px] flex items-center justify-center font-bold">
-                    {unreadCount > 9 ? "9+" : unreadCount}
-                  </span>
-                )}
               </NavLink>
             );
           })}
