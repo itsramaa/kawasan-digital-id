@@ -10,7 +10,7 @@ const navLinks = [
   { label: "Templates", path: "/templates" },
   { label: "Custom Website", path: "/custom" },
   { label: "Portfolio", path: "/showcase" },
-  { label: "How It Works", path: "/how-it-works" },
+  { label: "Help & FAQ", path: "/help" },
 ];
 
 export function StorefrontLayout({ children }: { children: ReactNode }) {
