@@ -1,69 +1,61 @@
 
-# Maksimalkan Homepage Store
+# Maksimalkan Templates Page
 
 ## Ringkasan
-Upgrade visual dan konten homepage `/store` agar terlihat lebih profesional, modern, dan meyakinkan pengunjung. Semua 10 section sudah ada -- fokus pada peningkatan visual, animasi, dan konten yang lebih kaya.
+Upgrade halaman katalog template (`/store/templates`) agar lebih profesional, informatif, dan engaging -- sejajar dengan homepage yang sudah di-upgrade.
 
 ## Perubahan yang Akan Dilakukan
 
-### 1. Hero Section -- Lebih Impactful
-- Tambahkan badge/announcement bar di atas heading (contoh: "Trusted by 50+ businesses")
-- Tambahkan social proof stats di bawah CTA (contoh: "50+ Klien | 100+ Website | 4.9 Rating")
-- Tambahkan subtle animated gradient background atau decorative shapes
-- Perbesar spacing dan gunakan heading yang lebih dramatis
+### 1. Page Header -- Lebih Impactful
+- Tambahkan hero banner kecil dengan gradient background (konsisten dengan homepage)
+- Tambahkan search bar untuk pencarian template berdasarkan nama/deskripsi
+- Tambahkan stats ringkas: jumlah template, kategori tersedia
 
-### 2. Category Section -- Lebih Interaktif
-- Tambahkan hover animation scale-up pada kartu kategori
-- Tambahkan subtle description/tagline di bawah heading section
+### 2. Filter Sidebar -- Lebih Polished
+- Tambahkan icon pada setiap section header (harga, kategori, waktu)
+- Tambahkan count badge pada setiap kategori (jumlah template per kategori)
+- Tambahkan rating/review filter placeholder
+- Sticky sidebar saat scroll (desktop)
 
-### 3. Featured Templates -- Lebih Informatif
-- Tambahkan badge kondisional (Best Seller hanya untuk featured, bukan semua)
-- Tambahkan category label pada card
-- Hover effect: slight lift + shadow yang lebih dramatis
+### 3. Template Cards -- Visual Upgrade
+- Tambahkan badge "Best Seller" kondisional (hanya untuk `is_featured === true`)
+- Tambahkan badge "New" untuk template yang dibuat dalam 30 hari terakhir
+- Hover effect lebih dramatis: lift + shadow + border glow
+- Tambahkan rating stars placeholder pada card
+- Tambahkan "Add to Cart" quick-action button pada hover overlay
+- Animasi stagger pada grid saat pertama kali muncul (fade-in berurutan)
 
-### 4. Custom Highlight -- Lebih Menarik
-- Tambahkan checklist fitur (contoh: "Desain Eksklusif", "Full Ownership", "SEO Ready")
-- Ganti placeholder icon dengan visual yang lebih menarik (gradient icon grid)
+### 4. Quick View Dialog -- Lebih Informatif
+- Tambahkan daftar fitur included (dari `template_features` table)
+- Tambahkan badge kategori dan estimasi waktu yang lebih prominent
+- Tambahkan tombol "Add to Cart" langsung dari quick view
+- Tambahkan link ke demo jika `demo_url` tersedia
 
-### 5. Add-On Section -- Visual Upgrade
-- Tambahkan harga indikasi atau label "Popular" pada item tertentu
-- Hover animation yang lebih smooth
+### 5. Sort & View Options -- Lebih Fleksibel
+- Tambahkan toggle view: Grid vs List view
+- List view menampilkan lebih banyak detail (deskripsi lengkap, fitur preview)
+- Active filter chips di top bar yang bisa di-remove satu per satu
 
-### 6. How It Works -- Lebih Jelas
-- Tambahkan garis connector/timeline antar step
-- Warna step numbers yang lebih kontras
-- Tambahkan CTA link ke halaman detail "How It Works"
+### 6. Empty State & Loading -- Lebih Engaging
+- Skeleton loading yang lebih realistis (shimmer effect)
+- Empty state dengan ilustrasi yang lebih menarik dan suggestion links
 
-### 7. Showcase Section -- Clickable Cards
-- Buat card bisa diklik ke detail page (`/store/showcase/:id`)
-- Tambahkan category badge dan tech stack preview pada card
-
-### 8. Testimonials -- Lebih Terpercaya
-- Tambahkan avatar/foto placeholder yang lebih besar
-- Tambahkan quote icon dekoratif
-- Layout carousel/horizontal scroll untuk mobile
-
-### 9. FAQ Section -- Lebih Lengkap
-- Tambahkan link "Lihat Semua FAQ" ke `/store/help`
-- Subtle styling improvement pada accordion
-
-### 10. Final CTA -- Lebih Compelling
-- Tambahkan secondary CTA (contoh: "Konsultasi Gratis" ke Contact)
-- Tambahkan trust badges atau partner logos area
-
-### 11. Animasi & Polish Global
-- Tambahkan scroll-reveal animation (intersection observer) pada setiap section untuk efek muncul saat scroll
-- Smooth transitions antar section
-- Konsisten spacing antar semua section
+### 7. Scroll Animation
+- Gunakan `useScrollReveal` hook yang sudah ada untuk animasi section
+- Staggered card entrance animation
 
 ## Detail Teknis
 
 ### File yang Dimodifikasi
-- `src/pages/store/StorefrontHome.tsx` -- semua perubahan di sini, refactor setiap sub-component
+- `src/pages/store/TemplatesPage.tsx` -- refactor komprehensif dengan semua upgrade di atas
+
+### Data Tambahan
+- Quick View akan fetch `template_features` menggunakan hook `useTemplateDetail` yang sudah ada untuk menampilkan fitur included
 
 ### Pendekatan
 - Tidak ada perubahan database
-- Tidak ada dependency baru -- gunakan CSS animations dan Intersection Observer API native
-- Custom hook `useScrollReveal` sederhana untuk animasi scroll-in
-- Semua styling menggunakan Tailwind classes yang sudah ada
-- Tetap mempertahankan struktur 10 section yang sudah ada, hanya memperkaya visual dan konten
+- Tidak ada dependency baru
+- Menggunakan `useScrollReveal` hook yang sudah ada
+- Menambahkan state `viewMode` (grid/list) dan `searchQuery` untuk fitur baru
+- Quick View menggunakan `useTemplateDetail` untuk fetch fitur secara lazy (hanya saat dialog dibuka)
+- Semua styling menggunakan Tailwind classes
