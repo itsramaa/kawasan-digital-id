@@ -1,171 +1,69 @@
 
-# Custom Website Wizard + Cart Page Upgrade
+# Maksimalkan Homepage Store
 
 ## Ringkasan
+Upgrade visual dan konten homepage `/store` agar terlihat lebih profesional, modern, dan meyakinkan pengunjung. Semua 10 section sudah ada -- fokus pada peningkatan visual, animasi, dan konten yang lebih kaya.
 
-Dua fitur besar:
-1. **Custom Website Page** -- wizard multi-step (4 langkah) untuk request website custom, dengan estimasi harga dan timeline otomatis, lalu CTA deposit ke checkout
-2. **Cart Page Upgrade** -- tambah fitur edit add-ons (link kembali ke PDP), coupon input (UI only), dan tampilan yang lebih lengkap
+## Perubahan yang Akan Dilakukan
 
----
+### 1. Hero Section -- Lebih Impactful
+- Tambahkan badge/announcement bar di atas heading (contoh: "Trusted by 50+ businesses")
+- Tambahkan social proof stats di bawah CTA (contoh: "50+ Klien | 100+ Website | 4.9 Rating")
+- Tambahkan subtle animated gradient background atau decorative shapes
+- Perbesar spacing dan gunakan heading yang lebih dramatis
 
-## 1. Custom Website Wizard (`/store/custom`)
+### 2. Category Section -- Lebih Interaktif
+- Tambahkan hover animation scale-up pada kartu kategori
+- Tambahkan subtle description/tagline di bawah heading section
 
-### Halaman baru: `src/pages/store/CustomWebsitePage.tsx`
+### 3. Featured Templates -- Lebih Informatif
+- Tambahkan badge kondisional (Best Seller hanya untuk featured, bukan semua)
+- Tambahkan category label pada card
+- Hover effect: slight lift + shadow yang lebih dramatis
 
-Wizard 4 step dengan progress bar di atas. Data disimpan di local state (tidak ke DB sampai checkout).
+### 4. Custom Highlight -- Lebih Menarik
+- Tambahkan checklist fitur (contoh: "Desain Eksklusif", "Full Ownership", "SEO Ready")
+- Ganti placeholder icon dengan visual yang lebih menarik (gradient icon grid)
 
-### Step 1: Basic Info
+### 5. Add-On Section -- Visual Upgrade
+- Tambahkan harga indikasi atau label "Popular" pada item tertentu
+- Hover animation yang lebih smooth
 
-| Field | Tipe UI | Opsi |
-|-------|---------|------|
-| Industry | Select dropdown | Technology, F&B, Fashion, Health, Education, Real Estate, Finance, Other |
-| Website Type | Radio cards | Company Profile, Ecommerce, Landing Page, Portfolio, Blog, Web App |
-| Estimated Pages | Slider atau number input | 1-20+ halaman |
+### 6. How It Works -- Lebih Jelas
+- Tambahkan garis connector/timeline antar step
+- Warna step numbers yang lebih kontras
+- Tambahkan CTA link ke halaman detail "How It Works"
 
-### Step 2: Features
+### 7. Showcase Section -- Clickable Cards
+- Buat card bisa diklik ke detail page (`/store/showcase/:id`)
+- Tambahkan category badge dan tech stack preview pada card
 
-Checkbox grid:
-- Ecommerce / Product Catalog
-- Payment Gateway Integration
-- Multi-language Support
-- Membership / Login System
-- Booking / Appointment System
-- Blog / News Section
-- Contact Form
-- Live Chat Integration
+### 8. Testimonials -- Lebih Terpercaya
+- Tambahkan avatar/foto placeholder yang lebih besar
+- Tambahkan quote icon dekoratif
+- Layout carousel/horizontal scroll untuk mobile
 
-### Step 3: Timeline dan Budget
+### 9. FAQ Section -- Lebih Lengkap
+- Tambahkan link "Lihat Semua FAQ" ke `/store/help`
+- Subtle styling improvement pada accordion
 
-| Field | Tipe UI |
-|-------|---------|
-| Deadline | Date picker atau pilihan radio (ASAP, 2 minggu, 1 bulan, 2 bulan, fleksibel) |
-| Budget Range | Radio cards (Rp 3-5jt, 5-10jt, 10-20jt, 20jt+, Belum tahu) |
+### 10. Final CTA -- Lebih Compelling
+- Tambahkan secondary CTA (contoh: "Konsultasi Gratis" ke Contact)
+- Tambahkan trust badges atau partner logos area
 
-### Step 4: Summary dan Estimation
+### 11. Animasi & Polish Global
+- Tambahkan scroll-reveal animation (intersection observer) pada setiap section untuk efek muncul saat scroll
+- Smooth transitions antar section
+- Konsisten spacing antar semua section
 
-Tampilkan ringkasan semua pilihan user, lalu hitung estimasi:
+## Detail Teknis
 
-```text
-Scope Summary
------------------------
-Industry:      Technology
-Type:          Ecommerce
-Pages:         ~8
-Features:      Payment Gateway, Membership, Blog
+### File yang Dimodifikasi
+- `src/pages/store/StorefrontHome.tsx` -- semua perubahan di sini, refactor setiap sub-component
 
-Estimated Price Range:  Rp 8.000.000 - Rp 12.000.000
-Estimated Timeline:     21 - 30 hari
-
-[Pay Deposit to Start] --> ke /store/checkout (custom mode)
-[Save as Draft / Contact Us] --> alternatif CTA
-```
-
-**Logika estimasi (client-side, sederhana):**
-- Base: tergantung website type (Company Profile: 3jt, Ecommerce: 7jt, dst)
-- Per page tambahan: +500rb
-- Per feature: +1-3jt tergantung kompleksitas
-- Timeline: base 14 hari + 2 hari per page + 3-7 hari per feature kompleks
-- Hasil ditampilkan sebagai range (min-max)
-
-### Routing
-
-Tambah route baru di `App.tsx`:
-```text
-/store/custom --> CustomWebsitePage
-```
-
-Update navbar link "Custom Website" dari `/store/templates#custom-section` ke `/store/custom`.
-
-### Database
-
-Tabel baru `custom_inquiries` untuk menyimpan data wizard saat checkout:
-
-| Kolom | Tipe | Keterangan |
-|-------|------|------------|
-| id | uuid | PK |
-| user_id | uuid | nullable, diisi saat checkout |
-| industry | text | |
-| website_type | text | |
-| estimated_pages | integer | |
-| selected_features | jsonb | array string |
-| deadline | text | |
-| budget_range | text | |
-| estimated_price_min | numeric | |
-| estimated_price_max | numeric | |
-| estimated_days_min | integer | |
-| estimated_days_max | integer | |
-| status | text | default 'draft' |
-| created_at | timestamptz | default now() |
-
-RLS: user bisa baca/tulis milik sendiri, internal users bisa manage semua.
-
----
-
-## 2. Cart Page Upgrade
-
-### File: `src/pages/store/CartPage.tsx`
-
-Perubahan pada cart page yang sudah ada:
-
-### A. Edit Add-Ons
-
-Setiap item di cart menampilkan link "Edit Add-ons" yang mengarahkan kembali ke PDP (`/store/templates/:id`) agar user bisa mengubah pilihan add-on. Saat kembali dari PDP dan add to cart lagi, item di cart ter-update (sudah didukung oleh logic upsert di `useCart`).
-
-### B. Remove Item
-
-Sudah ada (tombol trash). Tidak perlu perubahan.
-
-### C. Coupon Input
-
-Tambah section coupon di sidebar summary:
-- Input field + tombol "Apply"
-- UI only untuk saat ini (tidak ada backend coupon system)
-- State: `couponCode` string, `couponApplied` boolean
-- Jika diklik Apply, tampilkan pesan "Coupon feature coming soon" via toast
-
-### D. Layout Upgrade
-
-- Tambah thumbnail kecil di setiap cart item (ambil dari template data)
-- Tampilkan delivery time per item
-- Tampilkan subtotal dan total lebih jelas
-- Tampilkan jumlah item di header ("Shopping Cart (3 items)")
-
-### Perubahan di `useCart` hook
-
-Tambah `thumbnail_url` dan `estimated_days` ke `CartItem` interface agar bisa ditampilkan di cart:
-
-```text
-CartItem {
-  ...existing fields
-  thumbnail_url: string | null   // baru
-  estimated_days: number | null  // baru
-}
-```
-
-Update `loadCart` untuk mengambil `thumbnail_url` dan `estimated_days` dari `service_templates`.
-
----
-
-## File yang Diubah/Dibuat
-
-| File | Aksi |
-|------|------|
-| Migration SQL | Buat tabel `custom_inquiries` + RLS |
-| `src/pages/store/CustomWebsitePage.tsx` | Baru -- wizard 4 step |
-| `src/pages/store/CartPage.tsx` | Upgrade -- edit link, coupon UI, thumbnail, delivery time |
-| `src/features/storefront/hooks/useCart.ts` | Update CartItem interface + loadCart query |
-| `src/App.tsx` | Tambah route `/store/custom` |
-| `src/shared/components/layouts/StorefrontLayout.tsx` | Update "Custom Website" nav link ke `/store/custom` |
-| `src/pages/store/StorefrontHome.tsx` | Update "Custom Website" CTA link ke `/store/custom` |
-
----
-
-## Catatan Teknis
-
-- Wizard menggunakan local state (useState) dengan step counter, bukan routing per step
-- Progress bar menggunakan komponen Progress yang sudah ada
-- Estimasi harga dihitung murni client-side dengan formula sederhana (bisa disesuaikan nanti)
-- Coupon system hanya UI placeholder -- backend bisa ditambahkan nanti
-- Cart item edit dilakukan via redirect ke PDP (re-use existing flow), bukan inline editing
-- Custom inquiry disimpan ke DB hanya saat user klik "Pay Deposit" dan sudah login
+### Pendekatan
+- Tidak ada perubahan database
+- Tidak ada dependency baru -- gunakan CSS animations dan Intersection Observer API native
+- Custom hook `useScrollReveal` sederhana untuk animasi scroll-in
+- Semua styling menggunakan Tailwind classes yang sudah ada
+- Tetap mempertahankan struktur 10 section yang sudah ada, hanya memperkaya visual dan konten
