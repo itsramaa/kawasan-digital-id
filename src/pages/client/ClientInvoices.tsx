@@ -4,6 +4,7 @@ import { StatusBadge } from "@/shared/components/common/StatusBadge";
 import { RevealCard } from "@/shared/components/common/RevealCard";
 import { HeroBanner } from "@/shared/components/common/HeroBanner";
 import { StatCards } from "@/shared/components/common/StatCards";
+import { StatSkeleton } from "@/shared/components/common/LoadingSkeleton";
 import { useClientInvoices } from "@/features/client/hooks/useClientInvoices";
 import { Receipt, CheckCircle, AlertTriangle, Clock } from "lucide-react";
 import { differenceInDays, parseISO } from "date-fns";
@@ -27,8 +28,6 @@ export default function ClientInvoices() {
     return 0;
   });
 
-  if (isLoading) return <ClientLayout><div className="text-center py-12 text-muted-foreground">Memuat...</div></ClientLayout>;
-
   const stats = [
     { label: "Belum Dibayar", value: `Rp ${(outstanding / 1e6).toFixed(1)}M`, icon: Receipt, color: "text-primary" },
     { label: "Sudah Dibayar", value: `Rp ${(paid / 1e6).toFixed(1)}M`, icon: CheckCircle, color: "text-emerald-500" },
@@ -40,9 +39,14 @@ export default function ClientInvoices() {
     <ClientLayout>
       <div className="space-y-6">
         <HeroBanner icon={Receipt} title="Invoice" subtitle="Daftar tagihan dan status pembayaran Anda" breadcrumb="Dasbor > Invoice" />
-        <StatCards stats={stats} />
 
-        {overdueCount > 0 && (
+        {isLoading ? (
+          <RevealCard delay={100}><StatSkeleton /></RevealCard>
+        ) : (
+          <StatCards stats={stats} />
+        )}
+
+        {!isLoading && overdueCount > 0 && (
           <RevealCard delay={120}>
             <div className="flex items-center gap-3 p-4 rounded-lg border border-destructive/30 bg-destructive/5" role="alert">
               <AlertTriangle className="w-5 h-5 text-destructive shrink-0" />
@@ -71,7 +75,7 @@ export default function ClientInvoices() {
                   );
                 }
               },
-              { key: "payment", header: "Dibayar", render: (i: any) => <span className="text-xs text-muted-foreground">{i.paid_at ? new Date(i.paid_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }) : "—"}</span> },
+              { key: "payment", header: "Dibayar", hideMobile: true, render: (i: any) => <span className="text-xs text-muted-foreground">{i.paid_at ? new Date(i.paid_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }) : "—"}</span> },
             ]}
             data={sortedInvoices}
             isLoading={isLoading}

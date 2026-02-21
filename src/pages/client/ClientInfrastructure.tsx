@@ -5,6 +5,7 @@ import { EmptyState } from "@/features/client/components/EmptyState";
 import { RevealCard } from "@/shared/components/common/RevealCard";
 import { HeroBanner } from "@/shared/components/common/HeroBanner";
 import { StatCards } from "@/shared/components/common/StatCards";
+import { StatSkeleton } from "@/shared/components/common/LoadingSkeleton";
 import { useClientDomains } from "@/features/client/hooks/useClientDomains";
 import { useClientHostings } from "@/features/client/hooks/useClientHostings";
 import { Globe, Server, Shield, AlertTriangle, CheckCircle, XCircle, Calendar } from "lucide-react";
@@ -46,7 +47,6 @@ export default function ClientInfrastructure() {
   const autoRenewCount = domains?.filter(d => d.auto_renew).length ?? 0;
 
   const isLoading = domainsLoading || hostingsLoading;
-  if (isLoading) return <ClientLayout><div className="text-center py-12 text-muted-foreground">Memuat...</div></ClientLayout>;
 
   const stats = [
     { label: "Total Domain", value: String(domains?.length ?? 0), icon: Globe, color: "text-primary" },
@@ -71,7 +71,11 @@ export default function ClientInfrastructure() {
           </RevealCard>
         )}
 
-        <StatCards stats={stats} />
+        {isLoading ? (
+          <RevealCard delay={100}><StatSkeleton /></RevealCard>
+        ) : (
+          <StatCards stats={stats} />
+        )}
 
         <RevealCard delay={150}>
           <Tabs defaultValue="domains">
@@ -81,7 +85,17 @@ export default function ClientInfrastructure() {
             </TabsList>
 
             <TabsContent value="domains">
-              {!domains?.length ? (
+              {isLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {Array.from({ length: 2 }).map((_, i) => (
+                    <div key={i} className="bg-card rounded-lg border border-border p-4 space-y-3 animate-pulse">
+                      <div className="flex justify-between"><div className="h-4 bg-muted rounded w-1/2" /><div className="h-5 bg-muted rounded w-16" /></div>
+                      <div className="h-1.5 bg-muted rounded-full" />
+                      <div className="grid grid-cols-3 gap-2"><div className="h-8 bg-muted rounded" /><div className="h-8 bg-muted rounded" /><div className="h-8 bg-muted rounded" /></div>
+                    </div>
+                  ))}
+                </div>
+              ) : !domains?.length ? (
                 <EmptyState icon={Globe} headline="Belum ada domain" description="Domain yang terdaftar akan muncul di sini." />
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -132,7 +146,17 @@ export default function ClientInfrastructure() {
             </TabsContent>
 
             <TabsContent value="hostings">
-              {!hostings?.length ? (
+              {isLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {Array.from({ length: 2 }).map((_, i) => (
+                    <div key={i} className="bg-card rounded-lg border border-border p-4 space-y-3 animate-pulse">
+                      <div className="flex justify-between"><div className="h-4 bg-muted rounded w-1/2" /><div className="h-5 bg-muted rounded w-16" /></div>
+                      <div className="h-1.5 bg-muted rounded-full" />
+                      <div className="grid grid-cols-3 gap-2"><div className="h-8 bg-muted rounded" /><div className="h-8 bg-muted rounded" /><div className="h-8 bg-muted rounded" /></div>
+                    </div>
+                  ))}
+                </div>
+              ) : !hostings?.length ? (
                 <EmptyState icon={Server} headline="Belum ada hosting" description="Layanan hosting Anda akan muncul di sini." />
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

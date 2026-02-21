@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import { ClientLayout } from "@/shared/components/layouts/ClientLayout";
 import { StatusBadge } from "@/shared/components/common/StatusBadge";
 import { DocumentUpload } from "@/features/client/components/DocumentUpload";
@@ -5,11 +6,14 @@ import { FeedbackSurvey } from "@/features/client/components/FeedbackSurvey";
 import { RevealCard } from "@/shared/components/common/RevealCard";
 import { HeroBanner } from "@/shared/components/common/HeroBanner";
 import { StatCards } from "@/shared/components/common/StatCards";
+import { StatSkeleton } from "@/shared/components/common/LoadingSkeleton";
 import { useClientProjects } from "@/features/client/hooks/useClientProjects";
-import { Calendar, ListTodo, CheckSquare, FolderKanban, CheckCircle, AlertTriangle, Clock } from "lucide-react";
+import { Calendar, ListTodo, CheckSquare, FolderKanban, CheckCircle, AlertTriangle, Clock, Filter } from "lucide-react";
 import { differenceInDays, parseISO } from "date-fns";
 import { cn } from "@/shared/utils/utils";
 import { Card, CardContent } from "@/shared/components/ui/card";
+import { Input } from "@/shared/components/ui/input";
+import { EmptyState } from "@/features/client/components/EmptyState";
 
 const statusVariant: Record<string, "info" | "warning" | "hold" | "success" | "neutral"> = {
   Planning: "warning", "In Progress": "info", "On Hold": "hold", Completed: "success", Cancelled: "neutral",
@@ -18,15 +22,37 @@ const taskPriorityVariant: Record<string, "error" | "warning" | "neutral"> = {
   Critical: "error", High: "warning", Medium: "warning", Low: "neutral",
 };
 
+type StatusFilter = "all" | "active" | "completed" | "onhold";
+
 export default function ClientProjects() {
   const { data: projects, isLoading } = useClientProjects();
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const activeCount = projects?.filter(p => ["Planning", "In Progress"].includes(p.status)).length ?? 0;
   const completedCount = projects?.filter(p => p.status === "Completed").length ?? 0;
   const overdueCount = projects?.filter(p => p.deadline && differenceInDays(parseISO(p.deadline), new Date()) < 0 && p.status !== "Completed").length ?? 0;
   const avgProgress = projects?.length ? Math.round(projects.reduce((s, p) => s + p.progress, 0) / projects.length) : 0;
 
-  if (isLoading) return <ClientLayout><div className="text-center py-12 text-muted-foreground">Memuat...</div></ClientLayout>;
+  const filteredProjects = useMemo(() => {
+    if (!projects) return [];
+    let list = projects;
+    if (statusFilter === "active") list = list.filter(p => ["Planning", "In Progress"].includes(p.status));
+    else if (statusFilter === "completed") list = list.filter(p => p.status === "Completed");
+    else if (statusFilter === "onhold") list = list.filter(p => ["On Hold", "Cancelled"].includes(p.status));
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(p => p.name.toLowerCase().includes(q));
+    }
+    return list;
+  }, [projects, statusFilter, searchQuery]);
+
+  const filterTabs: { key: StatusFilter; label: string; count: number }[] = [
+    { key: "all", label: "Semua", count: projects?.length ?? 0 },
+    { key: "active", label: "Aktif", count: activeCount },
+    { key: "completed", label: "Selesai", count: completedCount },
+    { key: "onhold", label: "Ditahan", count: projects?.filter(p => ["On Hold", "Cancelled"].includes(p.status)).length ?? 0 },
+  ];
 
   const stats = [
     { label: "Proyek Aktif", value: String(activeCount), icon: FolderKanban, color: "text-primary" },
@@ -39,7 +65,12 @@ export default function ClientProjects() {
     <ClientLayout>
       <div className="space-y-6">
         <HeroBanner icon={FolderKanban} title="Proyek Saya" subtitle="Pantau progres dan milestone proyek Anda" breadcrumb="Dasbor > Proyek" />
-        <StatCards stats={stats} />
+
+        {isLoading ? (
+          <RevealCard delay={100}><StatSkeleton /></RevealCard>
+        ) : (
+          <StatCards stats={stats} />
+        )}
 
         {/* Overdue Alert */}
         {overdueCount > 0 && (
@@ -53,20 +84,68 @@ export default function ClientProjects() {
           </RevealCard>
         )}
 
-        {/* Projects List */}
-        {!projects?.length ? (
-          <RevealCard delay={150}>
-            <div className="text-center py-16 bg-card rounded-lg border border-border">
-              <div className="w-16 h-16 mx-auto rounded-full bg-muted flex items-center justify-center mb-4">
-                <ListTodo className="w-8 h-8 text-muted-foreground/50" />
-              </div>
-              <p className="text-muted-foreground font-medium">Belum ada proyek</p>
-              <p className="text-xs text-muted-foreground mt-1">Proyek Anda akan muncul di sini setelah ditetapkan.</p>
+        {/* Search & Filter */}
+        <RevealCard delay={130}>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1 max-w-sm">
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Cari proyek..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="pl-9"
+                aria-label="Cari proyek"
+              />
             </div>
+            <div className="flex gap-1.5" role="tablist" aria-label="Filter status proyek">
+              {filterTabs.map(tab => (
+                <button
+                  key={tab.key}
+                  role="tab"
+                  aria-selected={statusFilter === tab.key}
+                  onClick={() => setStatusFilter(tab.key)}
+                  className={cn(
+                    "px-3 py-2 rounded-md text-xs font-medium transition-colors",
+                    statusFilter === tab.key
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:bg-muted/80"
+                  )}
+                >
+                  {tab.label} ({tab.count})
+                </button>
+              ))}
+            </div>
+          </div>
+        </RevealCard>
+
+        {/* Projects List */}
+        {isLoading ? (
+          <RevealCard delay={150}>
+            <div className="space-y-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="bg-card rounded-lg border border-border p-5 space-y-4 animate-pulse">
+                  <div className="flex justify-between">
+                    <div className="h-5 bg-muted rounded w-1/3" />
+                    <div className="h-5 bg-muted rounded w-16" />
+                  </div>
+                  <div className="h-2.5 bg-muted rounded-full w-full" />
+                  <div className="h-4 bg-muted rounded w-1/2" />
+                </div>
+              ))}
+            </div>
+          </RevealCard>
+        ) : !filteredProjects.length ? (
+          <RevealCard delay={150}>
+            <EmptyState
+              icon={projects?.length ? Filter : ListTodo}
+              headline={projects?.length ? "Tidak ada proyek ditemukan" : "Belum ada proyek"}
+              description={projects?.length ? "Coba ubah filter atau kata kunci pencarian." : "Proyek Anda akan muncul di sini setelah ditetapkan."}
+            />
           </RevealCard>
         ) : (
           <div className="space-y-5">
-            {projects.map((project: any, idx: number) => {
+            <p className="text-xs text-muted-foreground">{filteredProjects.length} proyek ditampilkan</p>
+            {filteredProjects.map((project: any, idx: number) => {
               const isOverdue = project.deadline && differenceInDays(parseISO(project.deadline), new Date()) < 0 && project.status !== "Completed";
               const daysLeft = project.deadline ? differenceInDays(parseISO(project.deadline), new Date()) : null;
               const visibleTasks = (project.tasks ?? []).filter((t: any) => t.is_client_visible);

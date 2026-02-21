@@ -9,6 +9,10 @@ interface Column<T> {
   className?: string;
   sortable?: boolean;
   sortValue?: (row: T) => string | number | Date;
+  /** Label shown in mobile card view */
+  mobileLabel?: string;
+  /** Hide this column in mobile card view */
+  hideMobile?: boolean;
 }
 
 interface DataTableProps<T> {
@@ -30,9 +34,9 @@ export function DataTable<T extends { id: string }>({
   columns,
   data,
   isLoading,
-  emptyMessage = "No data found.",
+  emptyMessage = "Tidak ada data.",
   emptyIcon,
-  searchPlaceholder = "Search...",
+  searchPlaceholder = "Cari...",
   searchField,
   onRowClick,
   rowClassName,
@@ -82,6 +86,9 @@ export function DataTable<T extends { id: string }>({
     setPage(0);
   };
 
+  // Get visible columns for mobile
+  const mobileColumns = columns.filter(c => !c.hideMobile);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3 flex-wrap">
@@ -93,6 +100,7 @@ export function DataTable<T extends { id: string }>({
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(0); }}
               placeholder={searchPlaceholder}
+              aria-label={searchPlaceholder}
               className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-md text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
@@ -100,7 +108,8 @@ export function DataTable<T extends { id: string }>({
         {actions}
       </div>
 
-      <div className="bg-card rounded-lg border border-border overflow-hidden">
+      {/* Desktop Table View */}
+      <div className="bg-card rounded-lg border border-border overflow-hidden hidden md:block">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -172,7 +181,7 @@ export function DataTable<T extends { id: string }>({
           </table>
         </div>
 
-        {/* Pagination */}
+        {/* Desktop Pagination */}
         {filtered.length > 0 && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/20">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -188,42 +197,101 @@ export function DataTable<T extends { id: string }>({
                 ))}
               </select>
             </div>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setPage(Math.max(0, page - 1))}
-                disabled={page === 0}
-                className="p-1.5 rounded hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed"
-                aria-label="Halaman sebelumnya"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
-                const p = totalPages <= 5 ? i : Math.max(0, Math.min(page - 2, totalPages - 5)) + i;
-                return (
-                  <button
-                    key={p}
-                    onClick={() => setPage(p)}
-                    className={cn(
-                      "w-7 h-7 rounded text-xs font-medium",
-                      p === page ? "bg-primary text-primary-foreground" : "hover:bg-muted text-muted-foreground"
-                    )}
-                  >
-                    {p + 1}
-                  </button>
-                );
-              })}
-              <button
-                onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
-                disabled={page >= totalPages - 1}
-                className="p-1.5 rounded hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed"
-                aria-label="Halaman berikutnya"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+            <PaginationButtons page={page} totalPages={totalPages} onPageChange={setPage} />
           </div>
         )}
       </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-3">
+        {isLoading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="bg-card rounded-lg border border-border p-4 space-y-3 animate-pulse">
+              <div className="h-4 bg-muted rounded w-3/4" />
+              <div className="h-3 bg-muted rounded w-1/2" />
+              <div className="h-3 bg-muted rounded w-2/3" />
+            </div>
+          ))
+        ) : paged.length === 0 ? (
+          <div className="bg-card rounded-lg border border-border p-8 text-center text-muted-foreground">
+            {emptyIcon && <div className="flex justify-center mb-3">{emptyIcon}</div>}
+            {emptyMessage}
+          </div>
+        ) : (
+          paged.map((row) => (
+            <div
+              key={row.id}
+              onClick={() => onRowClick?.(row)}
+              className={cn(
+                "bg-card rounded-lg border border-border p-4 space-y-2 transition-colors",
+                onRowClick && "cursor-pointer hover:bg-muted/30",
+                rowClassName?.(row)
+              )}
+            >
+              {mobileColumns.map((col, i) => (
+                <div key={col.key} className={cn(i === 0 ? "font-medium" : "flex items-center justify-between gap-2")}>
+                  {i === 0 ? (
+                    col.render(row)
+                  ) : (
+                    <>
+                      <span className="text-xs text-muted-foreground shrink-0">{col.mobileLabel || col.header}</span>
+                      <div className="text-right">{col.render(row)}</div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          ))
+        )}
+
+        {/* Mobile Pagination */}
+        {filtered.length > 0 && (
+          <div className="flex items-center justify-between py-2">
+            <span className="text-xs text-muted-foreground">{from}–{to} dari {filtered.length}</span>
+            <PaginationButtons page={page} totalPages={totalPages} onPageChange={setPage} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PaginationButtons({ page, totalPages, onPageChange }: { page: number; totalPages: number; onPageChange: (p: number) => void }) {
+  return (
+    <div className="flex items-center gap-1">
+      <button
+        onClick={() => onPageChange(Math.max(0, page - 1))}
+        disabled={page === 0}
+        className="p-1.5 rounded hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed"
+        aria-label="Halaman sebelumnya"
+      >
+        <ChevronLeft className="w-4 h-4" />
+      </button>
+      {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
+        const p = totalPages <= 5 ? i : Math.max(0, Math.min(page - 2, totalPages - 5)) + i;
+        return (
+          <button
+            key={p}
+            onClick={() => onPageChange(p)}
+            aria-label={`Halaman ${p + 1}`}
+            aria-current={p === page ? "page" : undefined}
+            className={cn(
+              "w-7 h-7 rounded text-xs font-medium",
+              p === page ? "bg-primary text-primary-foreground" : "hover:bg-muted text-muted-foreground"
+            )}
+          >
+            {p + 1}
+          </button>
+        );
+      })}
+      <button
+        onClick={() => onPageChange(Math.min(totalPages - 1, page + 1))}
+        disabled={page >= totalPages - 1}
+        className="p-1.5 rounded hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed"
+        aria-label="Halaman berikutnya"
+      >
+        <ChevronRight className="w-4 h-4" />
+      </button>
     </div>
   );
 }
