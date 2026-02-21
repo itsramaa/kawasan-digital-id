@@ -1,105 +1,131 @@
 
+# Fix & Maksimalisasi Checkout Page + Order Success Page
 
-# Maksimalisasi Lanjutan: Lokalisasi, Accessibility, Responsive, dan Bug Fixes
+## Masalah Utama yang Ditemukan
 
-Berdasarkan audit menyeluruh terhadap seluruh codebase client portal dan referensi `.trae/skills`, berikut temuan yang belum diperbaiki dan rencana implementasinya.
+### 1. Checkout Tidak Support Cart (Bug Kritis)
+Halaman checkout saat ini **hanya mendukung single template** via query parameter (`?template_id=xxx&features=xxx`). Ketika user klik "Lanjut ke Checkout" dari halaman Cart, URL menjadi `/checkout` tanpa parameter -- menghasilkan tampilan **"No template selected"**. Ini adalah bug yang memblokir flow utama pembelian.
 
----
+### 2. Semua Teks Masih Bahasa Inggris
+- "Login Required", "Login to Continue"
+- "Checkout", "Contact Information", "Name *", "Email *", "Phone", "Company", "Notes"
+- "Payment Method", "Request Invoice", "Pay Online"
+- "Place Order", "Processing...", "Failed to place order"
+- "Order Summary", "Total"
+- Order Success: "Order Placed Successfully!", "Back to Home", "Browse More Templates"
 
-## Temuan yang Masih Tersisa
+### 3. UI/UX Kurang Maksimal
+- Tidak ada hero banner/breadcrumb seperti halaman Cart
+- Tidak ada trust signals (padahal Cart punya)
+- Tidak ada stepper/progress indicator (Cart -> Checkout -> Success)
+- Loading state hanya skeleton sederhana
+- Order Summary tidak menampilkan estimasi waktu
+- Tidak ada link kembali ke Cart
+- Order Success page sangat basic -- tidak ada order number, tidak ada detail pesanan
 
-### 1. Lokalisasi Belum Tuntas (Bahasa Inggris Masih Tersebar)
-Beberapa komponen dan halaman masih menggunakan Bahasa Inggris:
+### 4. Console Error
+- `forwardRef` warning pada CheckoutPage -- kemungkinan dari komponen yang menerima ref
 
-| File | Teks Inggris | Harus |
-|------|-------------|-------|
-| `ClientLayout.tsx` | "Profile", "Logout" (dropdown) | "Profil", "Keluar" |
-| `ActivityTimeline.tsx` | "No recent activity.", "Project", "Invoice", "Ticket" | "Belum ada aktivitas terbaru.", "Proyek", "Tagihan", "Tiket" |
-| `ActivityLogList.tsx` | "Loading...", "No activity recorded yet." | "Memuat...", "Belum ada aktivitas tercatat." |
-| `DocumentUpload.tsx` | "Documents", "Uploading...", "Click to upload a file", "Description (optional)", "No documents uploaded yet.", "Loading...", "Download" | Semua ke Bahasa Indonesia |
-| `FeedbackSurvey.tsx` | "Feedback Submitted", "Overall", "Communication", "Quality", "Timeliness", "Would you recommend us?", "Yes", "No", "Any additional comments...", "Submit Feedback", "Submitting...", "How was your experience?" | Semua ke Bahasa Indonesia |
-| `ClientSupport.tsx` | Breadcrumb "Dashboard > Support" (baris 148-151), hero banner masih inline (tidak pakai shared `HeroBanner`) | Gunakan `HeroBanner` + lokalisasi |
-| `ClientMessages.tsx` | Hero banner masih inline (tidak pakai shared `HeroBanner`) | Gunakan `HeroBanner` |
-| `ClientAccount.tsx` | Breadcrumb "Dasbor > Profil" manual, hero masih inline, "Read Only" label | Gunakan `HeroBanner` + "Hanya Baca" |
-
-### 2. Konsistensi Komponen Shared (DRY)
-- `ClientSupport.tsx`: Masih menggunakan stat cards inline (baris 177-198) alih-alih shared `StatCards`
-- `ClientSupport.tsx`: Hero banner inline, bukan shared `HeroBanner`
-- `ClientMessages.tsx`: Hero banner inline, bukan shared `HeroBanner`
-- `ClientMessages.tsx`: Stat cards inline, bukan shared `StatCards`
-- `ClientAccount.tsx`: Hero banner inline, bukan shared `HeroBanner`
-
-### 3. Accessibility Tambahan
-- `DocumentUpload.tsx`: Upload button tidak punya `aria-label`
-- `DocumentUpload.tsx`: Download button hanya punya `title`, perlu `aria-label`
-- `FeedbackSurvey.tsx`: Star rating tidak punya `aria-label` per bintang
-- `FeedbackSurvey.tsx`: Recommend buttons tidak punya `aria-pressed`
-- `ClientSupport.tsx`: Filter buttons masih tanpa `role="tablist"` / `role="tab"` / `aria-selected`
-- `ClientSupport.tsx`: Search input tidak punya `aria-label`
-- `EmptyState.tsx`: Tidak punya `role="status"` untuk screen reader
-
-### 4. Loading State Bisa Ditingkatkan
-- Semua halaman client menampilkan teks "Memuat..." -- bisa diganti skeleton loading
-- `ActivityLogList.tsx`: "Loading..." tanpa skeleton
-- `DocumentUpload.tsx`: "Loading..." tanpa skeleton
-
-### 5. Bug Fix: FinalCTA ref Warning
-- `FinalCTA.tsx` menggunakan `useScrollReveal` yang mengembalikan `ref` langsung ke `<section>` -- ini sudah benar (bukan forwardRef issue)
-- Badge component sudah tidak pakai forwardRef -- ini sudah OK
+### 5. Accessibility
+- Label form tidak menggunakan `htmlFor`
+- Payment method radio tidak punya `aria-label` group
+- Error messages tidak punya `role="alert"`
 
 ---
 
 ## Rencana Implementasi
 
-### Fase 1: Lokalisasi Tuntas
+### Fase 1: Support Cart-Based Checkout (Bug Fix Kritis)
 
-**1a. `ActivityTimeline.tsx`**: Ganti semua teks Inggris ke Indonesia
-**1b. `ActivityLogList.tsx`**: Ganti "Loading..." dan empty state
-**1c. `DocumentUpload.tsx`**: Lokalisasi semua teks (judul, placeholder, status upload, empty state)
-**1d. `FeedbackSurvey.tsx`**: Lokalisasi semua teks (judul, label rating, tombol, placeholder)
-**1e. `ClientLayout.tsx`**: Ganti "Profile" dan "Logout" di dropdown
+Refactor `CheckoutPage.tsx` agar mendukung **dua mode**:
+- **Mode Single**: Ketika ada `?template_id=xxx` (direct checkout dari detail page)
+- **Mode Cart**: Ketika tidak ada `template_id` -- ambil items dari `useCart()` hook
 
-### Fase 2: Konsistensi Shared Components
+Logika:
+```text
+if (searchParams has template_id) -> single template mode (existing)
+else -> cart mode: use useCart() items as order items
+```
 
-**2a. `ClientSupport.tsx`**: Refactor untuk menggunakan `HeroBanner` dan `StatCards` shared components, hapus inline hero/stat, tambah `role="tablist"` pada filter, `aria-label` pada search
-**2b. `ClientMessages.tsx`**: Refactor untuk menggunakan `HeroBanner`, hapus inline hero
-**2c. `ClientAccount.tsx`**: Ganti "Read Only" ke "Hanya Baca"
+Pada mode cart, order summary menampilkan semua item dari keranjang dengan subtotal masing-masing. Saat submit, buat **satu order per item** (karena struktur tabel `orders` menggunakan `template_id` singular) atau buat satu order dengan semua items.
 
-### Fase 3: Accessibility
+### Fase 2: Lokalisasi Penuh (Bahasa Indonesia)
 
-**3a. `DocumentUpload.tsx`**: Tambah `aria-label` pada upload dan download buttons
-**3b. `FeedbackSurvey.tsx`**: Tambah `aria-label` per star, `aria-pressed` pada recommend buttons
-**3c. `EmptyState.tsx`**: Tambah `role="status"`
-**3d. `ClientSupport.tsx`**: Tambah `role="tablist"` dan `aria-selected` pada filter tabs
+Semua teks di CheckoutPage dan OrderSuccessPage diterjemahkan:
+- "Checkout" -> "Checkout" (tetap, sudah umum)
+- "Contact Information" -> "Informasi Kontak"
+- "Name *" -> "Nama *"
+- "Email *" -> "Email *"
+- "Phone" -> "Telepon"
+- "Company" -> "Perusahaan"
+- "Notes" -> "Catatan"
+- "Payment Method" -> "Metode Pembayaran"
+- "Request Invoice" -> "Minta Invoice"
+- "Pay Online" -> "Bayar Online"
+- "Place Order" -> "Buat Pesanan"
+- "Order Summary" -> "Ringkasan Pesanan"
+- Validation messages ke Indonesia
+- Order Success page sepenuhnya ke Indonesia
 
-### Fase 4: Skeleton Loading
+### Fase 3: Maksimalisasi UI/UX
 
-**4a. Buat `LoadingSkeleton` component** di `src/shared/components/common/LoadingSkeleton.tsx` -- reusable skeleton untuk halaman client (stat cards skeleton, list skeleton, table skeleton)
-**4b. Ganti semua "Memuat..." text** dengan skeleton di semua halaman client yang masih menggunakan teks loading
+**3a. Hero Banner + Breadcrumb**
+Tambah hero section dengan gradient seperti CartPage:
+- Breadcrumb: Home > Keranjang > Checkout
+- Badge "Checkout"
+- Title + subtitle kontekstual
+
+**3b. Progress Stepper**
+Tambah visual stepper 3 langkah:
+```text
+[1. Keranjang] ──── [2. Checkout (aktif)] ──── [3. Konfirmasi]
+```
+
+**3c. Trust Signals**
+Tambah trust signals di sidebar Order Summary (seperti CartPage):
+- Pembayaran Aman & Terverifikasi
+- Garansi Revisi
+- Support 24/7
+- Gratis konsultasi
+
+**3d. Order Summary Enhancement**
+- Tampilkan estimasi waktu pengerjaan
+- Tampilkan kategori template
+- Tambah link "Edit Keranjang" kembali ke cart
+- Accent line gradient di atas card summary
+
+**3e. Order Success Page Enhancement**
+- Tampilkan nomor pesanan (dari response order creation)
+- Tampilkan ringkasan singkat (nama template, total)
+- Tambah timeline next steps (apa yang terjadi selanjutnya)
+- Link ke Dashboard Klien untuk track pesanan
+- Animasi success yang lebih menarik
+
+**3f. Login Gate Enhancement**
+- Lokalisasi ke Indonesia
+- Tambah ilustrasi yang lebih menarik
+- Tambah info bahwa keranjang akan tersimpan
+
+### Fase 4: Accessibility
+
+- Tambah `htmlFor` pada semua label form
+- Tambah `role="group"` dan `aria-label` pada payment method
+- Tambah `role="alert"` pada error messages
+- Tambah `aria-label` pada tombol submit
 
 ---
 
 ## Detail Teknis
 
-### File Baru
-| File | Deskripsi |
-|------|-----------|
-| `src/shared/components/common/LoadingSkeleton.tsx` | Komponen skeleton loading reusable (page, stat, list, table varian) |
-
 ### File yang Dimodifikasi
 | File | Perubahan |
 |------|-----------|
-| `src/features/client/components/ActivityTimeline.tsx` | Lokalisasi teks |
-| `src/features/client/components/ActivityLogList.tsx` | Lokalisasi teks |
-| `src/features/client/components/DocumentUpload.tsx` | Lokalisasi + a11y (aria-label) |
-| `src/features/client/components/FeedbackSurvey.tsx` | Lokalisasi + a11y (aria-label, aria-pressed) |
-| `src/features/client/components/EmptyState.tsx` | Tambah `role="status"` |
-| `src/shared/components/layouts/ClientLayout.tsx` | "Profile" -> "Profil", "Logout" -> "Keluar" |
-| `src/pages/client/ClientSupport.tsx` | Gunakan `HeroBanner` + `StatCards`, tambah a11y pada filter/search |
-| `src/pages/client/ClientMessages.tsx` | Gunakan `HeroBanner` |
-| `src/pages/client/ClientAccount.tsx` | "Read Only" -> "Hanya Baca" |
-| Semua halaman dengan "Memuat..." | Ganti dengan skeleton loading |
+| `src/pages/store/CheckoutPage.tsx` | Refactor total: support cart mode, lokalisasi, hero banner, stepper, trust signals, a11y |
+| `src/pages/store/OrderSuccessPage.tsx` | Enhancement: order number, detail pesanan, next steps, lokalisasi |
+| `src/features/storefront/hooks/useCreateOrder.ts` | Return order data (order_number) untuk ditampilkan di success page |
 
 ### Tidak Ada Perubahan Schema/Database
-Semua perubahan hanya di frontend.
+Semua perubahan hanya di frontend. Struktur tabel `orders` sudah mendukung flow ini.
 
+### Pendekatan Cart Checkout
+Karena tabel `orders` memiliki kolom `template_id` (singular), untuk multi-item cart, akan dibuat **satu order per cart item** secara berurutan. Ini memungkinkan tracking independen per layanan yang dipesan. Setelah semua order berhasil dibuat, cart di-clear dan redirect ke success page.
