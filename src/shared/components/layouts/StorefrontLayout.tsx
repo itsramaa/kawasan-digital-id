@@ -13,8 +13,8 @@ const navLinks = [
 ];
 
 const helpCenterLinks = [
-  { label: "How It Works", path: "/store", hash: "#how-it-works" },
-  { label: "Help / FAQ", path: "/store", hash: "#faq-section" },
+  { label: "How It Works", path: "/store/how-it-works" },
+  { label: "Help / FAQ", path: "/store/help" },
   { label: "Contact", path: "/store", hash: "#contact" },
 ];
 
@@ -232,16 +232,58 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
       <main className="flex-1">{children}</main>
 
       <footer className="border-t border-border bg-card">
-        <div className="max-w-6xl mx-auto px-4 lg:px-8 py-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded bg-primary flex items-center justify-center">
-                <Globe className="w-3 h-3 text-primary-foreground" />
+        <div className="max-w-6xl mx-auto px-4 lg:px-8 py-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+            {/* About */}
+            <div className="col-span-2 md:col-span-1 space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded bg-primary flex items-center justify-center">
+                  <Globe className="w-3 h-3 text-primary-foreground" />
+                </div>
+                <span className="text-sm font-bold">Kawasan Digital</span>
               </div>
-              <span className="text-sm font-semibold">Kawasan Digital</span>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Solusi website profesional untuk bisnis Anda. Template siap pakai atau custom sesuai kebutuhan.
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground">
+
+            {/* Services */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold text-foreground">Services</h4>
+              <div className="space-y-2">
+                <Link to="/store/templates" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Templates</Link>
+                <Link to="/store/custom" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Custom Website</Link>
+                <Link to="/store/showcase" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Portfolio</Link>
+              </div>
+            </div>
+
+            {/* Help */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold text-foreground">Help</h4>
+              <div className="space-y-2">
+                <Link to="/store/how-it-works" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">How It Works</Link>
+                <Link to="/store/help" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">FAQ</Link>
+                <Link to="/store#contact" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
+              </div>
+            </div>
+
+            {/* Legal */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold text-foreground">Legal</h4>
+              <div className="space-y-2">
+                <span className="block text-xs text-muted-foreground">Privacy Policy</span>
+                <span className="block text-xs text-muted-foreground">Terms of Service</span>
+                <span className="block text-xs text-muted-foreground">Refund Policy</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-border pt-6 flex flex-col md:flex-row justify-between items-center gap-3">
+            <p className="text-xs text-muted-foreground">
               © {new Date().getFullYear()} Kawasan Digital. All rights reserved.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              hello@kawasandigital.com
             </p>
           </div>
         </div>

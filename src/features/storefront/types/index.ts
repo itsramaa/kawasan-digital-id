@@ -9,6 +9,10 @@ export interface ShowcaseProject {
   is_published: boolean;
   display_order: number;
   created_at: string;
+  client_background: string | null;
+  challenge: string | null;
+  solution: string | null;
+  result: string | null;
 }
 
 export interface ServiceTemplate {
@@ -77,6 +81,7 @@ export interface StoreFAQ {
   display_order: number;
   is_published: boolean;
   created_at: string;
+  category: string | null;
 }
 
 export interface CheckoutFormData {

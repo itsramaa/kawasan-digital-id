@@ -763,36 +763,48 @@ export type Database = {
       showcase_projects: {
         Row: {
           category: string | null
+          challenge: string | null
+          client_background: string | null
           created_at: string
           demo_url: string | null
           description: string | null
           display_order: number | null
           id: string
           is_published: boolean | null
+          result: string | null
+          solution: string | null
           tech_stack: string[] | null
           thumbnail_url: string | null
           title: string
         }
         Insert: {
           category?: string | null
+          challenge?: string | null
+          client_background?: string | null
           created_at?: string
           demo_url?: string | null
           description?: string | null
           display_order?: number | null
           id?: string
           is_published?: boolean | null
+          result?: string | null
+          solution?: string | null
           tech_stack?: string[] | null
           thumbnail_url?: string | null
           title: string
         }
         Update: {
           category?: string | null
+          challenge?: string | null
+          client_background?: string | null
           created_at?: string
           demo_url?: string | null
           description?: string | null
           display_order?: number | null
           id?: string
           is_published?: boolean | null
+          result?: string | null
+          solution?: string | null
           tech_stack?: string[] | null
           thumbnail_url?: string | null
           title?: string
@@ -802,6 +814,7 @@ export type Database = {
       store_faqs: {
         Row: {
           answer: string
+          category: string | null
           created_at: string
           display_order: number
           id: string
@@ -810,6 +823,7 @@ export type Database = {
         }
         Insert: {
           answer: string
+          category?: string | null
           created_at?: string
           display_order?: number
           id?: string
@@ -818,6 +832,7 @@ export type Database = {
         }
         Update: {
           answer?: string
+          category?: string | null
           created_at?: string
           display_order?: number
           id?: string
