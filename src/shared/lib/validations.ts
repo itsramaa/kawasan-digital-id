@@ -27,7 +27,15 @@ export const profileSchema = z.object({
   phone: z.string().trim().max(20, "Phone too long").optional().or(z.literal("")),
 });
 
+export const contactSchema = z.object({
+  name: z.string().trim().min(1, "Nama wajib diisi").max(100, "Nama terlalu panjang"),
+  email: z.string().trim().email("Email tidak valid").max(255, "Email terlalu panjang"),
+  subject: z.string().trim().min(1, "Subjek wajib dipilih"),
+  message: z.string().trim().min(10, "Pesan minimal 10 karakter").max(1000, "Pesan maksimal 1000 karakter"),
+});
+
 export type InquiryFormValues = z.infer<typeof inquirySchema>;
 export type TicketFormValues = z.infer<typeof ticketSchema>;
 export type ClientFormValues = z.infer<typeof clientSchema>;
 export type ProfileFormValues = z.infer<typeof profileSchema>;
+export type ContactFormValues = z.infer<typeof contactSchema>;

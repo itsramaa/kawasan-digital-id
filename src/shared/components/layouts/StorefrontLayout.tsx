@@ -15,7 +15,7 @@ const navLinks = [
 const helpCenterLinks = [
   { label: "How It Works", path: "/store/how-it-works" },
   { label: "Help / FAQ", path: "/store/help" },
-  { label: "Contact", path: "/store", hash: "#contact" },
+  { label: "Contact", path: "/store/contact" },
 ];
 
 function HelpCenterDropdown({ location }: { location: ReturnType<typeof useLocation> }) {
@@ -88,8 +88,8 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
   };
 
   const getHelpNavTo = (link: typeof helpCenterLinks[number]) => {
-    if (link.hash && link.path === location.pathname) return link.hash;
-    if (link.hash) return link.path + link.hash;
+    if ('hash' in link && (link as any).hash && link.path === location.pathname) return (link as any).hash;
+    if ('hash' in link && (link as any).hash) return link.path + (link as any).hash;
     return link.path;
   };
 
@@ -263,7 +263,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
               <div className="space-y-2">
                 <Link to="/store/how-it-works" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">How It Works</Link>
                 <Link to="/store/help" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">FAQ</Link>
-                <Link to="/store#contact" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
+                <Link to="/store/contact" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
               </div>
             </div>
 

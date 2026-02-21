@@ -38,6 +38,7 @@ import CartPage from "./pages/store/CartPage";
 import CustomWebsitePage from "./pages/store/CustomWebsitePage";
 import HowItWorksPage from "./pages/store/HowItWorksPage";
 import HelpFAQPage from "./pages/store/HelpFAQPage";
+import ContactPage from "./pages/store/ContactPage";
 import ClientOrders from "./pages/client/ClientOrders";
 
 const queryClient = new QueryClient();
@@ -90,6 +91,7 @@ const App = () => (
             <Route path="/store/custom" element={<CustomWebsitePage />} />
             <Route path="/store/how-it-works" element={<HowItWorksPage />} />
             <Route path="/store/help" element={<HelpFAQPage />} />
+            <Route path="/store/contact" element={<ContactPage />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
