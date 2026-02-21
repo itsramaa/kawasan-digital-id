@@ -1,53 +1,24 @@
 
-# Perapian & Sortir Navbar Dashboard Klien
+# Hapus "Contact" dari Navigasi Storefront
 
-## Masalah Saat Ini
-Navbar memiliki **9 item** yang terlalu banyak untuk navigasi horizontal, menyebabkan tampilan "acak-acakan" terutama di layar yang tidak terlalu lebar:
+## Perubahan
 
-```
-Dasbor | Proyek | Pesanan | Kontrak | Invoice | Pembayaran | Infrastruktur | Bantuan | Pesan
-```
+Menghapus link "Contact" dari dropdown **Help Center** di navbar storefront. Setelah perubahan, dropdown Help Center hanya berisi:
 
-## Rencana Perubahan
-
-### 1. Hapus "Pesan"
-Sesuai permintaan, tab "Pesan" akan dihapus dari navbar karena akan diganti dengan floating live chat button di masa depan. Import `useUnreadCount` dan badge unread juga akan dibersihkan.
-
-### 2. Gabungkan "Invoice" dan "Pembayaran" menjadi "Keuangan"
-Kedua halaman ini saling terkait (invoice = tagihan, pembayaran = bukti bayar). Digabungkan menjadi satu tab "Keuangan" yang mengarah ke `/dashboard/invoices` sebagai default. Halaman pembayaran tetap bisa diakses melalui sub-navigasi di dalam halaman tersebut atau via link internal.
-
-### 3. Urutan Navbar Baru (6 item)
-Disusun berdasarkan prioritas dan frekuensi penggunaan klien:
-
-```
-Dasbor | Proyek | Pesanan | Keuangan | Infrastruktur | Bantuan
-```
-
-| No | Label | Path | Alasan Urutan |
-|----|-------|------|---------------|
-| 1 | Dasbor | `/dashboard` | Halaman utama, selalu pertama |
-| 2 | Proyek | `/dashboard/projects` | Aktivitas inti klien |
-| 3 | Pesanan | `/dashboard/orders` | Terkait pembelian dari storefront |
-| 4 | Keuangan | `/dashboard/invoices` | Gabungan Invoice + Pembayaran |
-| 5 | Infrastruktur | `/dashboard/infrastructure` | Domain & hosting |
-| 6 | Bantuan | `/dashboard/support` | Support/tiket |
-
-### 4. Tab "Kontrak" Dihapus dari Navbar
-Kontrak terkait erat dengan proyek dan jarang diakses secara mandiri. Akses kontrak tetap tersedia melalui:
-- Quick action di Dashboard
-- Link dari halaman Proyek
-- Route `/dashboard/contracts` tetap ada, hanya tidak di navbar utama
-
-### 5. "Keuangan" Aktif untuk Kedua Path
-Tab "Keuangan" akan menampilkan state aktif (highlighted) ketika user berada di `/dashboard/invoices` ATAU `/dashboard/payments`.
+1. How It Works
+2. Help / FAQ
 
 ## Detail Teknis
 
-### File yang Dimodifikasi
+### File: `src/shared/components/layouts/StorefrontLayout.tsx`
 
-| File | Perubahan |
-|------|-----------|
-| `src/shared/components/layouts/ClientLayout.tsx` | Update `navItems` array: hapus Pesan, hapus Kontrak, gabung Invoice+Pembayaran jadi "Keuangan", bersihkan import `useUnreadCount` dan `MessageSquare` |
+**1. Update `helpCenterLinks` array (baris 15-19)**
+Hapus entry `{ label: "Contact", path: "/contact" }` sehingga hanya tersisa 2 item.
 
-### Tidak Ada Perubahan Routing
-Semua route (`/dashboard/contracts`, `/dashboard/payments`, `/dashboard/messages`) tetap ada di `App.tsx` dan tetap bisa diakses via URL langsung. Hanya navbar yang disederhanakan.
+**2. Update Footer section "Help" (baris 260-268)**
+Hapus link Contact dari kolom Help di footer, menyisakan "How It Works" dan "FAQ".
+
+### Tidak Dihapus
+- Route `/contact` di `App.tsx` tetap ada (halaman masih bisa diakses via URL langsung)
+- File `ContactPage.tsx` tidak dihapus
+- Nanti akan digantikan oleh floating live chat button
