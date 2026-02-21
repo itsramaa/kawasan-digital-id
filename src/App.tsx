@@ -38,6 +38,9 @@ import CartPage from "./pages/store/CartPage";
 import CustomWebsitePage from "./pages/store/CustomWebsitePage";
 
 import HelpFAQPage from "./pages/store/HelpFAQPage";
+import PrivacyPolicyPage from "./pages/store/PrivacyPolicyPage";
+import TermsOfServicePage from "./pages/store/TermsOfServicePage";
+import RefundPolicyPage from "./pages/store/RefundPolicyPage";
 
 import ClientOrders from "./pages/client/ClientOrders";
 
@@ -66,7 +69,10 @@ const App = () => (
             <Route path="/custom" element={<CustomWebsitePage />} />
             <Route path="/how-it-works" element={<Navigate to="/help" replace />} />
             <Route path="/help" element={<HelpFAQPage />} />
-            
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsOfServicePage />} />
+            <Route path="/refund" element={<RefundPolicyPage />} />
+
 
             {/* Admin/Internal Portal Routes */}
             <Route path="/admin" element={<ProtectedRoute requireInternal><Dashboard /></ProtectedRoute>} />
