@@ -1,83 +1,83 @@
 
-# Maksimalkan Template Detail Page
+
+# Maksimalkan Help Center Pages
 
 ## Ringkasan
-Upgrade halaman detail template (`/store/templates/:id`) agar lebih profesional, informatif, dan conversion-optimized -- sejajar dengan homepage dan templates page yang sudah di-upgrade.
+Upgrade dua halaman Help Center (`/store/how-it-works` dan `/store/help`) agar lebih profesional, engaging, dan sejajar dengan halaman lain yang sudah di-upgrade (Homepage, Templates, Detail).
 
-## Perubahan yang Akan Dilakukan
+---
 
-### 1. Breadcrumb -- Lebih Informatif
-- Ganti tombol "Back" sederhana menjadi breadcrumb trail: Home > Templates > [Category] > [Template Name]
-- Setiap level bisa diklik untuk navigasi
+## Halaman 1: How It Works (`HowItWorksPage.tsx`)
 
-### 2. Gallery Section -- Lebih Interaktif
-- Tambahkan transisi smooth (fade) saat ganti gambar
-- Tambahkan image zoom on hover (scale effect di main image)
-- Tambahkan counter "1 / 5" pada gallery
-- Tambahkan badge "Best Seller" dan "New" kondisional (overlay di gambar utama)
-- Perbaiki thumbnail strip dengan active indicator yang lebih jelas
+### 1. Hero Section
+- Tambahkan hero banner dengan gradient background (konsisten dengan halaman lain)
+- Subtitle yang lebih deskriptif
+- Badge "10 Langkah Mudah" sebagai trust signal
 
-### 3. Info Panel -- Lebih Kaya
-- Tambahkan star rating placeholder (5 bintang)
-- Tambahkan badge "Garansi Uang Kembali" dan "Revisi Gratis" sebagai trust signals
-- Tambahkan harga coret (original price hint) untuk kesan value
-- Sticky behavior pada Order Summary saat scroll di desktop (`lg:sticky lg:top-24`)
+### 2. Timeline Visual Upgrade
+- Card-based layout per step (bukan hanya text list)
+- Hover effect: lift + shadow + border glow pada setiap card
+- Alternating layout pada desktop (zigzag: kiri-kanan)
+- Nomor step yang lebih prominent (badge besar)
+- Scroll-reveal animation per step (staggered)
 
-### 4. Package Includes -- Visual Upgrade
-- Tambahkan icon per item (bukan hanya checkmark)
-- Gunakan grid 3 kolom pada desktop
-- Tambahkan animasi scroll-reveal
-- Heading dengan icon dekoratif
+### 3. Phase Grouping
+- Kelompokkan 10 step menjadi 3-4 fase visual:
+  - Fase 1: Persiapan (Step 1-3)
+  - Fase 2: Pengerjaan (Step 4-6)
+  - Fase 3: Finalisasi (Step 7-9)
+  - Fase 4: After-Launch (Step 10)
+- Setiap fase punya heading + divider dekoratif
 
-### 5. Scope Customization & Infra Add-Ons -- Lebih Engaging
-- Tambahkan badge "Popular" pada add-on tertentu (harga tertinggi atau kondisional)
-- Hover effect lebih dramatis: border glow + subtle scale
-- Tambahkan info tooltip pada setiap add-on yang punya description
-- Animasi scroll-reveal per section
+### 4. CTA Section Upgrade
+- Gradient background pada CTA
+- Tambahkan trust signals (jumlah project selesai, rating)
+- Animasi scroll-reveal
 
-### 6. Tambah Section Baru: "Mengapa Memilih Template Ini?"
-- Section trust/value proposition dengan 3-4 poin (Desain Profesional, SEO Optimized, Full Ownership, Support Responsif)
-- Layout icon grid 2x2
+---
+
+## Halaman 2: Help / FAQ (`HelpFAQPage.tsx`)
+
+### 1. Hero Section
+- Tambahkan hero banner dengan gradient background
+- Search bar untuk pencarian FAQ berdasarkan keyword
+- Stats: jumlah FAQ tersedia
+
+### 2. Category Filter Upgrade
+- Icon per kategori
+- Count badge per kategori (jumlah FAQ)
+- Hover effect lebih prominent
 - Scroll-reveal animation
 
-### 7. FAQ Section -- Lebih Polished
-- Tambahkan link "Lihat Semua FAQ" ke `/store/help`
+### 3. FAQ Cards Upgrade
+- Hover effect pada accordion items
+- Animasi stagger saat muncul
+- Highlight matched search text (jika search aktif)
+- Empty state yang lebih engaging dengan suggestions
+
+### 4. Contact CTA Upgrade
+- Gradient background
+- Tambahkan info tambahan (response time, channel support)
+- Icon grid untuk berbagai channel kontak (email, WhatsApp hint)
 - Scroll-reveal animation
-- Subtle gradient background
 
-### 8. Related Templates -- Lebih Menarik
-- Hover effect: lift + shadow + border glow
-- Tambahkan category badge dan estimasi hari pada card
-- Tambahkan "Best Seller" badge kondisional
-- Horizontal scroll pada mobile
+### 5. Tambah Section: Quick Links
+- Grid cards menuju halaman terkait (How It Works, Templates, Custom)
+- Masing-masing dengan icon, judul, dan deskripsi singkat
 
-### 9. Loading State -- Lebih Realistis
-- Skeleton shimmer yang lebih detail (breadcrumb, gallery, sidebar, sections)
-- Skeleton mengikuti layout asli
-
-### 10. Scroll Animation Global
-- Gunakan `useScrollReveal` hook pada setiap section (Package Includes, Scope, Infra, FAQ, Related)
-- Smooth fade-in + slide-up effect
+---
 
 ## Detail Teknis
 
-### File yang Dimodifikasi/Dibuat
-- **Refactor**: `src/pages/store/TemplateDetailPage.tsx` -- dipecah menjadi sub-components
-- **Buat baru**: `src/features/storefront/components/detail/DetailBreadcrumb.tsx`
-- **Buat baru**: `src/features/storefront/components/detail/DetailGallery.tsx`
-- **Buat baru**: `src/features/storefront/components/detail/DetailInfoPanel.tsx`
-- **Buat baru**: `src/features/storefront/components/detail/PackageIncludes.tsx`
-- **Buat baru**: `src/features/storefront/components/detail/ScopeCustomization.tsx`
-- **Buat baru**: `src/features/storefront/components/detail/InfraAddOns.tsx`
-- **Buat baru**: `src/features/storefront/components/detail/WhyChooseSection.tsx`
-- **Buat baru**: `src/features/storefront/components/detail/DetailFAQ.tsx`
-- **Buat baru**: `src/features/storefront/components/detail/RelatedTemplates.tsx`
-- **Buat baru**: `src/features/storefront/components/detail/DetailSkeleton.tsx`
+### File yang Dimodifikasi
+- `src/pages/store/HowItWorksPage.tsx` -- refactor komprehensif
+- `src/pages/store/HelpFAQPage.tsx` -- refactor komprehensif
 
 ### Pendekatan
 - Tidak ada perubahan database
 - Tidak ada dependency baru
 - Menggunakan `useScrollReveal` hook yang sudah ada
-- Semua data dari hooks yang sudah ada (`useTemplateDetail`, `useRelatedTemplates`, `useFAQs`, `useCart`)
+- Data FAQ dari hook `useFAQs` yang sudah ada
 - Semua styling menggunakan Tailwind classes
-- Komponen parent `TemplateDetailPage.tsx` menjadi orchestrator yang memanggil sub-components
+- Menambahkan `searchQuery` state pada FAQ page untuk fitur pencarian
+
