@@ -1,63 +1,76 @@
 
-# Maksimalkan Halaman Profile
+# Maksimalkan Halaman Support Client
 
 ## Ringkasan
-Upgrade halaman Profile (`/dashboard/account`) dari layout sederhana menjadi halaman profil yang profesional dan polished -- dengan hero/banner section, avatar lebih besar, layout 2 kolom, section terpisah untuk info perusahaan dan personal, serta animasi scroll-reveal.
+Upgrade halaman Support (`/dashboard/support`) dari layout sederhana menjadi halaman yang profesional dan polished, konsisten dengan style halaman Profile yang sudah di-upgrade -- hero banner, summary cards, filter/search, detail panel yang lebih kaya, dan animasi scroll-reveal.
 
 ---
 
 ## Perubahan yang Akan Dilakukan
 
-### 1. Hero Banner Section
-- Gradient background banner di bagian atas (konsisten dengan halaman lain: `bg-gradient-to-br from-primary/5 via-transparent to-primary/3`)
-- Avatar besar (80px) dengan inisial yang overlap di atas banner
-- Nama lengkap, email, dan badge role ditampilkan di samping avatar
-- Breadcrumb: Dashboard > Profile
+### 1. Hero Banner + Header
+- Gradient banner konsisten dengan halaman Profile (`bg-gradient-to-br from-primary/10 via-primary/5 to-transparent`)
+- Breadcrumb: Dashboard > Support
+- Icon HeadphonesIcon besar di banner
+- Judul "Pusat Bantuan" + subtitle ringkas
+- Tombol "Tiket Baru" di kanan atas
 
-### 2. Layout 2 Kolom (Desktop)
-- **Kolom Kiri (sidebar)**: Kartu profil ringkas -- avatar, nama, email, role, tanggal bergabung (`created_at`), status akun (active/inactive)
-- **Kolom Kanan (main)**: Form edit profil dan info perusahaan
+### 2. Summary Stat Cards (4 kartu)
+- **Tiket Aktif** (Open + In Progress) -- warna info
+- **Menunggu** (Pending Client) -- warna warning
+- **Eskalasi** (Escalated) -- warna error/destructive
+- **Terselesaikan** (Resolved + Closed) -- warna success
+- Masing-masing card dengan icon kecil, angka besar, dan label
 
-### 3. Info Perusahaan -- Desain Lebih Polished
-- Card terpisah dengan icon-icon yang lebih jelas
-- Grid 2 kolom untuk company name, industry, email, phone
-- Badge "Read Only" untuk menandakan ini tidak bisa diedit
-- Styling lebih konsisten dengan card lainnya
+### 3. Filter & Search Bar
+- Search input untuk filter tiket berdasarkan subject/ticket_number
+- Filter tabs/buttons: Semua, Aktif, Eskalasi, Selesai
+- Tampilan jumlah tiket terfilter
 
-### 4. Form Edit Profil -- Upgrade Visual
-- Card terpisah dengan heading "Informasi Personal"
-- Field Full Name, Email (disabled dengan penjelasan), Phone
-- Tombol Save dengan loading state yang lebih prominent
-- Success feedback yang lebih jelas
+### 4. Ticket List -- Upgrade Visual
+- Card tiket dengan visual yang lebih polished:
+  - Border-left warna sesuai priority (Critical = merah, High = orange)
+  - Badge priority dengan animasi pulse untuk Critical
+  - SLA indicator yang lebih prominent
+  - Deskripsi truncated (line-clamp-2)
+  - Info project, tanggal dibuat
+  - Hover shadow yang lebih halus
+- Tiket yang dipilih diberi highlight border + background
 
-### 5. Section Keamanan Akun
-- Card baru di bawah form profil
-- Info: "Email terverifikasi" dengan icon check hijau
-- Info: tanggal terakhir login (dari `user.last_sign_in_at`)
-- Tombol "Ubah Password" (navigasi atau placeholder untuk fitur mendatang)
+### 5. Detail Panel -- Lebih Kaya
+- Sticky panel di kanan (desktop)
+- Header: ticket number, subject, badges (status + priority + SLA)
+- Section "Deskripsi" dengan card terpisah
+- Grid info: Created, Resolved, Project, Assigned To
+- Timeline visual sederhana menunjukkan status saat ini dalam flow (Open -> In Progress -> Resolved -> Closed)
+- Tombol aksi: "Tutup Tiket" jika statusnya sudah Resolved
 
-### 6. Animasi
-- `useScrollReveal` pada setiap card/section
-- Fade-in staggered untuk tampilan yang lebih hidup
+### 6. Empty State -- Upgrade
+- Ilustrasi icon yang lebih besar
+- Teks dalam Bahasa Indonesia
+- CTA button "Buat Tiket Baru"
+
+### 7. Animasi Scroll-Reveal
+- RevealCard wrapper pada setiap section (hero, stats, list, detail)
+- Staggered delay untuk efek cascade
+
+### 8. Teks UI
+- Semua teks dalam Bahasa Indonesia: "Pusat Bantuan", "Tiket Aktif", "Eskalasi", "Terselesaikan", "Pilih tiket untuk melihat detail", dll.
 
 ---
 
 ## Detail Teknis
 
 ### File yang Dimodifikasi
-- `src/pages/client/ClientAccount.tsx` -- refactor komprehensif
-
-### Data yang Digunakan
-- `profile` dari `useAuth()`: full_name, email, avatar_url, phone, is_active, created_at
-- `user` dari `useAuth()`: email, last_sign_in_at
-- `roles` dari `useAuth()`: role badges
-- `clientInfo` dari query `clients` table: company_name, industry, email, phone
+- `src/pages/client/ClientSupport.tsx` -- refactor komprehensif
 
 ### Pendekatan
 - Tidak ada perubahan database
 - Tidak ada dependency baru
+- Menggunakan `RevealCard` pattern yang sama dari `ClientAccount.tsx`
 - Menggunakan `useScrollReveal` hook yang sudah ada
-- Semua data sudah tersedia dari AuthContext dan existing query
-- Teks UI dalam Bahasa Indonesia
-- Responsive: 2 kolom di desktop, 1 kolom di mobile
-- Icon dari lucide-react: Calendar, CheckCircle, Lock, dll
+- Data yang sudah tersedia dari `useClientTickets`: ticket_number, subject, description, status, priority, sla_deadline, created_at, resolved_at, projects.name
+- Icon dari lucide-react: HeadphonesIcon, Clock, AlertTriangle, CheckCircle, Filter, Search, ChevronRight, Inbox, dll
+- Menggunakan Card/CardHeader/CardContent dari shadcn/ui
+- Responsive: 3 kolom di desktop (2 list + 1 detail), 1 kolom di mobile
+- Filter state lokal menggunakan useState
