@@ -36,6 +36,8 @@ import CheckoutPage from "./pages/store/CheckoutPage";
 import OrderSuccessPage from "./pages/store/OrderSuccessPage";
 import CartPage from "./pages/store/CartPage";
 import CustomWebsitePage from "./pages/store/CustomWebsitePage";
+import HowItWorksPage from "./pages/store/HowItWorksPage";
+import HelpFAQPage from "./pages/store/HelpFAQPage";
 import ClientOrders from "./pages/client/ClientOrders";
 
 const queryClient = new QueryClient();
@@ -79,12 +81,15 @@ const App = () => (
             {/* Storefront Routes (Public) */}
             <Route path="/store" element={<StorefrontHome />} />
             <Route path="/store/showcase" element={<ShowcasePage />} />
+            <Route path="/store/showcase/:id" element={<ShowcasePage />} />
             <Route path="/store/templates" element={<TemplatesPage />} />
             <Route path="/store/templates/:id" element={<TemplateDetailPage />} />
             <Route path="/store/checkout" element={<CheckoutPage />} />
             <Route path="/store/order-success" element={<OrderSuccessPage />} />
             <Route path="/store/cart" element={<CartPage />} />
             <Route path="/store/custom" element={<CustomWebsitePage />} />
+            <Route path="/store/how-it-works" element={<HowItWorksPage />} />
+            <Route path="/store/help" element={<HelpFAQPage />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
