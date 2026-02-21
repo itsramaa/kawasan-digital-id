@@ -7,7 +7,8 @@ import { ActivityLogList } from "@/features/client/components/ActivityLogList";
 import { RevealCard } from "@/shared/components/common/RevealCard";
 import { HeroBanner } from "@/shared/components/common/HeroBanner";
 import { StatCards } from "@/shared/components/common/StatCards";
-import { FolderKanban, Receipt, HeadphonesIcon, ArrowUpRight, CheckCircle, AlertTriangle, Clock, LayoutDashboard } from "lucide-react";
+import { StatSkeleton, ListSkeleton } from "@/shared/components/common/LoadingSkeleton";
+import { FolderKanban, Receipt, HeadphonesIcon, ArrowUpRight, CheckCircle, AlertTriangle, Clock, LayoutDashboard, Plus, MessageSquare, FileText, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useClientProjects } from "@/features/client/hooks/useClientProjects";
 import { useClientInvoices } from "@/features/client/hooks/useClientInvoices";
@@ -17,7 +18,7 @@ import { useClientDomains } from "@/features/client/hooks/useClientDomains";
 import { useClientActivity } from "@/features/client/hooks/useClientActivity";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { differenceInDays, parseISO } from "date-fns";
-import { lazy, Suspense, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/shared/utils/utils";
 import { Card, CardContent } from "@/shared/components/ui/card";
 
@@ -27,15 +28,25 @@ const statusVariant: Record<string, "info" | "warning" | "hold" | "success" | "n
 
 const PIE_COLORS = ["hsl(160, 60%, 45%)", "hsl(216, 51%, 48%)", "hsl(0, 84%, 60%)", "hsl(220, 9%, 46%)"];
 
+// Quick action links for the dashboard
+const quickActions = [
+  { label: "Buat Tiket", icon: Plus, to: "/dashboard/support", color: "text-primary", bg: "bg-primary/10" },
+  { label: "Lihat Invoice", icon: Receipt, to: "/dashboard/invoices", color: "text-emerald-600", bg: "bg-emerald-500/10" },
+  { label: "Kirim Pesan", icon: MessageSquare, to: "/dashboard/messages", color: "text-blue-600", bg: "bg-blue-500/10" },
+  { label: "Cek Kontrak", icon: FileText, to: "/dashboard/contracts", color: "text-amber-600", bg: "bg-amber-500/10" },
+];
+
 export default function ClientDashboard() {
   const { profile } = useAuth();
   const [activityTab, setActivityTab] = useState<"recent" | "log">("recent");
-  const { data: projects } = useClientProjects();
-  const { data: invoices } = useClientInvoices();
+  const { data: projects, isLoading: loadingProjects } = useClientProjects();
+  const { data: invoices, isLoading: loadingInvoices } = useClientInvoices();
   const { data: tickets } = useClientTickets();
   const { data: contracts } = useClientContracts();
   const { data: domains } = useClientDomains();
   const { data: activity } = useClientActivity();
+
+  const isLoading = loadingProjects || loadingInvoices;
 
   const activeProjects = projects?.filter(p => ["Planning", "In Progress"].includes(p.status)).length ?? 0;
   const outstandingAmt = invoices?.filter(i => ["Sent", "Viewed", "Overdue"].includes(i.status)).reduce((s, i) => s + Number(i.amount), 0) ?? 0;
@@ -79,8 +90,30 @@ export default function ClientDashboard() {
           </div>
         </RevealCard>
 
-        {/* Stat Cards */}
-        <StatCards stats={stats} />
+        {/* Stat Cards with skeleton */}
+        {isLoading ? (
+          <RevealCard delay={100}><StatSkeleton /></RevealCard>
+        ) : (
+          <StatCards stats={stats} />
+        )}
+
+        {/* Quick Actions */}
+        <RevealCard delay={110}>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {quickActions.map((action) => (
+              <Link
+                key={action.label}
+                to={action.to}
+                className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border hover:shadow-md hover:border-primary/20 transition-all group"
+              >
+                <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-colors", action.bg)}>
+                  <action.icon className={cn("w-4 h-4", action.color)} />
+                </div>
+                <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{action.label}</span>
+              </Link>
+            ))}
+          </div>
+        </RevealCard>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Left: Action Items + Projects */}
@@ -125,7 +158,9 @@ export default function ClientDashboard() {
                   <h2 className="text-sm font-semibold flex items-center gap-2"><FolderKanban className="w-4 h-4 text-primary" /> Proyek Saya</h2>
                   <Link to="/dashboard/projects" className="text-xs text-primary hover:underline flex items-center gap-1">Lihat Semua <ArrowUpRight className="w-3 h-3" /></Link>
                 </div>
-                {!projects?.length ? (
+                {loadingProjects ? (
+                  <ListSkeleton rows={3} />
+                ) : !projects?.length ? (
                   <Card>
                     <CardContent className="p-6 text-center">
                       <p className="text-sm text-muted-foreground">Belum ada proyek yang ditetapkan.</p>
@@ -134,29 +169,31 @@ export default function ClientDashboard() {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {projects.slice(0, 4).map((p) => (
-                      <Card key={p.id} className="hover:shadow-md transition-shadow">
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between mb-3">
-                            <h3 className="font-medium">{p.name}</h3>
-                            <StatusBadge status={p.status} variant={statusVariant[p.status] ?? "neutral"} />
-                          </div>
-                          <div className="space-y-1.5">
-                            <div className="flex justify-between text-xs">
-                              <span className="text-muted-foreground">Progres</span>
-                              <span className="font-mono font-medium">{p.progress}%</span>
+                      <Link key={p.id} to="/dashboard/projects" className="block">
+                        <Card className="hover:shadow-md transition-all hover:border-primary/20 cursor-pointer">
+                          <CardContent className="p-4">
+                            <div className="flex items-start justify-between mb-3">
+                              <h3 className="font-medium">{p.name}</h3>
+                              <StatusBadge status={p.status} variant={statusVariant[p.status] ?? "neutral"} />
                             </div>
-                            <div className="h-2.5 bg-muted rounded-full overflow-hidden">
-                              <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${p.progress}%` }} />
+                            <div className="space-y-1.5">
+                              <div className="flex justify-between text-xs">
+                                <span className="text-muted-foreground">Progres</span>
+                                <span className="font-mono font-medium">{p.progress}%</span>
+                              </div>
+                              <div className="h-2.5 bg-muted rounded-full overflow-hidden">
+                                <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${p.progress}%` }} />
+                              </div>
                             </div>
-                          </div>
-                          {p.milestones?.length > 0 && (
-                            <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
-                              <CheckCircle className="w-3 h-3" />
-                              {p.milestones.filter((m: any) => m.status === "Approved").length}/{p.milestones.length} milestone selesai
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card>
+                            {p.milestones?.length > 0 && (
+                              <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
+                                <CheckCircle className="w-3 h-3" />
+                                {p.milestones.filter((m: any) => m.status === "Approved").length}/{p.milestones.length} milestone selesai
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -172,7 +209,6 @@ export default function ClientDashboard() {
                 <Card>
                   <CardContent className="p-5">
                     <h2 className="text-sm font-semibold mb-3 flex items-center gap-2"><Receipt className="w-4 h-4 text-primary" /> Ringkasan Pembayaran</h2>
-                    {/* Screen reader summary */}
                     <p className="sr-only">
                       Pembayaran lunas: Rp {(paidAmt / 1e6).toFixed(1)}M. Belum lunas: Rp {(outstandingAmt / 1e6).toFixed(1)}M.
                     </p>
@@ -237,7 +273,9 @@ export default function ClientDashboard() {
                     <h2 className="text-sm font-semibold">Invoice Terbaru</h2>
                     <Link to="/dashboard/invoices" className="text-xs text-primary hover:underline flex items-center gap-1">Semua <ArrowUpRight className="w-3 h-3" /></Link>
                   </div>
-                  {!invoices?.length ? (
+                  {loadingInvoices ? (
+                    <ListSkeleton rows={3} />
+                  ) : !invoices?.length ? (
                     <p className="text-sm text-muted-foreground text-center py-4">Belum ada invoice.</p>
                   ) : (
                     <div className="space-y-2">

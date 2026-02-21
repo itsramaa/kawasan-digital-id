@@ -4,6 +4,7 @@ import { DataTable } from "@/shared/components/common/DataTable";
 import { RevealCard } from "@/shared/components/common/RevealCard";
 import { HeroBanner } from "@/shared/components/common/HeroBanner";
 import { StatCards } from "@/shared/components/common/StatCards";
+import { StatSkeleton } from "@/shared/components/common/LoadingSkeleton";
 import { useClientContracts } from "@/features/client/hooks/useClientContracts";
 import { FileText, CheckCircle, AlertTriangle, Clock } from "lucide-react";
 import { differenceInDays, parseISO } from "date-fns";
@@ -20,8 +21,6 @@ export default function ClientContracts() {
   const expiringSoon = contracts?.filter(c => { if (!c.end_date || c.status !== "Active") return false; return differenceInDays(parseISO(c.end_date), new Date()) <= 60; }).length ?? 0;
   const completed = contracts?.filter(c => c.status === "Completed").length ?? 0;
 
-  if (isLoading) return <ClientLayout><div className="text-center py-12 text-muted-foreground">Memuat...</div></ClientLayout>;
-
   const stats = [
     { label: "Kontrak Aktif", value: String(active), icon: FileText, color: "text-primary" },
     { label: "Total Nilai", value: `Rp ${(totalValue / 1e6).toFixed(1)}M`, icon: CheckCircle, color: "text-emerald-500" },
@@ -33,9 +32,14 @@ export default function ClientContracts() {
     <ClientLayout>
       <div className="space-y-6">
         <HeroBanner icon={FileText} title="Kontrak" subtitle="Perjanjian kerja sama dan status kontrak Anda" breadcrumb="Dasbor > Kontrak" />
-        <StatCards stats={stats} />
 
-        {expiringSoon > 0 && (
+        {isLoading ? (
+          <RevealCard delay={100}><StatSkeleton /></RevealCard>
+        ) : (
+          <StatCards stats={stats} />
+        )}
+
+        {!isLoading && expiringSoon > 0 && (
           <RevealCard delay={120}>
             <div className="flex items-center gap-3 p-4 rounded-lg border border-destructive/30 bg-destructive/5" role="alert">
               <AlertTriangle className="w-5 h-5 text-destructive shrink-0" />
@@ -49,7 +53,7 @@ export default function ClientContracts() {
             columns={[
               { key: "title", header: "Kontrak", render: (c: any) => <span className="font-medium">{c.title}</span> },
               { key: "status", header: "Status", render: (c: any) => <StatusBadge status={c.status} variant={statusMap[c.status] ?? "neutral"} /> },
-              { key: "start", header: "Mulai", render: (c: any) => <span className="text-xs text-muted-foreground">{c.start_date ? new Date(c.start_date).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }) : "—"}</span> },
+              { key: "start", header: "Mulai", hideMobile: true, render: (c: any) => <span className="text-xs text-muted-foreground">{c.start_date ? new Date(c.start_date).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }) : "—"}</span> },
               {
                 key: "end", header: "Berakhir", sortable: true, sortValue: (c: any) => c.end_date ?? "", render: (c: any) => {
                   const daysLeft = c.end_date ? differenceInDays(parseISO(c.end_date), new Date()) : null;

@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { ClientLayout } from "@/shared/components/layouts/ClientLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
+import { HeroBanner } from "@/shared/components/common/HeroBanner";
+import { StatCards } from "@/shared/components/common/StatCards";
+import { StatSkeleton, ListSkeleton } from "@/shared/components/common/LoadingSkeleton";
 import {
   useClientMessages,
   useMessageReplies,
@@ -63,51 +66,34 @@ export default function ClientMessages() {
     setMobileShowConvo(true);
   };
 
+  const stats = [
+    { label: "Total Pesan", value: String(messages.length), icon: Mail, color: "text-primary" },
+    { label: "Pesan Baru", value: String(messages.filter((m) => (m.status || "new") === "new").length), icon: Inbox, color: "text-primary" },
+    { label: "Belum Dibaca", value: String(messages.filter((m) => m.unread_count > 0).length), icon: MessageSquare, color: messages.filter((m) => m.unread_count > 0).length > 0 ? "text-destructive" : "text-muted-foreground" },
+  ];
+
   return (
     <ClientLayout>
       <div className="space-y-6">
         {/* Hero */}
-        <RevealCard>
-          <div className="relative rounded-xl overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-border p-6 lg:p-8">
-            <div className="flex items-center justify-between gap-4 flex-wrap">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <MessageSquare className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h1 className="text-xl lg:text-2xl font-bold text-foreground">Pesan</h1>
-                  <p className="text-sm text-muted-foreground">Komunikasi langsung dengan tim kami</p>
-                </div>
-              </div>
-              <Button onClick={() => setComposeOpen(true)} size="sm">
-                <Plus className="w-4 h-4 mr-1" /> Pesan Baru
-              </Button>
-            </div>
-          </div>
-        </RevealCard>
+        <HeroBanner
+          icon={MessageSquare}
+          title="Pesan"
+          subtitle="Komunikasi langsung dengan tim kami"
+          breadcrumb="Dasbor > Pesan"
+          actions={
+            <Button onClick={() => setComposeOpen(true)} size="sm">
+              <Plus className="w-4 h-4 mr-1" /> Pesan Baru
+            </Button>
+          }
+        />
 
         {/* Stat Cards */}
-        <RevealCard delay={50}>
-          <div className="grid grid-cols-3 gap-3" role="group" aria-label="Ringkasan pesan">
-            {[
-              { label: "Total", count: messages.length, icon: Mail },
-              { label: "Baru", count: messages.filter((m) => (m.status || "new") === "new").length, icon: Inbox },
-              { label: "Belum Dibaca", count: messages.filter((m) => m.unread_count > 0).length, icon: MessageSquare },
-            ].map((s) => (
-              <Card key={s.label} className="p-4">
-                <div className="flex items-center gap-3" aria-label={`${s.label}: ${s.count}`}>
-                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <s.icon className="w-4 h-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xl font-bold text-foreground">{s.count}</p>
-                    <p className="text-xs text-muted-foreground">{s.label}</p>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </RevealCard>
+        {isLoading ? (
+          <RevealCard delay={50}><StatSkeleton count={3} /></RevealCard>
+        ) : (
+          <StatCards stats={stats} />
+        )}
 
         {/* Main Content */}
         <RevealCard delay={100}>
@@ -130,7 +116,7 @@ export default function ClientMessages() {
               <ScrollArea className="flex-1">
                 <div className="px-3 pb-3 space-y-1">
                   {isLoading ? (
-                    <div className="text-center py-10 text-sm text-muted-foreground">Memuat...</div>
+                    <ListSkeleton rows={5} />
                   ) : filtered.length === 0 ? (
                     <div className="text-center py-10 space-y-3">
                       <Inbox className="w-10 h-10 text-muted-foreground/40 mx-auto" />
@@ -204,7 +190,6 @@ function ConversationPanel({ message, onBack }: { message: ContactMessage; onBac
 
   useRealtimeReplies(message.id);
 
-  // Mark as read on mount - using ref to avoid dependency issues
   useEffect(() => {
     if (message.unread_count > 0) markAsReadRef.current.mutate(message.id);
   }, [message.id, message.unread_count]);

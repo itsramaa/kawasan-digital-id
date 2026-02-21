@@ -3,6 +3,7 @@ import { DataTable } from "@/shared/components/common/DataTable";
 import { RevealCard } from "@/shared/components/common/RevealCard";
 import { HeroBanner } from "@/shared/components/common/HeroBanner";
 import { StatCards } from "@/shared/components/common/StatCards";
+import { StatSkeleton } from "@/shared/components/common/LoadingSkeleton";
 import { useClientPayments } from "@/features/client/hooks/useClientPayments";
 import { CreditCard, Receipt, CalendarCheck, Wallet } from "lucide-react";
 import { Badge } from "@/shared/components/ui/badge";
@@ -18,8 +19,6 @@ export default function ClientPayments() {
   payments?.forEach(p => { const m = p.payment_method ?? "Lainnya"; methodCounts[m] = (methodCounts[m] || 0) + 1; });
   const topMethod = Object.entries(methodCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "—";
 
-  if (isLoading) return <ClientLayout><div className="text-center py-12 text-muted-foreground">Memuat...</div></ClientLayout>;
-
   const stats = [
     { label: "Total Dibayar", value: `Rp ${(totalPaid / 1e6).toFixed(1)}M`, icon: CreditCard, color: "text-primary" },
     { label: "Transaksi", value: String(count), icon: Receipt, color: "text-primary" },
@@ -31,7 +30,12 @@ export default function ClientPayments() {
     <ClientLayout>
       <div className="space-y-6">
         <HeroBanner icon={CreditCard} title="Pembayaran" subtitle="Riwayat dan detail pembayaran Anda" breadcrumb="Dasbor > Pembayaran" />
-        <StatCards stats={stats} />
+
+        {isLoading ? (
+          <RevealCard delay={100}><StatSkeleton /></RevealCard>
+        ) : (
+          <StatCards stats={stats} />
+        )}
 
         <RevealCard delay={150}>
           <DataTable
@@ -41,7 +45,7 @@ export default function ClientPayments() {
               { key: "amount", header: "Jumlah", className: "text-right", render: (p: any) => <span className="font-mono text-xs font-semibold">Rp {Number(p.amount).toLocaleString("id-ID")}</span> },
               { key: "date", header: "Tanggal", render: (p: any) => <span className="text-xs text-muted-foreground">{new Date(p.payment_date).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</span> },
               { key: "method", header: "Metode", render: (p: any) => p.payment_method ? <Badge variant="secondary" className="text-[10px]">{p.payment_method}</Badge> : <span className="text-xs text-muted-foreground">—</span> },
-              { key: "ref", header: "Referensi", render: (p: any) => <span className="font-mono text-xs text-muted-foreground">{p.reference_number ?? "—"}</span> },
+              { key: "ref", header: "Referensi", hideMobile: true, render: (p: any) => <span className="font-mono text-xs text-muted-foreground">{p.reference_number ?? "—"}</span> },
             ]}
             data={payments ?? []}
             isLoading={isLoading}

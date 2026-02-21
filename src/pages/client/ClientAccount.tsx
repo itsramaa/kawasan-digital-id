@@ -96,7 +96,7 @@ export default function ClientAccount() {
                     <p className="text-xs text-muted-foreground">{user?.email}</p>
                   </div>
                   <div className="border-t border-border pt-3 space-y-3 text-sm">
-                    <div className="flex items-center gap-2.5"><Shield className="w-4 h-4 text-muted-foreground" /><div><p className="text-xs text-muted-foreground">Role</p><p className="font-medium capitalize">{roleName}</p></div></div>
+                    <div className="flex items-center gap-2.5"><Shield className="w-4 h-4 text-muted-foreground" /><div><p className="text-xs text-muted-foreground">Peran</p><p className="font-medium capitalize">{roleName}</p></div></div>
                     <div className="flex items-center gap-2.5"><Calendar className="w-4 h-4 text-muted-foreground" /><div><p className="text-xs text-muted-foreground">Bergabung sejak</p><p className="font-medium">{joinDate}</p></div></div>
                     <div className="flex items-center gap-2.5">
                       <CheckCircle className="w-4 h-4 text-muted-foreground" />
