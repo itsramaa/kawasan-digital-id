@@ -1,119 +1,80 @@
 
 
-# Sistem Pesan (Messaging) di Dashboard Client
+# Maksimalkan Halaman Infrastructure Client
 
 ## Ringkasan
-Mengubah `contact_messages` menjadi backbone sistem messaging dua arah di dashboard client. Pesan dari form kontak publik masuk sebagai thread baru, dan admin bisa membalas. Client melihat semua pesan + balasan di halaman baru `/dashboard/messages` dengan tampilan inbox yang profesional.
+Upgrade halaman Infrastructure (`/dashboard/infrastructure`) agar konsisten dengan style halaman Profile dan Support yang sudah di-upgrade -- hero banner, summary stat cards, tab navigation, detail cards yang lebih polished, animasi scroll-reveal, dan teks UI dalam Bahasa Indonesia.
 
 ---
 
-## Perubahan yang Diperlukan
+## Perubahan yang Akan Dilakukan
 
-### 1. Database: Tabel Baru `message_replies`
+### 1. Hero Banner + Breadcrumb
+- Breadcrumb: Dashboard > Infrastruktur
+- Gradient banner konsisten (`bg-gradient-to-br from-primary/10 via-primary/5 to-transparent`)
+- Icon Globe besar di banner
+- Judul "Infrastruktur" + subtitle "Domain, hosting, dan status layanan Anda"
 
-Tabel balasan untuk threading pada `contact_messages`:
+### 2. Summary Stat Cards (4 kartu)
+- **Total Domain** -- icon Globe, jumlah domain
+- **Domain Kadaluarsa** -- icon AlertTriangle, jumlah expiring/expired, warna warning/error
+- **Total Hosting** -- icon Server, jumlah hosting aktif
+- **SSL Aktif** -- icon Shield, placeholder atau jumlah domain dengan auto_renew aktif
+- Masing-masing dengan `RevealCard` animasi
 
-```text
-message_replies
-- id (uuid, PK)
-- message_id (uuid, FK -> contact_messages.id)
-- sender_type (text: 'client' | 'admin')
-- sender_id (uuid, nullable -- user_id pengirim)
-- body (text)
-- created_at (timestamptz)
-```
+### 3. Tab Navigation (Domain & Hosting)
+- Menggunakan `Tabs` dari shadcn/ui untuk switch antara Domain dan Hosting
+- Tab icons: Globe untuk Domain, Server untuk Hosting
+- Jumlah item di setiap tab label (contoh: "Domain (5)")
 
-### 2. Database: Modifikasi `contact_messages`
+### 4. Domain Cards -- Upgrade Visual
+- Card yang lebih polished dengan layout terstruktur:
+  - Header: domain name (font-mono) + status badge
+  - Progress bar visual untuk sisa hari sebelum expired (hijau > 90 hari, kuning 30-90, merah < 30)
+  - Grid info: Registrar, Tanggal Kadaluarsa (formatted), Auto-Renew (icon check/cross)
+  - Border-left accent warna sesuai status (hijau = aktif, kuning = expiring, merah = expired)
+  - Hover shadow effect
+- Teks: "Registrar", "Kadaluarsa", "Perpanjangan Otomatis"
 
-Tambahkan kolom baru:
-- `user_id` (uuid, nullable) -- link ke auth user jika pengirim sudah login
-- `updated_at` (timestamptz, default now()) -- untuk sorting by latest activity
-- `unread_count` (integer, default 0) -- jumlah balasan belum dibaca oleh client
+### 5. Hosting Cards -- Upgrade Visual
+- Card yang lebih polished:
+  - Header: server name + status badge
+  - Badge server_type (VPS, Shared, Dedicated, dll)
+  - Grid info: Provider, Tipe, Kadaluarsa
+  - Border-left accent warna sesuai status
+  - Hover shadow effect
+- Teks: "Penyedia", "Tipe Server", "Kadaluarsa"
 
-### 3. RLS Policies
+### 6. Alert Banners -- Upgrade
+- Tetap tampilkan alert untuk domain/hosting yang expiring
+- Teks dalam Bahasa Indonesia: "X domain akan kadaluarsa dalam 30 hari"
+- Style konsisten dengan halaman lain
 
-**contact_messages:**
-- Client bisa SELECT pesan miliknya sendiri (WHERE user_id = auth.uid())
-- Existing: Anyone can INSERT (tetap, untuk form publik)
-- Client bisa UPDATE `status` dan `unread_count` pada pesan miliknya
+### 7. Empty State -- Upgrade
+- Icon lebih besar dengan background circle
+- Teks dalam Bahasa Indonesia
+- Tampilan yang lebih polished
 
-**message_replies:**
-- Client bisa SELECT balasan pada pesan miliknya
-- Client bisa INSERT balasan pada pesan miliknya (sender_type = 'client')
-- Internal users bisa manage semua
-
-### 4. Update Form Kontak Publik (`ContactPage.tsx`)
-
-- Jika user sedang login, sertakan `user_id` saat insert ke `contact_messages`
-- Ini memungkinkan pesan dari form kontak muncul di dashboard client
-
-### 5. Halaman Baru: `/dashboard/messages`
-
-Layout inbox profesional dengan dua panel:
-
-```text
-+---------------------------+-------------------------+
-| Inbox List (kiri)         | Conversation (kanan)    |
-|                           |                         |
-| [Search bar]              | Subject + Status        |
-| [Filter: Semua/Baru/...]  | ----------------------- |
-|                           | Pesan awal (bubble)     |
-| > Thread 1 (unread dot)  | Balasan admin (bubble)  |
-|   Thread 2               | Balasan client (bubble) |
-|   Thread 3               |                         |
-|                           | [Input balas + Send]    |
-+---------------------------+-------------------------+
-```
-
-Fitur:
-- **Inbox list**: Subject, preview pesan, tanggal, status badge, unread indicator
-- **Conversation view**: Chat bubbles dua arah (client di kanan, admin di kiri)
-- **Reply input**: Textarea + tombol kirim di bawah conversation
-- **Search & Filter**: Cari berdasarkan subject, filter by status (new/replied/closed)
-- **Empty state**: Ilustrasi + CTA "Kirim Pesan Baru" yang buka form dialog
-- **Compose dialog**: Form kirim pesan baru (subject + message) dari dalam dashboard
-- **Real-time**: Subscribe ke `message_replies` untuk update langsung
-- **Unread badge**: Notifikasi jumlah pesan belum dibaca di navbar
-
-### 6. Tambah "Messages" ke Navbar (`ClientLayout.tsx`)
-
-- Tambah entry baru di `navItems`: `{ label: "Messages", path: "/dashboard/messages", icon: MessageSquare }`
-- Badge kecil merah dengan angka unread di samping icon (jika ada)
-- Posisi setelah "Support" atau sebelum "Support"
-
-### 7. Route Baru (`App.tsx`)
-
-- Tambah route: `/dashboard/messages` -> `ClientMessages`
-
-### 8. Hook Data (`useClientMessages.ts`)
-
-- `useClientMessages()`: Fetch semua contact_messages milik user, order by updated_at desc
-- `useMessageReplies(messageId)`: Fetch semua replies untuk satu thread
-- `useReplyMutation()`: Insert reply baru
-- `useComposeMessage()`: Insert pesan baru dari dashboard
-- `useUnreadCount()`: Count pesan dengan unread_count > 0 (untuk badge navbar)
-
----
-
-## File yang Dibuat/Dimodifikasi
-
-| File | Aksi |
-|------|------|
-| Database migration | Baru -- tambah kolom di `contact_messages`, buat tabel `message_replies` |
-| `src/features/client/hooks/useClientMessages.ts` | Baru -- hooks data messaging |
-| `src/pages/client/ClientMessages.tsx` | Baru -- halaman inbox + conversation |
-| `src/pages/store/ContactPage.tsx` | Edit -- sertakan `user_id` jika login |
-| `src/shared/components/layouts/ClientLayout.tsx` | Edit -- tambah Messages di navbar + badge |
-| `src/App.tsx` | Edit -- tambah route `/dashboard/messages` |
+### 8. Animasi Scroll-Reveal
+- `RevealCard` wrapper pada hero, stats, tabs, setiap card
+- Staggered delay untuk efek cascade
 
 ---
 
 ## Detail Teknis
 
-- Realtime subscription pada `message_replies` agar balasan admin langsung muncul tanpa refresh
-- Chat bubble styling: client = `bg-primary text-primary-foreground` (kanan), admin = `bg-muted` (kiri)
-- Scroll otomatis ke bawah saat ada pesan baru
-- RevealCard + useScrollReveal untuk animasi masuk
-- Compose dialog menggunakan pattern FormDialog yang sudah ada
-- Teks UI dalam Bahasa Indonesia
-- Unread badge menggunakan realtime channel untuk update count
+### File yang Dimodifikasi
+- `src/pages/client/ClientInfrastructure.tsx` -- refactor komprehensif
+
+### Pendekatan
+- Tidak ada perubahan database
+- Tidak ada dependency baru
+- Menggunakan `RevealCard` pattern dari `ClientAccount.tsx`
+- Menggunakan `useScrollReveal` hook yang sudah ada
+- Menggunakan `Card`, `CardContent`, `CardHeader` dari shadcn/ui
+- Menggunakan `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` dari shadcn/ui
+- Data yang sudah tersedia: domain_name, status, registrar, expiry_date, auto_renew, name, provider, server_type
+- Icon dari lucide-react: Globe, Server, Shield, AlertTriangle, CheckCircle, ChevronRight, Calendar, Clock
+- Responsive: grid 2 kolom di desktop, 1 kolom di mobile
+- Semua teks UI dalam Bahasa Indonesia
+
