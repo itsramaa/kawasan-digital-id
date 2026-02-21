@@ -1,20 +1,3 @@
-export interface ShowcaseProject {
-  id: string;
-  title: string;
-  description: string | null;
-  thumbnail_url: string | null;
-  category: string | null;
-  tech_stack: string[];
-  demo_url: string | null;
-  is_published: boolean;
-  display_order: number;
-  created_at: string;
-  client_background: string | null;
-  challenge: string | null;
-  solution: string | null;
-  result: string | null;
-}
-
 export interface ServiceTemplate {
   id: string;
   name: string;

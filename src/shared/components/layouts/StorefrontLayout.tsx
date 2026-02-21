@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/shared/utils/utils";
-import { Globe, Menu, X, ShoppingCart } from "lucide-react";
+import { Globe, Menu, X, ShoppingCart, ArrowUp } from "lucide-react";
 import { useCart } from "@/features/storefront/hooks/useCart";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -67,7 +67,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
             <Link to="/cart" className="relative p-2 hover:bg-muted rounded-lg transition-colors">
               <ShoppingCart className="w-5 h-5 text-muted-foreground" />
               {itemCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center text-[10px] font-bold bg-primary text-primary-foreground rounded-full min-w-[18px] h-[18px]">
+                <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center text-[10px] font-bold bg-primary text-primary-foreground rounded-full min-w-[18px] h-[18px] animate-scale-in">
                   {itemCount}
                 </span>
               )}
@@ -93,7 +93,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
             <Link to="/cart" className="relative p-2 hover:bg-muted rounded-lg transition-colors">
               <ShoppingCart className="w-5 h-5 text-muted-foreground" />
               {itemCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center text-[10px] font-bold bg-primary text-primary-foreground rounded-full min-w-[18px] h-[18px]">
+                <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center text-[10px] font-bold bg-primary text-primary-foreground rounded-full min-w-[18px] h-[18px] animate-scale-in">
                   {itemCount}
                 </span>
               )}
@@ -167,7 +167,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
               <div className="space-y-2">
                 <Link to="/templates" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Templates</Link>
                 <Link to="/custom" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Custom Website</Link>
-                
+                <Link to="/custom" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Estimasi Custom</Link>
               </div>
             </div>
 
@@ -201,6 +201,30 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
       </footer>
+      {/* Back to Top */}
+      <BackToTop />
     </div>
+  );
+}
+
+function BackToTop() {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  if (!show) return null;
+
+  return (
+    <button
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:bg-primary/90 transition-all animate-fade-in"
+      aria-label="Back to top"
+    >
+      <ArrowUp className="w-4 h-4" />
+    </button>
   );
 }
