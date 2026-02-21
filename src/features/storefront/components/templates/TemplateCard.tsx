@@ -47,7 +47,7 @@ export function TemplateCard({ template, index, onQuickView, isWishlisted, onTog
           <button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleWishlist(template.id); }}
             className={cn(
-              "absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 shadow-sm",
+              "absolute top-2 right-2 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 shadow-sm",
               isWishlisted
                 ? "bg-red-500 text-white scale-110"
                 : "bg-white/80 text-muted-foreground hover:bg-white hover:text-red-500"
