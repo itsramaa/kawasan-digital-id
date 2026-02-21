@@ -176,14 +176,15 @@ export function DataTable<T extends { id: string }>({
         {filtered.length > 0 && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/20">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span>Showing {from}–{to} of {filtered.length}</span>
+              <span>Menampilkan {from}–{to} dari {filtered.length}</span>
               <select
                 value={pageSize}
                 onChange={(e) => { setPageSize(Number(e.target.value)); setPage(0); }}
                 className="bg-card border border-border rounded px-1.5 py-0.5 text-xs"
+                aria-label="Jumlah baris per halaman"
               >
                 {pageSizeOptions.map((n) => (
-                  <option key={n} value={n}>{n} rows</option>
+                  <option key={n} value={n}>{n} baris</option>
                 ))}
               </select>
             </div>
@@ -192,6 +193,7 @@ export function DataTable<T extends { id: string }>({
                 onClick={() => setPage(Math.max(0, page - 1))}
                 disabled={page === 0}
                 className="p-1.5 rounded hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed"
+                aria-label="Halaman sebelumnya"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -214,6 +216,7 @@ export function DataTable<T extends { id: string }>({
                 onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
                 disabled={page >= totalPages - 1}
                 className="p-1.5 rounded hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed"
+                aria-label="Halaman berikutnya"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

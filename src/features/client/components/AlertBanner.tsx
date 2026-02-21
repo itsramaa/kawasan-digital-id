@@ -17,7 +17,7 @@ const config = {
 export function AlertBanner({ variant, title, description, className }: AlertBannerProps) {
   const { icon: Icon, bg } = config[variant];
   return (
-    <div className={cn("flex items-start gap-3 px-4 py-3 rounded-lg border", bg, className)}>
+    <div role="alert" aria-live="polite" className={cn("flex items-start gap-3 px-4 py-3 rounded-lg border", bg, className)}>
       <Icon className="w-5 h-5 mt-0.5 flex-shrink-0" />
       <div>
         <p className="text-sm font-medium">{title}</p>
