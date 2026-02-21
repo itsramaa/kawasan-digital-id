@@ -29,7 +29,7 @@ import ClientSupport from "./pages/client/ClientSupport";
 import ClientAccount from "./pages/client/ClientAccount";
 import NotFound from "./pages/NotFound";
 import StorefrontHome from "./pages/store/StorefrontHome";
-import ShowcasePage from "./pages/store/ShowcasePage";
+
 import TemplatesPage from "./pages/store/TemplatesPage";
 import TemplateDetailPage from "./pages/store/TemplateDetailPage";
 import CheckoutPage from "./pages/store/CheckoutPage";
@@ -59,8 +59,8 @@ const App = () => (
             
             {/* Storefront Routes (Public) - root level */}
             <Route path="/" element={<StorefrontHome />} />
-            <Route path="/showcase" element={<ShowcasePage />} />
-            <Route path="/showcase/:id" element={<ShowcasePage />} />
+
+
             <Route path="/templates" element={<TemplatesPage />} />
             <Route path="/templates/:id" element={<TemplateDetailPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />

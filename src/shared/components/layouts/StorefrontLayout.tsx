@@ -9,7 +9,7 @@ const navLinks = [
   { label: "Home", path: "/" },
   { label: "Templates", path: "/templates" },
   { label: "Custom Website", path: "/custom" },
-  { label: "Portfolio", path: "/showcase" },
+  
   { label: "Help & FAQ", path: "/help" },
 ];
 
@@ -167,7 +167,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
               <div className="space-y-2">
                 <Link to="/templates" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Templates</Link>
                 <Link to="/custom" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Custom Website</Link>
-                <Link to="/showcase" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Portfolio</Link>
+                
               </div>
             </div>
 
