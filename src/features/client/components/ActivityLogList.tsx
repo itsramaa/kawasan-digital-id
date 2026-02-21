@@ -13,8 +13,8 @@ const entityIcons: Record<string, typeof Activity> = {
 export function ActivityLogList() {
   const { data: logs, isLoading } = useActivityLogs(30);
 
-  if (isLoading) return <p className="text-sm text-muted-foreground text-center py-4">Loading...</p>;
-  if (!logs?.length) return <p className="text-sm text-muted-foreground text-center py-4">No activity recorded yet.</p>;
+  if (isLoading) return <p className="text-sm text-muted-foreground text-center py-4">Memuat...</p>;
+  if (!logs?.length) return <p className="text-sm text-muted-foreground text-center py-4" role="status">Belum ada aktivitas tercatat.</p>;
 
   return (
     <div className="space-y-1">

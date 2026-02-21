@@ -100,14 +100,14 @@ export function ClientLayout({ children }: ClientLayoutProps) {
                   className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-muted transition-colors"
                 >
                   <User className="w-4 h-4" />
-                  Profile
+                  Profil
                 </button>
                 <button
                   onClick={() => { signOut(); setDropdownOpen(false); }}
                   className="flex items-center gap-2 w-full px-3 py-2 text-sm text-destructive hover:bg-muted transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
-                  Logout
+                  Keluar
                 </button>
               </div>
             )}

@@ -145,9 +145,9 @@ export default function ClientSupport() {
       <div className="space-y-6">
         {/* Breadcrumb */}
         <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <span>Dashboard</span>
+          <span>Dasbor</span>
           <ChevronRight className="w-3.5 h-3.5" />
-          <span className="text-foreground font-medium">Support</span>
+          <span className="text-foreground font-medium">Bantuan</span>
         </div>
 
         {/* Hero Banner */}
@@ -207,12 +207,15 @@ export default function ClientSupport() {
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className="pl-9"
+                aria-label="Cari tiket dukungan"
               />
             </div>
-            <div className="flex gap-1.5">
+            <div className="flex gap-1.5" role="tablist" aria-label="Filter tiket">
               {filterTabs.map(tab => (
                 <button
                   key={tab.key}
+                  role="tab"
+                  aria-selected={activeTab === tab.key}
                   onClick={() => setActiveTab(tab.key)}
                   className={cn(
                     "px-3 py-2 rounded-md text-xs font-medium transition-colors",
