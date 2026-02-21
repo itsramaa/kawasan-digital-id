@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { ClientLayout } from "@/shared/components/layouts/ClientLayout";
-import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
+import { RevealCard } from "@/shared/components/common/RevealCard";
 import {
   useClientMessages,
   useMessageReplies,
@@ -11,7 +11,7 @@ import {
   type ContactMessage,
 } from "@/features/client/hooks/useClientMessages";
 import { cn } from "@/shared/utils/utils";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { Card, CardHeader } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -20,25 +20,12 @@ import { Label } from "@/shared/components/ui/label";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
 import { FormDialog } from "@/shared/components/common/FormDialog";
 import {
-  MessageSquare, Search, Plus, Send, Inbox, ChevronRight,
+  MessageSquare, Search, Plus, Send, Inbox,
   Mail, Clock, ArrowLeft,
 } from "lucide-react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { toast } from "sonner";
-
-function RevealCard({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  const { ref, isVisible } = useScrollReveal(0.1);
-  return (
-    <div
-      ref={ref}
-      className={cn("transition-all duration-700", isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6", className)}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-}
 
 const STATUS_MAP: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   new: { label: "Baru", variant: "default" },
@@ -101,14 +88,14 @@ export default function ClientMessages() {
 
         {/* Stat Cards */}
         <RevealCard delay={50}>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-3" role="group" aria-label="Ringkasan pesan">
             {[
               { label: "Total", count: messages.length, icon: Mail },
               { label: "Baru", count: messages.filter((m) => (m.status || "new") === "new").length, icon: Inbox },
               { label: "Belum Dibaca", count: messages.filter((m) => m.unread_count > 0).length, icon: MessageSquare },
             ].map((s) => (
               <Card key={s.label} className="p-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3" aria-label={`${s.label}: ${s.count}`}>
                   <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
                     <s.icon className="w-4 h-4 text-primary" />
                   </div>
@@ -130,11 +117,11 @@ export default function ClientMessages() {
               <CardHeader className="pb-3 space-y-3">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input placeholder="Cari pesan..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9" />
+                  <Input placeholder="Cari pesan..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9" aria-label="Cari pesan" />
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-1" role="tablist" aria-label="Filter pesan">
                   {(["all", "new", "replied", "closed"] as const).map((f) => (
-                    <Button key={f} variant={filter === f ? "default" : "ghost"} size="sm" className="text-xs h-7 px-2.5" onClick={() => setFilter(f)}>
+                    <Button key={f} role="tab" aria-selected={filter === f} variant={filter === f ? "default" : "ghost"} size="sm" className="text-xs h-7 px-2.5" onClick={() => setFilter(f)}>
                       {f === "all" ? "Semua" : STATUS_MAP[f]?.label || f}
                     </Button>
                   ))}
@@ -187,10 +174,7 @@ export default function ClientMessages() {
             {/* Conversation Panel */}
             <Card className={cn("lg:col-span-3 flex flex-col", !mobileShowConvo && "hidden lg:flex")}>
               {selectedMessage ? (
-                <ConversationPanel
-                  message={selectedMessage}
-                  onBack={() => setMobileShowConvo(false)}
-                />
+                <ConversationPanel message={selectedMessage} onBack={() => setMobileShowConvo(false)} />
               ) : (
                 <div className="flex-1 flex flex-col items-center justify-center text-center p-6 space-y-3">
                   <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
@@ -203,7 +187,6 @@ export default function ClientMessages() {
           </div>
         </RevealCard>
 
-        {/* Compose Dialog */}
         <ComposeDialog open={composeOpen} onOpenChange={setComposeOpen} />
       </div>
     </ClientLayout>
@@ -214,17 +197,18 @@ function ConversationPanel({ message, onBack }: { message: ContactMessage; onBac
   const { data: replies = [] } = useMessageReplies(message.id);
   const replyMutation = useReplyMutation();
   const markAsRead = useMarkAsRead();
+  const markAsReadRef = useRef(markAsRead);
+  markAsReadRef.current = markAsRead;
   const [replyText, setReplyText] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useRealtimeReplies(message.id);
 
-  // Mark as read on mount
+  // Mark as read on mount - using ref to avoid dependency issues
   useEffect(() => {
-    if (message.unread_count > 0) markAsRead.mutate(message.id);
+    if (message.unread_count > 0) markAsReadRef.current.mutate(message.id);
   }, [message.id, message.unread_count]);
 
-  // Auto scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [replies.length]);
@@ -233,17 +217,16 @@ function ConversationPanel({ message, onBack }: { message: ContactMessage; onBac
     const body = replyText.trim();
     if (!body) return;
     replyMutation.mutate({ messageId: message.id, body }, {
-      onSuccess: () => { setReplyText(""); },
+      onSuccess: () => setReplyText(""),
       onError: () => toast.error("Gagal mengirim balasan"),
     });
   };
 
   return (
     <>
-      {/* Header */}
       <div className="border-b border-border p-4 space-y-2">
         <div className="flex items-center gap-2">
-          <button onClick={onBack} className="lg:hidden p-1 hover:bg-muted rounded-md">
+          <button onClick={onBack} className="lg:hidden p-1 hover:bg-muted rounded-md" aria-label="Kembali ke daftar pesan">
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div className="min-w-0 flex-1">
@@ -259,10 +242,8 @@ function ConversationPanel({ message, onBack }: { message: ContactMessage; onBac
         </div>
       </div>
 
-      {/* Messages */}
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
-          {/* Original message */}
           <div className="flex justify-end">
             <div className="max-w-[80%] rounded-2xl rounded-tr-sm bg-primary text-primary-foreground p-3">
               <p className="text-sm whitespace-pre-wrap">{message.message}</p>
@@ -272,20 +253,12 @@ function ConversationPanel({ message, onBack }: { message: ContactMessage; onBac
             </div>
           </div>
 
-          {/* Replies */}
           {replies.map((r) => {
             const isClient = r.sender_type === "client";
             return (
               <div key={r.id} className={cn("flex", isClient ? "justify-end" : "justify-start")}>
-                <div className={cn(
-                  "max-w-[80%] rounded-2xl p-3",
-                  isClient
-                    ? "bg-primary text-primary-foreground rounded-tr-sm"
-                    : "bg-muted text-foreground rounded-tl-sm"
-                )}>
-                  {!isClient && (
-                    <p className="text-[10px] font-semibold mb-1 opacity-70">Admin</p>
-                  )}
+                <div className={cn("max-w-[80%] rounded-2xl p-3", isClient ? "bg-primary text-primary-foreground rounded-tr-sm" : "bg-muted text-foreground rounded-tl-sm")}>
+                  {!isClient && <p className="text-[10px] font-semibold mb-1 opacity-70">Admin</p>}
                   <p className="text-sm whitespace-pre-wrap">{r.body}</p>
                   <p className={cn("text-[10px] mt-1 text-right", isClient ? "opacity-70" : "text-muted-foreground")}>
                     {format(new Date(r.created_at), "dd MMM, HH:mm", { locale: idLocale })}
@@ -298,7 +271,6 @@ function ConversationPanel({ message, onBack }: { message: ContactMessage; onBac
         </div>
       </ScrollArea>
 
-      {/* Reply Input */}
       <div className="border-t border-border p-3">
         <div className="flex gap-2">
           <Textarea
@@ -307,9 +279,10 @@ function ConversationPanel({ message, onBack }: { message: ContactMessage; onBac
             onChange={(e) => setReplyText(e.target.value)}
             className="min-h-[44px] max-h-[120px] resize-none"
             rows={1}
+            aria-label="Tulis balasan"
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
           />
-          <Button size="icon" onClick={handleSend} disabled={!replyText.trim() || replyMutation.isPending} className="shrink-0 self-end">
+          <Button size="icon" onClick={handleSend} disabled={!replyText.trim() || replyMutation.isPending} className="shrink-0 self-end" aria-label="Kirim balasan">
             <Send className="w-4 h-4" />
           </Button>
         </div>
@@ -324,17 +297,9 @@ function ComposeDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v
   const [message, setMessage] = useState("");
 
   const handleSend = () => {
-    if (!subject.trim() || !message.trim()) {
-      toast.error("Subjek dan pesan harus diisi");
-      return;
-    }
+    if (!subject.trim() || !message.trim()) { toast.error("Subjek dan pesan harus diisi"); return; }
     compose.mutate({ subject: subject.trim(), message: message.trim() }, {
-      onSuccess: () => {
-        toast.success("Pesan berhasil dikirim!");
-        setSubject("");
-        setMessage("");
-        onOpenChange(false);
-      },
+      onSuccess: () => { toast.success("Pesan berhasil dikirim!"); setSubject(""); setMessage(""); onOpenChange(false); },
       onError: () => toast.error("Gagal mengirim pesan"),
     });
   };
@@ -342,19 +307,11 @@ function ComposeDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v
   return (
     <FormDialog open={open} onOpenChange={onOpenChange} title="Pesan Baru" description="Kirim pesan baru ke tim kami">
       <div className="space-y-4 pt-2">
-        <div className="space-y-2">
-          <Label>Subjek</Label>
-          <Input placeholder="Topik pesan Anda" value={subject} onChange={(e) => setSubject(e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label>Pesan</Label>
-          <Textarea placeholder="Tulis pesan Anda..." rows={5} value={message} onChange={(e) => setMessage(e.target.value)} />
-        </div>
+        <div className="space-y-2"><Label>Subjek</Label><Input placeholder="Topik pesan Anda" value={subject} onChange={(e) => setSubject(e.target.value)} /></div>
+        <div className="space-y-2"><Label>Pesan</Label><Textarea placeholder="Tulis pesan Anda..." rows={5} value={message} onChange={(e) => setMessage(e.target.value)} /></div>
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Batal</Button>
-          <Button onClick={handleSend} disabled={compose.isPending}>
-            {compose.isPending ? "Mengirim..." : <><Send className="w-4 h-4 mr-1" /> Kirim</>}
-          </Button>
+          <Button onClick={handleSend} disabled={compose.isPending}>{compose.isPending ? "Mengirim..." : <><Send className="w-4 h-4 mr-1" /> Kirim</>}</Button>
         </div>
       </div>
     </FormDialog>

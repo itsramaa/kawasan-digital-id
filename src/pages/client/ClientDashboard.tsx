@@ -4,7 +4,9 @@ import { StatusBadge } from "@/shared/components/common/StatusBadge";
 import { AlertBanner } from "@/features/client/components/AlertBanner";
 import { ActivityTimeline } from "@/features/client/components/ActivityTimeline";
 import { ActivityLogList } from "@/features/client/components/ActivityLogList";
-import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
+import { RevealCard } from "@/shared/components/common/RevealCard";
+import { HeroBanner } from "@/shared/components/common/HeroBanner";
+import { StatCards } from "@/shared/components/common/StatCards";
 import { FolderKanban, Receipt, HeadphonesIcon, ArrowUpRight, CheckCircle, AlertTriangle, Clock, LayoutDashboard } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useClientProjects } from "@/features/client/hooks/useClientProjects";
@@ -15,22 +17,9 @@ import { useClientDomains } from "@/features/client/hooks/useClientDomains";
 import { useClientActivity } from "@/features/client/hooks/useClientActivity";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { differenceInDays, parseISO } from "date-fns";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { cn } from "@/shared/utils/utils";
 import { Card, CardContent } from "@/shared/components/ui/card";
-
-function RevealCard({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  const { ref, isVisible } = useScrollReveal(0.1);
-  return (
-    <div
-      ref={ref}
-      className={cn("transition-all duration-700 ease-out", isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4", className)}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-}
 
 const statusVariant: Record<string, "info" | "warning" | "hold" | "success" | "neutral"> = {
   Planning: "warning", "In Progress": "info", "On Hold": "hold", Completed: "success", Cancelled: "neutral",
@@ -74,24 +63,12 @@ export default function ClientDashboard() {
     <ClientLayout>
       <div className="space-y-6">
         {/* Hero Banner */}
-        <RevealCard>
-          <div className="relative rounded-xl overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-border">
-            <div className="px-6 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-                  <LayoutDashboard className="w-7 h-7 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Dashboard</p>
-                  <h1 className="text-2xl font-bold tracking-tight">
-                    {profile?.full_name ? `Halo, ${profile.full_name}` : "Dashboard Saya"}
-                  </h1>
-                  <p className="text-sm text-muted-foreground mt-0.5">Ringkasan proyek dan akun Anda</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </RevealCard>
+        <HeroBanner
+          icon={LayoutDashboard}
+          title={profile?.full_name ? `Halo, ${profile.full_name}` : "Dashboard Saya"}
+          subtitle="Ringkasan proyek dan akun Anda"
+          breadcrumb="Dasbor"
+        />
 
         {/* Alerts */}
         <RevealCard delay={80}>
@@ -103,23 +80,7 @@ export default function ClientDashboard() {
         </RevealCard>
 
         {/* Stat Cards */}
-        <RevealCard delay={100}>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {stats.map((s) => (
-              <Card key={s.label}>
-                <CardContent className="p-4 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                    <s.icon className={cn("w-5 h-5", s.color)} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-lg font-bold truncate">{s.value}</p>
-                    <p className="text-xs text-muted-foreground">{s.label}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </RevealCard>
+        <StatCards stats={stats} />
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Left: Action Items + Projects */}
@@ -172,7 +133,7 @@ export default function ClientDashboard() {
                   </Card>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {projects.slice(0, 4).map((p, idx) => (
+                    {projects.slice(0, 4).map((p) => (
                       <Card key={p.id} className="hover:shadow-md transition-shadow">
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between mb-3">
@@ -211,6 +172,10 @@ export default function ClientDashboard() {
                 <Card>
                   <CardContent className="p-5">
                     <h2 className="text-sm font-semibold mb-3 flex items-center gap-2"><Receipt className="w-4 h-4 text-primary" /> Ringkasan Pembayaran</h2>
+                    {/* Screen reader summary */}
+                    <p className="sr-only">
+                      Pembayaran lunas: Rp {(paidAmt / 1e6).toFixed(1)}M. Belum lunas: Rp {(outstandingAmt / 1e6).toFixed(1)}M.
+                    </p>
                     <ResponsiveContainer width="100%" height={160}>
                       <PieChart>
                         <Pie data={invoicePie} cx="50%" cy="50%" innerRadius={40} outerRadius={65} paddingAngle={3} dataKey="value">
@@ -238,10 +203,12 @@ export default function ClientDashboard() {
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2 mb-3">
                     <h2 className="text-sm font-semibold">Aktivitas</h2>
-                    <div className="flex gap-1 ml-auto">
+                    <div className="flex gap-1 ml-auto" role="tablist" aria-label="Tab aktivitas">
                       {(["recent", "log"] as const).map((tab) => (
                         <button
                           key={tab}
+                          role="tab"
+                          aria-selected={activityTab === tab}
                           onClick={() => setActivityTab(tab)}
                           className={cn(
                             "px-2 py-1 rounded text-[10px] font-medium transition-colors",

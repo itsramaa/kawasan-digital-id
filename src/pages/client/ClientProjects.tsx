@@ -1,36 +1,22 @@
 import { ClientLayout } from "@/shared/components/layouts/ClientLayout";
 import { StatusBadge } from "@/shared/components/common/StatusBadge";
-import { EmptyState } from "@/features/client/components/EmptyState";
 import { DocumentUpload } from "@/features/client/components/DocumentUpload";
 import { FeedbackSurvey } from "@/features/client/components/FeedbackSurvey";
+import { RevealCard } from "@/shared/components/common/RevealCard";
+import { HeroBanner } from "@/shared/components/common/HeroBanner";
+import { StatCards } from "@/shared/components/common/StatCards";
 import { useClientProjects } from "@/features/client/hooks/useClientProjects";
-import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
 import { Calendar, ListTodo, CheckSquare, FolderKanban, CheckCircle, AlertTriangle, Clock } from "lucide-react";
 import { differenceInDays, parseISO } from "date-fns";
 import { cn } from "@/shared/utils/utils";
 import { Card, CardContent } from "@/shared/components/ui/card";
-import { Progress } from "@/shared/components/ui/progress";
 
 const statusVariant: Record<string, "info" | "warning" | "hold" | "success" | "neutral"> = {
   Planning: "warning", "In Progress": "info", "On Hold": "hold", Completed: "success", Cancelled: "neutral",
 };
-
 const taskPriorityVariant: Record<string, "error" | "warning" | "neutral"> = {
   Critical: "error", High: "warning", Medium: "warning", Low: "neutral",
 };
-
-function RevealCard({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  const { ref, isVisible } = useScrollReveal(0.1);
-  return (
-    <div
-      ref={ref}
-      className={cn("transition-all duration-700 ease-out", isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4", className)}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-}
 
 export default function ClientProjects() {
   const { data: projects, isLoading } = useClientProjects();
@@ -52,47 +38,13 @@ export default function ClientProjects() {
   return (
     <ClientLayout>
       <div className="space-y-6">
-        {/* Hero Banner */}
-        <RevealCard>
-          <div className="relative rounded-xl overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-border">
-            <div className="px-6 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-                  <FolderKanban className="w-7 h-7 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Dashboard &gt; Proyek</p>
-                  <h1 className="text-2xl font-bold tracking-tight">Proyek Saya</h1>
-                  <p className="text-sm text-muted-foreground mt-0.5">Pantau progres dan milestone proyek Anda</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </RevealCard>
-
-        {/* Stat Cards */}
-        <RevealCard delay={100}>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {stats.map((s) => (
-              <Card key={s.label}>
-                <CardContent className="p-4 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                    <s.icon className={cn("w-5 h-5", s.color)} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-lg font-bold truncate">{s.value}</p>
-                    <p className="text-xs text-muted-foreground">{s.label}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </RevealCard>
+        <HeroBanner icon={FolderKanban} title="Proyek Saya" subtitle="Pantau progres dan milestone proyek Anda" breadcrumb="Dasbor > Proyek" />
+        <StatCards stats={stats} />
 
         {/* Overdue Alert */}
         {overdueCount > 0 && (
           <RevealCard delay={120}>
-            <div className="flex items-center gap-3 p-4 rounded-lg border border-destructive/30 bg-destructive/5">
+            <div className="flex items-center gap-3 p-4 rounded-lg border border-destructive/30 bg-destructive/5" role="alert">
               <AlertTriangle className="w-5 h-5 text-destructive shrink-0" />
               <p className="text-sm text-destructive font-medium">
                 {overdueCount} proyek telah melewati tenggat waktu. Silakan koordinasi dengan tim kami.
@@ -122,10 +74,7 @@ export default function ClientProjects() {
 
               return (
                 <RevealCard key={project.id} delay={150 + idx * 60}>
-                  <Card className={cn(
-                    "overflow-hidden transition-shadow hover:shadow-md",
-                    isOverdue && "border-l-4 border-l-destructive"
-                  )}>
+                  <Card className={cn("overflow-hidden transition-shadow hover:shadow-md", isOverdue && "border-l-4 border-l-destructive")}>
                     <CardContent className="p-5">
                       {/* Header */}
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
@@ -134,9 +83,7 @@ export default function ClientProjects() {
                           <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                             <span className="flex items-center gap-1">
                               <Calendar className="w-3 h-3" />
-                              {project.deadline
-                                ? new Date(project.deadline).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })
-                                : "Tanpa tenggat"}
+                              {project.deadline ? new Date(project.deadline).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }) : "Tanpa tenggat"}
                             </span>
                             {daysLeft !== null && project.status !== "Completed" && (
                               <span className={cn("font-medium", isOverdue ? "text-destructive" : daysLeft <= 7 ? "text-yellow-500" : "text-muted-foreground")}>
@@ -201,13 +148,8 @@ export default function ClientProjects() {
                         </div>
                       )}
 
-                      {/* Document Upload */}
                       <DocumentUpload projectId={project.id} />
-
-                      {/* Feedback Survey */}
-                      {project.status === "Completed" && (
-                        <FeedbackSurvey projectId={project.id} />
-                      )}
+                      {project.status === "Completed" && <FeedbackSurvey projectId={project.id} />}
                     </CardContent>
                   </Card>
                 </RevealCard>

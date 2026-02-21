@@ -11,14 +11,14 @@ interface ClientLayoutProps {
 }
 
 const navItems = [
-  { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-  { label: "Projects", path: "/dashboard/projects", icon: FolderKanban },
-  { label: "Orders", path: "/dashboard/orders", icon: ShoppingBag },
-  { label: "Contracts", path: "/dashboard/contracts", icon: FileText },
-  { label: "Invoices", path: "/dashboard/invoices", icon: Receipt },
-  { label: "Payments", path: "/dashboard/payments", icon: CreditCard },
-  { label: "Infrastructure", path: "/dashboard/infrastructure", icon: Server },
-  { label: "Support", path: "/dashboard/support", icon: HeadphonesIcon },
+  { label: "Dasbor", path: "/dashboard", icon: LayoutDashboard },
+  { label: "Proyek", path: "/dashboard/projects", icon: FolderKanban },
+  { label: "Pesanan", path: "/dashboard/orders", icon: ShoppingBag },
+  { label: "Kontrak", path: "/dashboard/contracts", icon: FileText },
+  { label: "Invoice", path: "/dashboard/invoices", icon: Receipt },
+  { label: "Pembayaran", path: "/dashboard/payments", icon: CreditCard },
+  { label: "Infrastruktur", path: "/dashboard/infrastructure", icon: Server },
+  { label: "Bantuan", path: "/dashboard/support", icon: HeadphonesIcon },
   { label: "Pesan", path: "/dashboard/messages", icon: MessageSquare },
 ];
 
@@ -55,7 +55,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
         <div className="flex items-center justify-between h-14 gap-4">
           {/* Left: Logo */}
           <div className="flex items-center gap-3 shrink-0">
-            <button onClick={() => setMobileOpen(!mobileOpen)} className="lg:hidden p-1.5 hover:bg-muted rounded-md">
+            <button onClick={() => setMobileOpen(!mobileOpen)} className="lg:hidden p-1.5 hover:bg-muted rounded-md" aria-expanded={mobileOpen} aria-label="Menu navigasi">
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             <div className="flex items-center gap-2">
@@ -73,7 +73,8 @@ export function ClientLayout({ children }: ClientLayoutProps) {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search projects, invoices..."
+                placeholder="Cari proyek, invoice..."
+                aria-label="Cari proyek, invoice"
                 className="w-full h-9 pl-9 pr-3 rounded-lg bg-muted border-none text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
@@ -114,7 +115,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
         </div>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex gap-1 -mb-px">
+        <nav className="hidden lg:flex gap-1 -mb-px" aria-label="Navigasi utama">
           {navItems.map((item) => {
             const active = item.path === "/dashboard" ? location.pathname === "/dashboard" : location.pathname.startsWith(item.path);
             return (

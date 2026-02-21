@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import { useAuth } from "@/features/auth/AuthContext";
 import { FormDialog } from "@/shared/components/common/FormDialog";
 import { StatusBadge } from "@/shared/components/common/StatusBadge";
@@ -7,30 +8,15 @@ import { ClientLayout } from "@/shared/components/layouts/ClientLayout";
 import { ticketSchema, type TicketFormValues } from "@/shared/lib/validations";
 import { useClientTickets, useClientTicketMutation } from "@/features/client/hooks/useClientTickets";
 import { useClientProjects } from "@/features/client/hooks/useClientProjects";
-import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
+import { RevealCard } from "@/shared/components/common/RevealCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Input } from "@/shared/components/ui/input";
 import {
   Clock, Plus, MessageSquare, AlertTriangle, CheckCircle, Search,
   Headphones, ChevronRight, Inbox, TicketCheck, AlertCircle, ArrowRight
 } from "lucide-react";
-import { useState, useMemo } from "react";
 import { differenceInMinutes, parseISO } from "date-fns";
 import { cn } from "@/shared/utils/utils";
-
-// --- Reusable RevealCard ---
-function RevealCard({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  const { ref, isVisible } = useScrollReveal(0.1);
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"} ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-}
 
 // --- Maps ---
 const statusMap: Record<string, "info" | "success" | "error" | "neutral"> = {

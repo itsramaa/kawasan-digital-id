@@ -4,30 +4,17 @@ import { useAuth } from "@/features/auth/AuthContext";
 import { useClientProfileMutation } from "@/features/client/hooks/useClientProfileMutation";
 import { ValidatedInput } from "@/shared/components/common/ValidatedInput";
 import { profileSchema } from "@/shared/lib/validations";
+import { RevealCard } from "@/shared/components/common/RevealCard";
 import {
   User, Mail, Phone, Shield, Building2, Briefcase,
   Calendar, CheckCircle, Lock, ChevronRight
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/integrations/supabase/client";
-import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
-
-function RevealCard({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  const { ref, isVisible } = useScrollReveal(0.1);
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"} ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-}
 
 export default function ClientAccount() {
   const { profile, user, roles } = useAuth();
@@ -69,11 +56,10 @@ export default function ClientAccount() {
   return (
     <ClientLayout>
       <div className="space-y-6">
-        {/* Breadcrumb */}
         <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <span>Dashboard</span>
+          <span>Dasbor</span>
           <ChevronRight className="w-3.5 h-3.5" />
-          <span className="text-foreground font-medium">Profile</span>
+          <span className="text-foreground font-medium">Profil</span>
         </div>
 
         {/* Hero Banner */}
@@ -96,7 +82,6 @@ export default function ClientAccount() {
           </div>
         </RevealCard>
 
-        {/* 2-Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Sidebar */}
           <div className="lg:col-span-1 space-y-6">
@@ -111,20 +96,8 @@ export default function ClientAccount() {
                     <p className="text-xs text-muted-foreground">{user?.email}</p>
                   </div>
                   <div className="border-t border-border pt-3 space-y-3 text-sm">
-                    <div className="flex items-center gap-2.5">
-                      <Shield className="w-4 h-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">Role</p>
-                        <p className="font-medium capitalize">{roleName}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">Bergabung sejak</p>
-                        <p className="font-medium">{joinDate}</p>
-                      </div>
-                    </div>
+                    <div className="flex items-center gap-2.5"><Shield className="w-4 h-4 text-muted-foreground" /><div><p className="text-xs text-muted-foreground">Role</p><p className="font-medium capitalize">{roleName}</p></div></div>
+                    <div className="flex items-center gap-2.5"><Calendar className="w-4 h-4 text-muted-foreground" /><div><p className="text-xs text-muted-foreground">Bergabung sejak</p><p className="font-medium">{joinDate}</p></div></div>
                     <div className="flex items-center gap-2.5">
                       <CheckCircle className="w-4 h-4 text-muted-foreground" />
                       <div>
@@ -143,15 +116,9 @@ export default function ClientAccount() {
 
           {/* Right Main */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Personal Info Form */}
             <RevealCard delay={150}>
               <Card>
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <User className="w-4 h-4 text-primary" />
-                    Informasi Personal
-                  </CardTitle>
-                </CardHeader>
+                <CardHeader className="pb-4"><CardTitle className="text-base flex items-center gap-2"><User className="w-4 h-4 text-primary" />Informasi Personal</CardTitle></CardHeader>
                 <CardContent>
                   <form onSubmit={handleSave} className="space-y-4">
                     <ValidatedInput label="Nama Lengkap" icon={<User className="w-3.5 h-3.5" />} required value={form.full_name} onChange={e => setForm({ ...form, full_name: e.target.value })} error={errors.full_name} />
@@ -161,99 +128,40 @@ export default function ClientAccount() {
                       <p className="text-xs text-muted-foreground">Email tidak dapat diubah</p>
                     </div>
                     <ValidatedInput label="Telepon" icon={<Phone className="w-3.5 h-3.5" />} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} error={errors.phone} placeholder="+62 xxx xxxx xxxx" />
-                    <Button type="submit" disabled={saving} className="w-full sm:w-auto">
-                      {saving ? "Menyimpan..." : "Simpan Perubahan"}
-                    </Button>
+                    <Button type="submit" disabled={saving} className="w-full sm:w-auto">{saving ? "Menyimpan..." : "Simpan Perubahan"}</Button>
                   </form>
                 </CardContent>
               </Card>
             </RevealCard>
 
-            {/* Company Info */}
             {clientInfo && (
               <RevealCard delay={200}>
                 <Card>
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-base flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-primary" />
-                        Informasi Perusahaan
-                      </CardTitle>
+                      <CardTitle className="text-base flex items-center gap-2"><Building2 className="w-4 h-4 text-primary" />Informasi Perusahaan</CardTitle>
                       <span className="text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full uppercase tracking-wider">Read Only</span>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {clientInfo.company_name && (
-                        <div className="flex items-start gap-3">
-                          <Building2 className="w-4 h-4 text-muted-foreground mt-0.5" />
-                          <div>
-                            <p className="text-xs text-muted-foreground">Nama Perusahaan</p>
-                            <p className="text-sm font-medium">{clientInfo.company_name}</p>
-                          </div>
-                        </div>
-                      )}
-                      {clientInfo.industry && (
-                        <div className="flex items-start gap-3">
-                          <Briefcase className="w-4 h-4 text-muted-foreground mt-0.5" />
-                          <div>
-                            <p className="text-xs text-muted-foreground">Industri</p>
-                            <p className="text-sm font-medium">{clientInfo.industry}</p>
-                          </div>
-                        </div>
-                      )}
-                      {clientInfo.email && (
-                        <div className="flex items-start gap-3">
-                          <Mail className="w-4 h-4 text-muted-foreground mt-0.5" />
-                          <div>
-                            <p className="text-xs text-muted-foreground">Email Perusahaan</p>
-                            <p className="text-sm font-medium">{clientInfo.email}</p>
-                          </div>
-                        </div>
-                      )}
-                      {clientInfo.phone && (
-                        <div className="flex items-start gap-3">
-                          <Phone className="w-4 h-4 text-muted-foreground mt-0.5" />
-                          <div>
-                            <p className="text-xs text-muted-foreground">Telepon Perusahaan</p>
-                            <p className="text-sm font-medium">{clientInfo.phone}</p>
-                          </div>
-                        </div>
-                      )}
+                      {clientInfo.company_name && <div className="flex items-start gap-3"><Building2 className="w-4 h-4 text-muted-foreground mt-0.5" /><div><p className="text-xs text-muted-foreground">Nama Perusahaan</p><p className="text-sm font-medium">{clientInfo.company_name}</p></div></div>}
+                      {clientInfo.industry && <div className="flex items-start gap-3"><Briefcase className="w-4 h-4 text-muted-foreground mt-0.5" /><div><p className="text-xs text-muted-foreground">Industri</p><p className="text-sm font-medium">{clientInfo.industry}</p></div></div>}
+                      {clientInfo.email && <div className="flex items-start gap-3"><Mail className="w-4 h-4 text-muted-foreground mt-0.5" /><div><p className="text-xs text-muted-foreground">Email Perusahaan</p><p className="text-sm font-medium">{clientInfo.email}</p></div></div>}
+                      {clientInfo.phone && <div className="flex items-start gap-3"><Phone className="w-4 h-4 text-muted-foreground mt-0.5" /><div><p className="text-xs text-muted-foreground">Telepon Perusahaan</p><p className="text-sm font-medium">{clientInfo.phone}</p></div></div>}
                     </div>
                   </CardContent>
                 </Card>
               </RevealCard>
             )}
 
-            {/* Account Security */}
             <RevealCard delay={250}>
               <Card>
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-primary" />
-                    Keamanan Akun
-                  </CardTitle>
-                </CardHeader>
+                <CardHeader className="pb-4"><CardTitle className="text-base flex items-center gap-2"><Lock className="w-4 h-4 text-primary" />Keamanan Akun</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-4 h-4 text-primary" />
-                    <div>
-                      <p className="text-sm font-medium">Email terverifikasi</p>
-                      <p className="text-xs text-muted-foreground">{user?.email}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">Login terakhir</p>
-                      <p className="text-xs text-muted-foreground">{lastLogin}</p>
-                    </div>
-                  </div>
-                  <Button variant="outline" size="sm" className="mt-2" disabled>
-                    <Lock className="w-3.5 h-3.5 mr-1.5" />
-                    Ubah Password
-                  </Button>
+                  <div className="flex items-center gap-3"><CheckCircle className="w-4 h-4 text-primary" /><div><p className="text-sm font-medium">Email terverifikasi</p><p className="text-xs text-muted-foreground">{user?.email}</p></div></div>
+                  <div className="flex items-center gap-3"><Calendar className="w-4 h-4 text-muted-foreground" /><div><p className="text-sm font-medium">Login terakhir</p><p className="text-xs text-muted-foreground">{lastLogin}</p></div></div>
+                  <Button variant="outline" size="sm" className="mt-2" disabled><Lock className="w-3.5 h-3.5 mr-1.5" />Ubah Password</Button>
                 </CardContent>
               </Card>
             </RevealCard>
