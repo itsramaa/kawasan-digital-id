@@ -1,76 +1,119 @@
 
-# Maksimalkan Halaman Support Client
+
+# Sistem Pesan (Messaging) di Dashboard Client
 
 ## Ringkasan
-Upgrade halaman Support (`/dashboard/support`) dari layout sederhana menjadi halaman yang profesional dan polished, konsisten dengan style halaman Profile yang sudah di-upgrade -- hero banner, summary cards, filter/search, detail panel yang lebih kaya, dan animasi scroll-reveal.
+Mengubah `contact_messages` menjadi backbone sistem messaging dua arah di dashboard client. Pesan dari form kontak publik masuk sebagai thread baru, dan admin bisa membalas. Client melihat semua pesan + balasan di halaman baru `/dashboard/messages` dengan tampilan inbox yang profesional.
 
 ---
 
-## Perubahan yang Akan Dilakukan
+## Perubahan yang Diperlukan
 
-### 1. Hero Banner + Header
-- Gradient banner konsisten dengan halaman Profile (`bg-gradient-to-br from-primary/10 via-primary/5 to-transparent`)
-- Breadcrumb: Dashboard > Support
-- Icon HeadphonesIcon besar di banner
-- Judul "Pusat Bantuan" + subtitle ringkas
-- Tombol "Tiket Baru" di kanan atas
+### 1. Database: Tabel Baru `message_replies`
 
-### 2. Summary Stat Cards (4 kartu)
-- **Tiket Aktif** (Open + In Progress) -- warna info
-- **Menunggu** (Pending Client) -- warna warning
-- **Eskalasi** (Escalated) -- warna error/destructive
-- **Terselesaikan** (Resolved + Closed) -- warna success
-- Masing-masing card dengan icon kecil, angka besar, dan label
+Tabel balasan untuk threading pada `contact_messages`:
 
-### 3. Filter & Search Bar
-- Search input untuk filter tiket berdasarkan subject/ticket_number
-- Filter tabs/buttons: Semua, Aktif, Eskalasi, Selesai
-- Tampilan jumlah tiket terfilter
+```text
+message_replies
+- id (uuid, PK)
+- message_id (uuid, FK -> contact_messages.id)
+- sender_type (text: 'client' | 'admin')
+- sender_id (uuid, nullable -- user_id pengirim)
+- body (text)
+- created_at (timestamptz)
+```
 
-### 4. Ticket List -- Upgrade Visual
-- Card tiket dengan visual yang lebih polished:
-  - Border-left warna sesuai priority (Critical = merah, High = orange)
-  - Badge priority dengan animasi pulse untuk Critical
-  - SLA indicator yang lebih prominent
-  - Deskripsi truncated (line-clamp-2)
-  - Info project, tanggal dibuat
-  - Hover shadow yang lebih halus
-- Tiket yang dipilih diberi highlight border + background
+### 2. Database: Modifikasi `contact_messages`
 
-### 5. Detail Panel -- Lebih Kaya
-- Sticky panel di kanan (desktop)
-- Header: ticket number, subject, badges (status + priority + SLA)
-- Section "Deskripsi" dengan card terpisah
-- Grid info: Created, Resolved, Project, Assigned To
-- Timeline visual sederhana menunjukkan status saat ini dalam flow (Open -> In Progress -> Resolved -> Closed)
-- Tombol aksi: "Tutup Tiket" jika statusnya sudah Resolved
+Tambahkan kolom baru:
+- `user_id` (uuid, nullable) -- link ke auth user jika pengirim sudah login
+- `updated_at` (timestamptz, default now()) -- untuk sorting by latest activity
+- `unread_count` (integer, default 0) -- jumlah balasan belum dibaca oleh client
 
-### 6. Empty State -- Upgrade
-- Ilustrasi icon yang lebih besar
-- Teks dalam Bahasa Indonesia
-- CTA button "Buat Tiket Baru"
+### 3. RLS Policies
 
-### 7. Animasi Scroll-Reveal
-- RevealCard wrapper pada setiap section (hero, stats, list, detail)
-- Staggered delay untuk efek cascade
+**contact_messages:**
+- Client bisa SELECT pesan miliknya sendiri (WHERE user_id = auth.uid())
+- Existing: Anyone can INSERT (tetap, untuk form publik)
+- Client bisa UPDATE `status` dan `unread_count` pada pesan miliknya
 
-### 8. Teks UI
-- Semua teks dalam Bahasa Indonesia: "Pusat Bantuan", "Tiket Aktif", "Eskalasi", "Terselesaikan", "Pilih tiket untuk melihat detail", dll.
+**message_replies:**
+- Client bisa SELECT balasan pada pesan miliknya
+- Client bisa INSERT balasan pada pesan miliknya (sender_type = 'client')
+- Internal users bisa manage semua
+
+### 4. Update Form Kontak Publik (`ContactPage.tsx`)
+
+- Jika user sedang login, sertakan `user_id` saat insert ke `contact_messages`
+- Ini memungkinkan pesan dari form kontak muncul di dashboard client
+
+### 5. Halaman Baru: `/dashboard/messages`
+
+Layout inbox profesional dengan dua panel:
+
+```text
++---------------------------+-------------------------+
+| Inbox List (kiri)         | Conversation (kanan)    |
+|                           |                         |
+| [Search bar]              | Subject + Status        |
+| [Filter: Semua/Baru/...]  | ----------------------- |
+|                           | Pesan awal (bubble)     |
+| > Thread 1 (unread dot)  | Balasan admin (bubble)  |
+|   Thread 2               | Balasan client (bubble) |
+|   Thread 3               |                         |
+|                           | [Input balas + Send]    |
++---------------------------+-------------------------+
+```
+
+Fitur:
+- **Inbox list**: Subject, preview pesan, tanggal, status badge, unread indicator
+- **Conversation view**: Chat bubbles dua arah (client di kanan, admin di kiri)
+- **Reply input**: Textarea + tombol kirim di bawah conversation
+- **Search & Filter**: Cari berdasarkan subject, filter by status (new/replied/closed)
+- **Empty state**: Ilustrasi + CTA "Kirim Pesan Baru" yang buka form dialog
+- **Compose dialog**: Form kirim pesan baru (subject + message) dari dalam dashboard
+- **Real-time**: Subscribe ke `message_replies` untuk update langsung
+- **Unread badge**: Notifikasi jumlah pesan belum dibaca di navbar
+
+### 6. Tambah "Messages" ke Navbar (`ClientLayout.tsx`)
+
+- Tambah entry baru di `navItems`: `{ label: "Messages", path: "/dashboard/messages", icon: MessageSquare }`
+- Badge kecil merah dengan angka unread di samping icon (jika ada)
+- Posisi setelah "Support" atau sebelum "Support"
+
+### 7. Route Baru (`App.tsx`)
+
+- Tambah route: `/dashboard/messages` -> `ClientMessages`
+
+### 8. Hook Data (`useClientMessages.ts`)
+
+- `useClientMessages()`: Fetch semua contact_messages milik user, order by updated_at desc
+- `useMessageReplies(messageId)`: Fetch semua replies untuk satu thread
+- `useReplyMutation()`: Insert reply baru
+- `useComposeMessage()`: Insert pesan baru dari dashboard
+- `useUnreadCount()`: Count pesan dengan unread_count > 0 (untuk badge navbar)
+
+---
+
+## File yang Dibuat/Dimodifikasi
+
+| File | Aksi |
+|------|------|
+| Database migration | Baru -- tambah kolom di `contact_messages`, buat tabel `message_replies` |
+| `src/features/client/hooks/useClientMessages.ts` | Baru -- hooks data messaging |
+| `src/pages/client/ClientMessages.tsx` | Baru -- halaman inbox + conversation |
+| `src/pages/store/ContactPage.tsx` | Edit -- sertakan `user_id` jika login |
+| `src/shared/components/layouts/ClientLayout.tsx` | Edit -- tambah Messages di navbar + badge |
+| `src/App.tsx` | Edit -- tambah route `/dashboard/messages` |
 
 ---
 
 ## Detail Teknis
 
-### File yang Dimodifikasi
-- `src/pages/client/ClientSupport.tsx` -- refactor komprehensif
-
-### Pendekatan
-- Tidak ada perubahan database
-- Tidak ada dependency baru
-- Menggunakan `RevealCard` pattern yang sama dari `ClientAccount.tsx`
-- Menggunakan `useScrollReveal` hook yang sudah ada
-- Data yang sudah tersedia dari `useClientTickets`: ticket_number, subject, description, status, priority, sla_deadline, created_at, resolved_at, projects.name
-- Icon dari lucide-react: HeadphonesIcon, Clock, AlertTriangle, CheckCircle, Filter, Search, ChevronRight, Inbox, dll
-- Menggunakan Card/CardHeader/CardContent dari shadcn/ui
-- Responsive: 3 kolom di desktop (2 list + 1 detail), 1 kolom di mobile
-- Filter state lokal menggunakan useState
+- Realtime subscription pada `message_replies` agar balasan admin langsung muncul tanpa refresh
+- Chat bubble styling: client = `bg-primary text-primary-foreground` (kanan), admin = `bg-muted` (kiri)
+- Scroll otomatis ke bawah saat ada pesan baru
+- RevealCard + useScrollReveal untuk animasi masuk
+- Compose dialog menggunakan pattern FormDialog yang sudah ada
+- Teks UI dalam Bahasa Indonesia
+- Unread badge menggunakan realtime channel untuk update count
