@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
-import { Sparkles, Clock, Star, Flame, ArrowRight, Eye } from "lucide-react";
+import { Sparkles, Clock, Star, Flame, ArrowRight, Eye, Heart } from "lucide-react";
 import { Badge } from "@/shared/components/ui/badge";
+import { cn } from "@/shared/utils/utils";
 import type { ServiceTemplate } from "@/features/storefront/types";
 
 interface Props {
   template: ServiceTemplate;
   index: number;
   onQuickView: (t: ServiceTemplate) => void;
+  isWishlisted?: boolean;
+  onToggleWishlist?: (id: string) => void;
 }
 
 function isNew(createdAt: string) {
@@ -14,7 +17,7 @@ function isNew(createdAt: string) {
   return diff < 30 * 24 * 60 * 60 * 1000;
 }
 
-export function TemplateListItem({ template, index, onQuickView }: Props) {
+export function TemplateListItem({ template, index, onQuickView, isWishlisted, onToggleWishlist }: Props) {
   return (
     <div
       className="group flex gap-5 rounded-xl border border-border bg-card overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 animate-fade-in"
@@ -37,6 +40,22 @@ export function TemplateListItem({ template, index, onQuickView }: Props) {
             <Badge className="bg-emerald-500/90 text-white border-0 text-[10px]">New</Badge>
           )}
         </div>
+
+        {/* Wishlist button */}
+        {onToggleWishlist && (
+          <button
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleWishlist(template.id); }}
+            className={cn(
+              "absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 shadow-sm",
+              isWishlisted
+                ? "bg-red-500 text-white scale-110"
+                : "bg-white/80 text-muted-foreground hover:bg-white hover:text-red-500"
+            )}
+            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            <Heart className={cn("w-4 h-4", isWishlisted && "fill-current")} />
+          </button>
+        )}
       </div>
 
       {/* Content */}

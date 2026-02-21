@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
-import { Sparkles, Eye, ArrowRight, Clock, ShoppingCart, Star, Flame } from "lucide-react";
+import { Sparkles, Eye, ArrowRight, Clock, Star, Flame, Heart } from "lucide-react";
 import { Badge } from "@/shared/components/ui/badge";
+import { cn } from "@/shared/utils/utils";
 import type { ServiceTemplate } from "@/features/storefront/types";
 
 interface TemplateCardProps {
   template: ServiceTemplate;
   index: number;
   onQuickView: (t: ServiceTemplate) => void;
+  isWishlisted?: boolean;
+  onToggleWishlist?: (id: string) => void;
 }
 
 function isNew(createdAt: string) {
@@ -14,7 +17,7 @@ function isNew(createdAt: string) {
   return diff < 30 * 24 * 60 * 60 * 1000;
 }
 
-export function TemplateCard({ template, index, onQuickView }: TemplateCardProps) {
+export function TemplateCard({ template, index, onQuickView, isWishlisted, onToggleWishlist }: TemplateCardProps) {
   return (
     <div
       className="group rounded-xl border border-border bg-card overflow-hidden hover:shadow-xl hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 animate-fade-in"
@@ -39,6 +42,22 @@ export function TemplateCard({ template, index, onQuickView }: TemplateCardProps
           )}
         </div>
 
+        {/* Wishlist button */}
+        {onToggleWishlist && (
+          <button
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleWishlist(template.id); }}
+            className={cn(
+              "absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 shadow-sm",
+              isWishlisted
+                ? "bg-red-500 text-white scale-110"
+                : "bg-white/80 text-muted-foreground hover:bg-white hover:text-red-500"
+            )}
+            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            <Heart className={cn("w-4 h-4", isWishlisted && "fill-current")} />
+          </button>
+        )}
+
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-2">
           <button
@@ -61,7 +80,6 @@ export function TemplateCard({ template, index, onQuickView }: TemplateCardProps
           <span className="text-xs font-medium text-secondary bg-secondary/10 px-2 py-0.5 rounded-full">
             {template.category || "Template"}
           </span>
-          {/* Rating placeholder */}
           <div className="flex items-center gap-0.5 ml-auto">
             {[1, 2, 3, 4, 5].map((i) => (
               <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />

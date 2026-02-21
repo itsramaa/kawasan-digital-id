@@ -3,7 +3,8 @@ import { useSearchParams } from "react-router-dom";
 import { StorefrontLayout } from "@/shared/components/layouts/StorefrontLayout";
 import { useServiceTemplates } from "@/features/storefront/hooks/useServiceTemplates";
 import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
-import { SlidersHorizontal, X, ChevronDown, LayoutGrid, List, Sparkles, Search as SearchIcon } from "lucide-react";
+import { useWishlist } from "@/features/storefront/hooks/useWishlist";
+import { SlidersHorizontal, X, ChevronDown, LayoutGrid, List, Sparkles, Search as SearchIcon, Heart } from "lucide-react";
 import { cn } from "@/shared/utils/utils";
 import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/shared/components/ui/sheet";
@@ -34,6 +35,7 @@ const SORT_OPTIONS: { label: string; value: SortOption }[] = [
 
 export default function TemplatesPage() {
   const { data: templates, isLoading } = useServiceTemplates();
+  const { toggle: toggleWishlist, has: isWishlisted, count: wishlistCount } = useWishlist();
   const isMobile = useIsMobile();
   const [searchParams] = useSearchParams();
   const initialCategory = searchParams.get("category");
@@ -46,6 +48,7 @@ export default function TemplatesPage() {
   const [sortOpen, setSortOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [showWishlistOnly, setShowWishlistOnly] = useState(false);
 
   const { ref: gridRef, isVisible: gridVisible } = useScrollReveal(0.05);
 
@@ -70,6 +73,10 @@ export default function TemplatesPage() {
     if (!templates) return [];
     let result = [...templates];
 
+    // Wishlist filter
+    if (showWishlistOnly) {
+      result = result.filter((t) => isWishlisted(t.id));
+    }
     // Search
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -98,7 +105,7 @@ export default function TemplatesPage() {
       default: result.sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
     }
     return result;
-  }, [templates, categoryFilter, priceRange, priceExtent, deliveryFilter, sortBy, searchQuery]);
+  }, [templates, categoryFilter, priceRange, priceExtent, deliveryFilter, sortBy, searchQuery, showWishlistOnly, isWishlisted]);
 
   const activeFilterCount = categoryFilter.length + deliveryFilter.length + (priceRange[0] > priceExtent[0] || priceRange[1] < priceExtent[1] ? 1 : 0);
 
@@ -175,6 +182,21 @@ export default function TemplatesPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Wishlist toggle */}
+            <button
+              onClick={() => setShowWishlistOnly(!showWishlistOnly)}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-medium transition-colors",
+                showWishlistOnly
+                  ? "border-red-500/30 bg-red-500/10 text-red-600"
+                  : "border-border hover:bg-muted text-muted-foreground"
+              )}
+            >
+              <Heart className={cn("w-4 h-4", showWishlistOnly && "fill-current")} />
+              {wishlistCount > 0 && (
+                <span className="text-xs">{wishlistCount}</span>
+              )}
+            </button>
             {/* View toggle */}
             {!isMobile && (
               <div className="flex rounded-lg border border-border overflow-hidden">
@@ -269,13 +291,13 @@ export default function TemplatesPage() {
                 viewMode === "grid" ? (
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {filtered.map((template, idx) => (
-                      <TemplateCard key={template.id} template={template} index={idx} onQuickView={setQuickViewTemplate} />
+                      <TemplateCard key={template.id} template={template} index={idx} onQuickView={setQuickViewTemplate} isWishlisted={isWishlisted(template.id)} onToggleWishlist={toggleWishlist} />
                     ))}
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {filtered.map((template, idx) => (
-                      <TemplateListItem key={template.id} template={template} index={idx} onQuickView={setQuickViewTemplate} />
+                      <TemplateListItem key={template.id} template={template} index={idx} onQuickView={setQuickViewTemplate} isWishlisted={isWishlisted(template.id)} onToggleWishlist={toggleWishlist} />
                     ))}
                   </div>
                 )
