@@ -85,11 +85,10 @@ export default function CartPage() {
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-3 gap-4 max-w-2xl mx-auto pt-4">
+            <div className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto pt-4">
               {[
                 { to: "/templates", icon: Layout, title: "Template Website", desc: "Siap pakai, cepat online" },
                 { to: "/custom", icon: Globe, title: "Custom Website", desc: "Desain sesuai keinginan" },
-                { to: "/showcase", icon: Sparkles, title: "Showcase", desc: "Lihat hasil karya kami" },
               ].map((card) => (
                 <Link
                   key={card.to}
