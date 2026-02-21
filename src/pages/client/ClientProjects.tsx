@@ -1,6 +1,8 @@
 import { ClientLayout } from "@/shared/components/layouts/ClientLayout";
 import { StatusBadge } from "@/shared/components/common/StatusBadge";
 import { EmptyState } from "@/features/client/components/EmptyState";
+import { DocumentUpload } from "@/features/client/components/DocumentUpload";
+import { FeedbackSurvey } from "@/features/client/components/FeedbackSurvey";
 import { useClientProjects } from "@/features/client/hooks/useClientProjects";
 import { Calendar, ListTodo, CheckSquare } from "lucide-react";
 import { differenceInDays, parseISO } from "date-fns";
@@ -106,6 +108,14 @@ export default function ClientProjects() {
                           ))}
                         </div>
                       </div>
+                    )}
+
+                    {/* Document Upload */}
+                    <DocumentUpload projectId={project.id} />
+
+                    {/* Feedback Survey (show for completed projects) */}
+                    {project.status === "Completed" && (
+                      <FeedbackSurvey projectId={project.id} />
                     )}
                   </div>
                 </div>
