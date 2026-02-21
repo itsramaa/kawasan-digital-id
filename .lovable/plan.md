@@ -1,90 +1,76 @@
 
-# Maksimalkan Portfolio / Showcase Page
+
+# Maksimalkan Custom Website Page
 
 ## Ringkasan
-Upgrade halaman Portfolio listing (`/store/showcase`) dan detail (`/store/showcase/:id`) agar sejajar dengan halaman lain yang sudah di-upgrade -- dengan hero gradient, search, animasi, dan visual yang lebih profesional.
+Upgrade halaman Custom Website wizard (`/store/custom`) agar sejajar dengan halaman lain yang sudah di-upgrade -- dengan hero gradient, stepper visual yang lebih profesional, animasi, trust signals, dan summary yang lebih informatif.
 
 ---
 
-## Halaman Listing (`/store/showcase`)
+## Perubahan yang Akan Dilakukan
 
 ### 1. Hero Section -- Gradient Banner
 - Tambahkan hero banner dengan gradient background (konsisten: `bg-gradient-to-br from-primary/5 via-transparent to-primary/3`)
-- Badge "Portfolio" sebagai trust signal
-- Subtitle lebih deskriptif dalam Bahasa Indonesia
-- Stats ringkas: jumlah project, jumlah kategori
+- Badge "Custom Website" sebagai trust signal
+- Subtitle lebih deskriptif dan engaging
+- Trust indicators: "Estimasi Instan", "Tanpa Komitmen", "Konsultasi Gratis"
 
-### 2. Search Bar
-- Tambahkan search input di hero section
-- Filter project berdasarkan title, description, dan tech_stack
-- Highlight: tampilkan jumlah hasil ditemukan
+### 2. Stepper / Progress -- Visual Upgrade
+- Ganti progress bar sederhana menjadi stepper visual dengan icon per step
+- Setiap step punya icon (ClipboardList, Settings, Calendar, FileCheck)
+- Active step dengan highlight, completed steps dengan checkmark
+- Connecting line antar steps
+- Animasi transisi saat pindah step
 
-### 3. Category Filter -- Lebih Polished
-- Tambahkan count badge per kategori (jumlah project)
-- Hover effect lebih prominent
-- Scroll-reveal animation pada filter bar
-
-### 4. Project Cards -- Visual Upgrade
-- Hover effect lebih dramatis: lift + shadow + border glow (konsisten dengan template cards)
-- Image zoom on hover (scale effect)
-- Tambahkan jumlah case study sections sebagai indicator ("4 studi kasus")
-- Staggered fade-in animation pada grid
-- Scroll-reveal pada keseluruhan grid
-
-### 5. Loading State -- Lebih Realistis
-- Skeleton shimmer yang lebih detail (hero, filter bar, cards)
-- Skeleton mengikuti layout asli
-
-### 6. Empty State -- Lebih Engaging
-- Ilustrasi lebih menarik dengan suggestion links (ke Templates, Custom)
-
----
-
-## Halaman Detail (`/store/showcase/:id`)
-
-### 1. Breadcrumb
-- Ganti tombol "Back" menjadi breadcrumb trail: Home > Portfolio > [Category] > [Project Name]
-
-### 2. Hero Image -- Lebih Interaktif
-- Image zoom on hover
-- Overlay badge kategori dan tech stack count
-- Gradient overlay halus di bawah gambar
-
-### 3. Project Info -- Lebih Kaya
-- Tambahkan meta info bar: kategori, jumlah tech stack, tanggal dibuat
-- Scroll-reveal animation per section
-
-### 4. Case Study Sections -- Visual Upgrade
-- Hover effect pada setiap card (lift + border glow)
-- Staggered scroll-reveal animation per section
-- Numbered indicator (01, 02, 03, 04) di samping icon
-
-### 5. Tech Stack -- Lebih Prominent
-- Grid layout dengan icon dekoratif
-- Hover effect per tech badge
+### 3. Step 1: Basic Info -- Lebih Polished
+- Industry selector: ganti `<select>` menjadi icon-based grid cards (setiap industry punya icon)
+- Website Type cards: tambahkan deskripsi singkat dan estimasi harga mulai ("Mulai dari Rp X")
+- Pages slider: tambahkan visual indicator (icon halaman) dan info "5 halaman sudah termasuk"
 - Scroll-reveal animation
 
-### 6. CTA Section -- Lebih Engaging
-- Tambahkan CTA "Mulai Project Serupa" dengan gradient background
-- Link ke `/store/templates` dan `/store/custom`
-- Trust signals
+### 4. Step 2: Features -- Lebih Engaging
+- Tambahkan badge "Popular" pada fitur tertentu (Ecommerce, Payment Gateway)
+- Tambahkan estimasi hari per fitur di samping harga ("+7 hari kerja")
+- Running total mini-bar di bawah feature list (total fitur terpilih + total biaya tambahan)
+- Hover effect lebih dramatis: border glow + subtle scale
+- Scroll-reveal animation
 
-### 7. Tambah Section: Related Projects
-- Tampilkan 2-3 project lain dari kategori yang sama (jika ada)
-- Card style konsisten dengan listing page
+### 5. Step 3: Timeline & Budget -- Lebih Informatif
+- Deadline cards: tambahkan icon dan subtle description per opsi
+- Budget cards: tambahkan hint "Paling Populer" pada range tertentu
+- Tambahkan info box: "Estimasi sementara berdasarkan pilihan Anda" dengan preview harga realtime
+- Scroll-reveal animation
+
+### 6. Step 4: Summary -- Lebih Profesional
+- Layout 2 kolom pada desktop: detail di kiri, pricing card sticky di kanan
+- Summary detail dengan icon per item (bukan hanya grid text)
+- Pricing card dengan gradient background, breakdown harga (base + pages + features)
+- Tambahkan trust signals: "Garansi Uang Kembali", "Revisi Gratis", "NDA Available"
+- Tambahkan disclaimer: "Harga final akan dikonfirmasi setelah konsultasi"
+- CTA buttons lebih prominent dengan icon
+
+### 7. Tambah Section: "Mengapa Custom?"
+- Tampilkan di bawah hero (sebelum wizard) atau sebagai collapsible section
+- 3-4 value propositions: "100% Sesuai Kebutuhan", "Tim Berpengalaman", "Support Berkelanjutan", "Full Ownership"
+- Icon grid layout dengan scroll-reveal
+
+### 8. Animasi Global
+- Fade-in transition saat pindah step (opacity + translateY)
+- Scroll-reveal pada hero dan "Mengapa Custom" section
+- Smooth transition pada running total dan estimasi harga
 
 ---
 
 ## Detail Teknis
 
 ### File yang Dimodifikasi
-- `src/pages/store/ShowcasePage.tsx` -- refactor komprehensif (listing + detail)
+- `src/pages/store/CustomWebsitePage.tsx` -- refactor komprehensif
 
 ### Pendekatan
 - Tidak ada perubahan database
 - Tidak ada dependency baru
 - Menggunakan `useScrollReveal` hook yang sudah ada
-- Data dari hook `useShowcaseProjects` yang sudah ada
-- Related projects difilter dari data yang sudah ada (by category)
-- Menambahkan state `searchQuery` untuk fitur pencarian
 - Semua styling menggunakan Tailwind classes
+- Logika estimasi (`estimate()`) tetap sama, hanya presentasi yang di-upgrade
+- Menambahkan icon mapping untuk industries dan step icons dari lucide-react
+
