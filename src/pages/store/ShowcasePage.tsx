@@ -48,7 +48,7 @@ function ShowcaseDetail({ projectId }: { projectId: string }) {
         <div className="max-w-4xl mx-auto px-4 lg:px-8 py-16 text-center">
           <FolderKanban className="w-12 h-12 mx-auto mb-3 text-muted-foreground/40" />
           <p className="text-muted-foreground">Project tidak ditemukan.</p>
-          <Link to="/store/showcase" className="text-sm text-primary hover:underline mt-4 inline-block">
+          <Link to="/showcase" className="text-sm text-primary hover:underline mt-4 inline-block">
             ← Kembali ke Portfolio
           </Link>
         </div>
@@ -73,12 +73,12 @@ function ShowcaseDetail({ projectId }: { projectId: string }) {
         {/* Breadcrumb */}
         <Reveal>
           <nav className="flex items-center gap-1.5 text-sm text-muted-foreground flex-wrap">
-            <Link to="/store" className="flex items-center gap-1 hover:text-foreground transition-colors">
+            <Link to="/" className="flex items-center gap-1 hover:text-foreground transition-colors">
               <Home className="w-3.5 h-3.5" />
               <span>Home</span>
             </Link>
             <ChevronRight className="w-3.5 h-3.5 shrink-0" />
-            <Link to="/store/showcase" className="hover:text-foreground transition-colors">Portfolio</Link>
+            <Link to="/showcase" className="hover:text-foreground transition-colors">Portfolio</Link>
             {project.category && (
               <>
                 <ChevronRight className="w-3.5 h-3.5 shrink-0" />
@@ -219,13 +219,13 @@ function ShowcaseDetail({ projectId }: { projectId: string }) {
             </p>
             <div className="flex flex-wrap justify-center gap-3 pt-2">
               <Link
-                to="/store/templates"
+                to="/templates"
                 className="px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors text-sm inline-flex items-center gap-2"
               >
                 Lihat Templates <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
-                to="/store/custom"
+                to="/custom"
                 className="px-5 py-2.5 rounded-lg border border-border bg-card text-foreground font-medium hover:bg-muted transition-colors text-sm"
               >
                 Custom Project
@@ -243,7 +243,7 @@ function ShowcaseDetail({ projectId }: { projectId: string }) {
                 {relatedProjects.map((rp) => (
                   <Link
                     key={rp.id}
-                    to={`/store/showcase/${rp.id}`}
+                    to={`/showcase/${rp.id}`}
                     className="group rounded-xl border border-border bg-card overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300"
                   >
                     <div className="aspect-video bg-muted flex items-center justify-center overflow-hidden">
@@ -423,7 +423,7 @@ export default function ShowcasePage() {
               {filtered.map((project, idx) => (
                 <Reveal key={project.id} delay={idx * 80}>
                   <Link
-                    to={`/store/showcase/${project.id}`}
+                    to={`/showcase/${project.id}`}
                     className="group rounded-xl border border-border bg-card overflow-hidden hover:shadow-xl hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 block"
                   >
                     <div className="aspect-video bg-muted flex items-center justify-center overflow-hidden relative">
@@ -480,13 +480,13 @@ export default function ShowcasePage() {
                 </div>
                 <div className="flex flex-wrap justify-center gap-3 pt-2">
                   <Link
-                    to="/store/templates"
+                    to="/templates"
                     className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors inline-flex items-center gap-1.5"
                   >
                     Lihat Templates <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                   <Link
-                    to="/store/custom"
+                    to="/custom"
                     className="px-4 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors"
                   >
                     Custom Project

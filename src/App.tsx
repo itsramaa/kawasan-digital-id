@@ -53,45 +53,45 @@ const App = () => (
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             
-            {/* Internal Portal Routes */}
-            <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/sales" element={<ProtectedRoute requireInternal><Sales /></ProtectedRoute>} />
-            <Route path="/sales/clients" element={<ProtectedRoute requireInternal><ClientsPage /></ProtectedRoute>} />
-            <Route path="/sales/quotations" element={<ProtectedRoute requireInternal><QuotationsPage /></ProtectedRoute>} />
-            <Route path="/sales/contracts" element={<ProtectedRoute requireInternal><ContractsPage /></ProtectedRoute>} />
-              <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
-            <Route path="/projects/:id" element={<ProtectedRoute><ProjectDetails /></ProtectedRoute>} />
-            <Route path="/projects/tasks" element={<ProtectedRoute><TasksPage /></ProtectedRoute>} />
-            <Route path="/finance" element={<ProtectedRoute><Finance /></ProtectedRoute>} />
-            <Route path="/finance/payments" element={<ProtectedRoute><PaymentsPage /></ProtectedRoute>} />
-            <Route path="/support" element={<ProtectedRoute><Support /></ProtectedRoute>} />
-            <Route path="/infrastructure" element={<ProtectedRoute requireInternal><Infrastructure /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute requireInternal><SettingsPage /></ProtectedRoute>} />
+            {/* Storefront Routes (Public) - root level */}
+            <Route path="/" element={<StorefrontHome />} />
+            <Route path="/showcase" element={<ShowcasePage />} />
+            <Route path="/showcase/:id" element={<ShowcasePage />} />
+            <Route path="/templates" element={<TemplatesPage />} />
+            <Route path="/templates/:id" element={<TemplateDetailPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/order-success" element={<OrderSuccessPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/custom" element={<CustomWebsitePage />} />
+            <Route path="/how-it-works" element={<HowItWorksPage />} />
+            <Route path="/help" element={<HelpFAQPage />} />
+            <Route path="/contact" element={<ContactPage />} />
 
-            {/* Client Portal Routes */}
-            <Route path="/client" element={<ProtectedRoute><ClientDashboard /></ProtectedRoute>} />
-            <Route path="/client/projects" element={<ProtectedRoute><ClientProjects /></ProtectedRoute>} />
-            <Route path="/client/contracts" element={<ProtectedRoute><ClientContracts /></ProtectedRoute>} />
-            <Route path="/client/invoices" element={<ProtectedRoute><ClientInvoices /></ProtectedRoute>} />
-            <Route path="/client/payments" element={<ProtectedRoute><ClientPayments /></ProtectedRoute>} />
-            <Route path="/client/infrastructure" element={<ProtectedRoute><ClientInfrastructure /></ProtectedRoute>} />
-            <Route path="/client/support" element={<ProtectedRoute><ClientSupport /></ProtectedRoute>} />
-            <Route path="/client/account" element={<ProtectedRoute><ClientAccount /></ProtectedRoute>} />
-            <Route path="/client/orders" element={<ProtectedRoute><ClientOrders /></ProtectedRoute>} />
+            {/* Admin/Internal Portal Routes */}
+            <Route path="/admin" element={<ProtectedRoute requireInternal><Dashboard /></ProtectedRoute>} />
+            <Route path="/admin/sales" element={<ProtectedRoute requireInternal><Sales /></ProtectedRoute>} />
+            <Route path="/admin/sales/clients" element={<ProtectedRoute requireInternal><ClientsPage /></ProtectedRoute>} />
+            <Route path="/admin/sales/quotations" element={<ProtectedRoute requireInternal><QuotationsPage /></ProtectedRoute>} />
+            <Route path="/admin/sales/contracts" element={<ProtectedRoute requireInternal><ContractsPage /></ProtectedRoute>} />
+            <Route path="/admin/projects" element={<ProtectedRoute requireInternal><Projects /></ProtectedRoute>} />
+            <Route path="/admin/projects/:id" element={<ProtectedRoute requireInternal><ProjectDetails /></ProtectedRoute>} />
+            <Route path="/admin/projects/tasks" element={<ProtectedRoute requireInternal><TasksPage /></ProtectedRoute>} />
+            <Route path="/admin/finance" element={<ProtectedRoute requireInternal><Finance /></ProtectedRoute>} />
+            <Route path="/admin/finance/payments" element={<ProtectedRoute requireInternal><PaymentsPage /></ProtectedRoute>} />
+            <Route path="/admin/support" element={<ProtectedRoute requireInternal><Support /></ProtectedRoute>} />
+            <Route path="/admin/infrastructure" element={<ProtectedRoute requireInternal><Infrastructure /></ProtectedRoute>} />
+            <Route path="/admin/settings" element={<ProtectedRoute requireInternal><SettingsPage /></ProtectedRoute>} />
 
-            {/* Storefront Routes (Public) */}
-            <Route path="/store" element={<StorefrontHome />} />
-            <Route path="/store/showcase" element={<ShowcasePage />} />
-            <Route path="/store/showcase/:id" element={<ShowcasePage />} />
-            <Route path="/store/templates" element={<TemplatesPage />} />
-            <Route path="/store/templates/:id" element={<TemplateDetailPage />} />
-            <Route path="/store/checkout" element={<CheckoutPage />} />
-            <Route path="/store/order-success" element={<OrderSuccessPage />} />
-            <Route path="/store/cart" element={<CartPage />} />
-            <Route path="/store/custom" element={<CustomWebsitePage />} />
-            <Route path="/store/how-it-works" element={<HowItWorksPage />} />
-            <Route path="/store/help" element={<HelpFAQPage />} />
-            <Route path="/store/contact" element={<ContactPage />} />
+            {/* Client Dashboard Routes */}
+            <Route path="/dashboard" element={<ProtectedRoute><ClientDashboard /></ProtectedRoute>} />
+            <Route path="/dashboard/projects" element={<ProtectedRoute><ClientProjects /></ProtectedRoute>} />
+            <Route path="/dashboard/contracts" element={<ProtectedRoute><ClientContracts /></ProtectedRoute>} />
+            <Route path="/dashboard/invoices" element={<ProtectedRoute><ClientInvoices /></ProtectedRoute>} />
+            <Route path="/dashboard/payments" element={<ProtectedRoute><ClientPayments /></ProtectedRoute>} />
+            <Route path="/dashboard/infrastructure" element={<ProtectedRoute><ClientInfrastructure /></ProtectedRoute>} />
+            <Route path="/dashboard/support" element={<ProtectedRoute><ClientSupport /></ProtectedRoute>} />
+            <Route path="/dashboard/account" element={<ProtectedRoute><ClientAccount /></ProtectedRoute>} />
+            <Route path="/dashboard/orders" element={<ProtectedRoute><ClientOrders /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

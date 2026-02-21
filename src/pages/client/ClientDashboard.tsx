@@ -109,7 +109,7 @@ export default function ClientDashboard() {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-sm font-semibold flex items-center gap-2"><FolderKanban className="w-4 h-4 text-primary" /> My Projects</h2>
-                <Link to="/client/projects" className="text-xs text-primary hover:underline flex items-center gap-1">View All <ArrowUpRight className="w-3 h-3" /></Link>
+                <Link to="/dashboard/projects" className="text-xs text-primary hover:underline flex items-center gap-1">View All <ArrowUpRight className="w-3 h-3" /></Link>
               </div>
               {!projects?.length ? (
                 <p className="text-sm text-muted-foreground bg-card rounded-lg border border-border p-6 text-center">No projects assigned yet.</p>
@@ -197,7 +197,7 @@ export default function ClientDashboard() {
             <div className="bg-card rounded-lg border border-border p-5">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-sm font-semibold">Recent Invoices</h2>
-                <Link to="/client/invoices" className="text-xs text-primary hover:underline flex items-center gap-1">All <ArrowUpRight className="w-3 h-3" /></Link>
+                <Link to="/dashboard/invoices" className="text-xs text-primary hover:underline flex items-center gap-1">All <ArrowUpRight className="w-3 h-3" /></Link>
               </div>
               {!invoices?.length ? (
                 <p className="text-sm text-muted-foreground text-center py-4">No invoices yet.</p>

@@ -7,7 +7,7 @@ import type { ServiceTemplate } from "@/features/storefront/types";
 function TemplateCard({ template, index }: { template: ServiceTemplate; index: number }) {
   return (
     <Link
-      to={`/store/templates/${template.id}`}
+      to={`/templates/${template.id}`}
       className="group rounded-xl border border-border bg-card overflow-hidden hover:shadow-xl hover:border-primary/30 hover:-translate-y-1 transition-all duration-300"
     >
       <div className="relative aspect-video bg-muted flex items-center justify-center overflow-hidden">
@@ -58,7 +58,7 @@ export function FeaturedSection({ templates }: { templates: ServiceTemplate[] })
     >
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-foreground">Template Terlaris</h2>
-        <Link to="/store/templates" className="text-sm font-medium text-primary hover:underline flex items-center gap-1">
+        <Link to="/templates" className="text-sm font-medium text-primary hover:underline flex items-center gap-1">
           Lihat Semua <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>

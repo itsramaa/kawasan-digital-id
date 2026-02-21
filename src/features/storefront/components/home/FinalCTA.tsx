@@ -26,10 +26,10 @@ export function FinalCTA() {
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button asChild size="lg" variant="secondary">
-            <Link to="/store/templates">Browse Templates</Link>
+            <Link to="/templates">Browse Templates</Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
-            <Link to="/store/contact">
+            <Link to="/contact">
               <MessageCircle className="w-4 h-4" /> Konsultasi Gratis
             </Link>
           </Button>

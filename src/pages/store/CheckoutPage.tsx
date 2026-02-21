@@ -63,7 +63,7 @@ export default function CheckoutPage() {
 
   // Auth gate: must be logged in
   if (!authLoading && !user) {
-    const redirectUrl = `/store/checkout?${searchParams.toString()}`;
+    const redirectUrl = `/checkout?${searchParams.toString()}`;
     return (
       <StorefrontLayout>
         <div className="max-w-md mx-auto px-4 py-20 text-center space-y-6">
@@ -100,7 +100,7 @@ export default function CheckoutPage() {
         user_id: user.id,
       });
       await clearCart();
-      navigate("/store/order-success");
+      navigate("/order-success");
     } catch (e) {
       // error handled by mutation
     }
@@ -121,7 +121,7 @@ export default function CheckoutPage() {
     return (
       <StorefrontLayout>
         <div className="max-w-4xl mx-auto px-4 py-20 text-center text-muted-foreground">
-          <p>No template selected. <a href="/store/templates" className="text-primary hover:underline">Browse templates</a></p>
+          <p>No template selected. <a href="/templates" className="text-primary hover:underline">Browse templates</a></p>
         </div>
       </StorefrontLayout>
     );

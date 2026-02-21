@@ -86,7 +86,7 @@ export function QuickViewDialog({ template, onClose }: Props) {
               {/* Actions */}
               <div className="flex gap-3">
                 <Link
-                  to={`/store/templates/${template.id}`}
+                  to={`/templates/${template.id}`}
                   onClick={onClose}
                   className="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors"
                 >

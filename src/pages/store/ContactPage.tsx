@@ -69,9 +69,9 @@ const MINI_FAQS = [
 ];
 
 const QUICK_LINKS = [
-  { icon: Palette, title: "Templates", desc: "Jelajahi koleksi template siap pakai", to: "/store/templates" },
-  { icon: Star, title: "Custom Website", desc: "Buat website sesuai kebutuhan unik Anda", to: "/store/custom" },
-  { icon: BookOpen, title: "How It Works", desc: "Pelajari proses dari awal hingga launch", to: "/store/how-it-works" },
+  { icon: Palette, title: "Templates", desc: "Jelajahi koleksi template siap pakai", to: "/templates" },
+  { icon: Star, title: "Custom Website", desc: "Buat website sesuai kebutuhan unik Anda", to: "/custom" },
+  { icon: BookOpen, title: "How It Works", desc: "Pelajari proses dari awal hingga launch", to: "/how-it-works" },
 ];
 
 function HeroSection() {
@@ -312,7 +312,7 @@ function InfoSidebar() {
             </div>
           ))}
         </div>
-        <Link to="/store/help" className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
+        <Link to="/help" className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
           Lihat semua FAQ <ArrowRight className="w-3 h-3" />
         </Link>
       </div>

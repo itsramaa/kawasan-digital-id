@@ -35,7 +35,7 @@ export function useAuthForm() {
         });
         if (error) throw error;
         toast.success("Login successful!");
-        navigate(redirectTo || "/");
+        navigate(redirectTo || "/dashboard");
       } else {
         const { error } = await supabase.auth.signUp({
           email: form.email,

@@ -27,7 +27,7 @@ export function CategorySection() {
         {CATEGORIES.map((cat) => (
           <Link
             key={cat.slug}
-            to={`/store/templates?category=${encodeURIComponent(cat.slug)}`}
+            to={`/templates?category=${encodeURIComponent(cat.slug)}`}
             className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
           >
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">

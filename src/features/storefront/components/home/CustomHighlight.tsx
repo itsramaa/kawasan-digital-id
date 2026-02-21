@@ -41,7 +41,7 @@ export function CustomHighlight() {
             ))}
           </ul>
           <Button asChild size="lg">
-            <Link to="/store/custom">
+            <Link to="/custom">
               Mulai Project Custom <ChevronRight className="w-4 h-4" />
             </Link>
           </Button>

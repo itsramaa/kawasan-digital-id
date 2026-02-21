@@ -40,12 +40,12 @@ export function HeroSection() {
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <Button asChild size="lg" className="text-base px-8">
-            <Link to="/store/templates">
+            <Link to="/templates">
               <Search className="w-4 h-4" /> Browse Templates
             </Link>
           </Button>
           <Button asChild variant="outline" size="lg" className="text-base px-8">
-            <Link to="/store/custom">
+            <Link to="/custom">
               <Sparkles className="w-4 h-4" /> Custom Website
             </Link>
           </Button>

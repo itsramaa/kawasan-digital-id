@@ -26,7 +26,7 @@ export default function Dashboard() {
   const { profile, roles, isClient, isInternal } = useAuth();
 
   if (isClient && !isInternal) {
-    return <Navigate to="/client" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const { projectCount, recentTasks } = useProjectStats();
@@ -107,7 +107,7 @@ export default function Dashboard() {
                 <h2 className="text-sm font-semibold text-card-foreground flex items-center gap-2">
                   <DollarSign className="w-4 h-4 text-primary" /> Monthly Revenue (Rp M)
                 </h2>
-                <Link to="/finance" className="text-xs text-primary hover:underline flex items-center gap-1">View All <ArrowUpRight className="w-3 h-3" /></Link>
+                <Link to="/admin/finance" className="text-xs text-primary hover:underline flex items-center gap-1">View All <ArrowUpRight className="w-3 h-3" /></Link>
               </div>
               <ResponsiveContainer width="100%" height={260}>
                 <AreaChart data={revenueTrend ?? []}>
@@ -135,7 +135,7 @@ export default function Dashboard() {
                 <h2 className="text-sm font-semibold text-card-foreground flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-primary" /> Sales Pipeline
                 </h2>
-                <Link to="/sales" className="text-xs text-primary hover:underline flex items-center gap-1">View All <ArrowUpRight className="w-3 h-3" /></Link>
+                <Link to="/admin/sales" className="text-xs text-primary hover:underline flex items-center gap-1">View All <ArrowUpRight className="w-3 h-3" /></Link>
               </div>
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={pipelineChartData} layout="vertical">
@@ -206,7 +206,7 @@ export default function Dashboard() {
                 <h2 className="text-sm font-semibold text-card-foreground flex items-center gap-2">
                   <ListTodo className="w-4 h-4 text-primary" /> Active Tasks
                 </h2>
-                <Link to="/projects/tasks" className="text-xs text-primary hover:underline flex items-center gap-1">Board <ArrowUpRight className="w-3 h-3" /></Link>
+                <Link to="/admin/projects/tasks" className="text-xs text-primary hover:underline flex items-center gap-1">Board <ArrowUpRight className="w-3 h-3" /></Link>
               </div>
               {!recentTasks?.length ? (
                 <p className="text-sm text-muted-foreground">No active tasks</p>
@@ -237,7 +237,7 @@ export default function Dashboard() {
                 <h2 className="text-sm font-semibold text-card-foreground flex items-center gap-2">
                   <HeadphonesIcon className="w-4 h-4 text-primary" /> Open Tickets
                 </h2>
-                <Link to="/support" className="text-xs text-primary hover:underline flex items-center gap-1">View All <ArrowUpRight className="w-3 h-3" /></Link>
+                <Link to="/admin/support" className="text-xs text-primary hover:underline flex items-center gap-1">View All <ArrowUpRight className="w-3 h-3" /></Link>
               </div>
               {!recentTickets?.length ? (
                 <p className="text-sm text-muted-foreground">No open tickets</p>
@@ -289,7 +289,7 @@ export default function Dashboard() {
                 <h2 className="text-sm font-semibold text-card-foreground flex items-center gap-2">
                   <Clock className="w-4 h-4 text-primary" /> Recent Inquiries
                 </h2>
-                <Link to="/sales" className="text-xs text-primary hover:underline flex items-center gap-1">Pipeline <ArrowUpRight className="w-3 h-3" /></Link>
+                <Link to="/admin/sales" className="text-xs text-primary hover:underline flex items-center gap-1">Pipeline <ArrowUpRight className="w-3 h-3" /></Link>
               </div>
               {(!recentInquiries || recentInquiries.length === 0) ? (
                 <p className="text-sm text-muted-foreground">No inquiries yet</p>

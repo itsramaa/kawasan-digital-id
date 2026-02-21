@@ -11,15 +11,15 @@ interface ClientLayoutProps {
 }
 
 const navItems = [
-  { label: "Dashboard", path: "/client", icon: LayoutDashboard },
-  { label: "Projects", path: "/client/projects", icon: FolderKanban },
-  { label: "Orders", path: "/client/orders", icon: ShoppingBag },
-  { label: "Contracts", path: "/client/contracts", icon: FileText },
-  { label: "Invoices", path: "/client/invoices", icon: Receipt },
-  { label: "Payments", path: "/client/payments", icon: CreditCard },
-  { label: "Infrastructure", path: "/client/infrastructure", icon: Server },
-  { label: "Support", path: "/client/support", icon: HeadphonesIcon },
-  { label: "Account", path: "/client/account", icon: User },
+  { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+  { label: "Projects", path: "/dashboard/projects", icon: FolderKanban },
+  { label: "Orders", path: "/dashboard/orders", icon: ShoppingBag },
+  { label: "Contracts", path: "/dashboard/contracts", icon: FileText },
+  { label: "Invoices", path: "/dashboard/invoices", icon: Receipt },
+  { label: "Payments", path: "/dashboard/payments", icon: CreditCard },
+  { label: "Infrastructure", path: "/dashboard/infrastructure", icon: Server },
+  { label: "Support", path: "/dashboard/support", icon: HeadphonesIcon },
+  { label: "Account", path: "/dashboard/account", icon: User },
 ];
 
 export function ClientLayout({ children }: ClientLayoutProps) {
@@ -56,7 +56,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
         {/* Desktop Nav */}
         <nav className="hidden lg:flex gap-1 -mb-px">
           {navItems.map((item) => {
-            const active = item.path === "/client" ? location.pathname === "/client" : location.pathname.startsWith(item.path);
+            const active = item.path === "/dashboard" ? location.pathname === "/dashboard" : location.pathname.startsWith(item.path);
             return (
               <NavLink
                 key={item.path}
@@ -80,7 +80,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
       {mobileOpen && (
         <div className="lg:hidden border-b border-border bg-card px-4 py-2 space-y-1">
           {navItems.map((item) => {
-            const active = item.path === "/client" ? location.pathname === "/client" : location.pathname.startsWith(item.path);
+            const active = item.path === "/dashboard" ? location.pathname === "/dashboard" : location.pathname.startsWith(item.path);
             return (
               <NavLink
                 key={item.path}

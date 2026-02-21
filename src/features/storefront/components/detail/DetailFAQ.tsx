@@ -27,7 +27,7 @@ export function DetailFAQ({ faqs }: DetailFAQProps) {
           <HelpCircle className="w-5 h-5 text-primary" /> Frequently Asked Questions
         </h2>
         <Link
-          to="/store/help"
+          to="/help"
           className="hidden sm:flex items-center gap-1 text-sm text-primary hover:underline"
         >
           Lihat Semua FAQ <ArrowRight className="w-3.5 h-3.5" />
@@ -46,7 +46,7 @@ export function DetailFAQ({ faqs }: DetailFAQProps) {
         ))}
       </Accordion>
       <Link
-        to="/store/help"
+        to="/help"
         className="flex sm:hidden items-center gap-1 text-sm text-primary hover:underline justify-center pt-2"
       >
         Lihat Semua FAQ <ArrowRight className="w-3.5 h-3.5" />

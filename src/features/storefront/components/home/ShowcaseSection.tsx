@@ -15,7 +15,7 @@ export function ShowcaseSection({ projects }: { projects: ShowcaseProject[] }) {
     >
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-foreground">Hasil Kerja Kami</h2>
-        <Link to="/store/showcase" className="text-sm font-medium text-primary hover:underline flex items-center gap-1">
+        <Link to="/showcase" className="text-sm font-medium text-primary hover:underline flex items-center gap-1">
           Lihat Semua <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>
@@ -23,7 +23,7 @@ export function ShowcaseSection({ projects }: { projects: ShowcaseProject[] }) {
         {projects.map((p) => (
           <Link
             key={p.id}
-            to={`/store/showcase/${p.id}`}
+            to={`/showcase/${p.id}`}
             className="group rounded-xl border border-border bg-card overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
           >
             <div className="aspect-video bg-muted flex items-center justify-center overflow-hidden">

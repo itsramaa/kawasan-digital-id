@@ -48,7 +48,7 @@ export default function CartPage() {
       >
         <div className="max-w-5xl mx-auto px-4 lg:px-8 py-10">
           <nav className="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
-            <Link to="/store" className="hover:text-primary transition-colors flex items-center gap-1"><Home className="w-3 h-3" /> Home</Link>
+            <Link to="/" className="hover:text-primary transition-colors flex items-center gap-1"><Home className="w-3 h-3" /> Home</Link>
             <ChevronRight className="w-3 h-3" />
             <span className="text-foreground font-medium">Keranjang</span>
           </nav>
@@ -87,9 +87,9 @@ export default function CartPage() {
 
             <div className="grid sm:grid-cols-3 gap-4 max-w-2xl mx-auto pt-4">
               {[
-                { to: "/store/templates", icon: Layout, title: "Template Website", desc: "Siap pakai, cepat online" },
-                { to: "/store/custom", icon: Globe, title: "Custom Website", desc: "Desain sesuai keinginan" },
-                { to: "/store/showcase", icon: Sparkles, title: "Showcase", desc: "Lihat hasil karya kami" },
+                { to: "/templates", icon: Layout, title: "Template Website", desc: "Siap pakai, cepat online" },
+                { to: "/custom", icon: Globe, title: "Custom Website", desc: "Desain sesuai keinginan" },
+                { to: "/showcase", icon: Sparkles, title: "Showcase", desc: "Lihat hasil karya kami" },
               ].map((card) => (
                 <Link
                   key={card.to}
@@ -157,7 +157,7 @@ export default function CartPage() {
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <Link
-                                    to={`/store/templates/${item.template_id}`}
+                                    to={`/templates/${item.template_id}`}
                                     className="p-2 text-muted-foreground hover:text-primary rounded-lg hover:bg-primary/10 transition-colors"
                                   >
                                     <Pencil className="w-4 h-4" />
@@ -262,7 +262,7 @@ export default function CartPage() {
 
                 {/* CTA */}
                 <Link
-                  to={user ? "/store/checkout" : `/login?redirect=${encodeURIComponent("/store/checkout")}`}
+                  to={user ? "/checkout" : `/login?redirect=${encodeURIComponent("/checkout")}`}
                   className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all hover:shadow-lg hover:shadow-primary/20"
                 >
                   {user ? "Lanjut ke Checkout" : "Login untuk Checkout"} <ArrowRight className="w-4 h-4" />
@@ -309,8 +309,8 @@ export default function CartPage() {
             </p>
             <div className="grid sm:grid-cols-2 gap-4">
               {[
-                { to: "/store/templates", icon: Layout, title: "Jelajahi Template Lain", desc: "Temukan template profesional untuk kebutuhan lainnya." },
-                { to: "/store/custom", icon: Globe, title: "Buat Website Custom", desc: "Butuh sesuatu yang unik? Buat dari nol sesuai visi Anda." },
+                { to: "/templates", icon: Layout, title: "Jelajahi Template Lain", desc: "Temukan template profesional untuk kebutuhan lainnya." },
+                { to: "/custom", icon: Globe, title: "Buat Website Custom", desc: "Butuh sesuatu yang unik? Buat dari nol sesuai visi Anda." },
               ].map((card) => (
                 <Link
                   key={card.to}

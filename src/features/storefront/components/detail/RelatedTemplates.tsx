@@ -26,7 +26,7 @@ export function RelatedTemplates({ templates }: RelatedTemplatesProps) {
         {templates.map((t) => (
           <Link
             key={t.id}
-            to={`/store/templates/${t.id}`}
+            to={`/templates/${t.id}`}
             className="min-w-[220px] lg:min-w-0 rounded-xl border border-border bg-card overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 hover:border-primary/30"
           >
             <div className="relative aspect-video bg-muted flex items-center justify-center overflow-hidden">

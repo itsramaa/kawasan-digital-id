@@ -212,13 +212,13 @@ function CTASection() {
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <Link
-            to="/store/templates"
+            to="/templates"
             className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors"
           >
             Browse Templates <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
-            to="/store/custom"
+            to="/custom"
             className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-border text-foreground font-semibold hover:bg-muted transition-colors"
           >
             Custom Website
