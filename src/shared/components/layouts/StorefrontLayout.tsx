@@ -15,7 +15,6 @@ const navLinks = [
 const helpCenterLinks = [
   { label: "How It Works", path: "/how-it-works" },
   { label: "Help / FAQ", path: "/help" },
-  { label: "Contact", path: "/contact" },
 ];
 
 function HelpCenterDropdown({ location }: { location: ReturnType<typeof useLocation> }) {
@@ -263,7 +262,6 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
               <div className="space-y-2">
                 <Link to="/how-it-works" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">How It Works</Link>
                 <Link to="/help" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">FAQ</Link>
-                <Link to="/contact" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
               </div>
             </div>
 
