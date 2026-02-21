@@ -111,7 +111,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
         </div>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex gap-1 -mb-px" aria-label="Navigasi utama">
+        <nav className="hidden lg:flex justify-center gap-1 -mb-px" aria-label="Navigasi utama">
           {navItems.map((item) => {
             const active = item.path === "/dashboard"
               ? location.pathname === "/dashboard"
