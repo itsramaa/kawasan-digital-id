@@ -3,7 +3,8 @@ import { useAuth } from "@/features/auth/AuthContext";
 import { StatusBadge, KPICard } from "@/shared/components/common/StatusBadge";
 import { AlertBanner } from "@/features/client/components/AlertBanner";
 import { ActivityTimeline } from "@/features/client/components/ActivityTimeline";
-import { FolderKanban, Receipt, HeadphonesIcon, ArrowUpRight, CheckCircle, AlertTriangle, Clock } from "lucide-react";
+import { ActivityLogList } from "@/features/client/components/ActivityLogList";
+import { FolderKanban, Receipt, HeadphonesIcon, ArrowUpRight, CheckCircle, AlertTriangle, Clock, Activity } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useClientProjects } from "@/features/client/hooks/useClientProjects";
 import { useClientInvoices } from "@/features/client/hooks/useClientInvoices";
@@ -13,6 +14,8 @@ import { useClientDomains } from "@/features/client/hooks/useClientDomains";
 import { useClientActivity } from "@/features/client/hooks/useClientActivity";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { differenceInDays, parseISO } from "date-fns";
+import { useState } from "react";
+import { cn } from "@/shared/utils/utils";
 
 const statusVariant: Record<string, "info" | "warning" | "hold" | "success" | "neutral"> = {
   Planning: "warning", "In Progress": "info", "On Hold": "hold", Completed: "success", Cancelled: "neutral",
@@ -22,6 +25,7 @@ const PIE_COLORS = ["hsl(160, 60%, 45%)", "hsl(216, 51%, 48%)", "hsl(0, 84%, 60%
 
 export default function ClientDashboard() {
   const { profile } = useAuth();
+  const [activityTab, setActivityTab] = useState<"recent" | "log">("recent");
   const { data: projects } = useClientProjects();
   const { data: invoices } = useClientInvoices();
   const { data: tickets } = useClientTickets();
@@ -163,10 +167,30 @@ export default function ClientDashboard() {
               </div>
             )}
 
-            {/* Recent Activity */}
+            {/* Recent Activity + Activity Log */}
             <div className="bg-card rounded-lg border border-border p-5">
-              <h2 className="text-sm font-semibold mb-3">Recent Activity</h2>
-              <ActivityTimeline items={activity ?? []} />
+              <div className="flex items-center gap-2 mb-3">
+                <h2 className="text-sm font-semibold">Activity</h2>
+                <div className="flex gap-1 ml-auto">
+                  {(["recent", "log"] as const).map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setActivityTab(tab)}
+                      className={cn(
+                        "px-2 py-1 rounded text-[10px] font-medium transition-colors",
+                        activityTab === tab ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
+                      )}
+                    >
+                      {tab === "recent" ? "Recent" : "Full Log"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {activityTab === "recent" ? (
+                <ActivityTimeline items={activity ?? []} />
+              ) : (
+                <ActivityLogList />
+              )}
             </div>
 
             {/* Recent Invoices */}
