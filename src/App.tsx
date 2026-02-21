@@ -38,6 +38,7 @@ import CartPage from "./pages/store/CartPage";
 import CustomWebsitePage from "./pages/store/CustomWebsitePage";
 
 import HelpFAQPage from "./pages/store/HelpFAQPage";
+import OrderTrackingPage from "./pages/store/OrderTrackingPage";
 import PrivacyPolicyPage from "./pages/store/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/store/TermsOfServicePage";
 import RefundPolicyPage from "./pages/store/RefundPolicyPage";
@@ -67,6 +68,7 @@ const App = () => (
             <Route path="/order-success" element={<OrderSuccessPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/custom" element={<CustomWebsitePage />} />
+            <Route path="/track-order" element={<OrderTrackingPage />} />
             <Route path="/how-it-works" element={<Navigate to="/help" replace />} />
             <Route path="/help" element={<HelpFAQPage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />

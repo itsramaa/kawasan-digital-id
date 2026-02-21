@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/shared/utils/utils";
-import { Globe, Menu, X, ShoppingCart, ArrowUp } from "lucide-react";
+import { Globe, Menu, X, ShoppingCart, ArrowUp, Package } from "lucide-react";
 import { useCart } from "@/features/storefront/hooks/useCart";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -9,7 +9,7 @@ const navLinks = [
   { label: "Home", path: "/" },
   { label: "Templates", path: "/templates" },
   { label: "Custom Website", path: "/custom" },
-  
+  { label: "Lacak Pesanan", path: "/track-order" },
   { label: "Help & FAQ", path: "/help" },
 ];
 
@@ -176,6 +176,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
               <h4 className="text-sm font-semibold text-foreground">Help</h4>
               <div className="space-y-2">
                 <a href="/#how-it-works" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
+                <Link to="/track-order" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Lacak Pesanan</Link>
                 <Link to="/help" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">FAQ</Link>
               </div>
             </div>
