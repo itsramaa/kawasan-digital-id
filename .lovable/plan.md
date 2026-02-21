@@ -1,76 +1,99 @@
 
 
-# Maksimalkan Custom Website Page
+# Buat & Maksimalkan Contact Page (`/store/contact`)
 
 ## Ringkasan
-Upgrade halaman Custom Website wizard (`/store/custom`) agar sejajar dengan halaman lain yang sudah di-upgrade -- dengan hero gradient, stepper visual yang lebih profesional, animasi, trust signals, dan summary yang lebih informatif.
+Membuat halaman Contact baru yang dedicated di `/store/contact` -- saat ini hanya ada hash link `#contact` yang tidak mengarah ke section apapun. Halaman ini akan menjadi pusat komunikasi utama dengan calon klien, dengan desain profesional yang konsisten dengan halaman store lainnya.
 
 ---
 
-## Perubahan yang Akan Dilakukan
+## Struktur Halaman
 
 ### 1. Hero Section -- Gradient Banner
-- Tambahkan hero banner dengan gradient background (konsisten: `bg-gradient-to-br from-primary/5 via-transparent to-primary/3`)
-- Badge "Custom Website" sebagai trust signal
-- Subtitle lebih deskriptif dan engaging
-- Trust indicators: "Estimasi Instan", "Tanpa Komitmen", "Konsultasi Gratis"
+- Gradient background konsisten (`bg-gradient-to-br from-primary/5 via-transparent to-primary/3`)
+- Badge "Contact Us"
+- Heading: "Hubungi Kami"
+- Subtitle deskriptif
+- Trust indicators: "Respon < 2 Jam", "Konsultasi Gratis", "Tim Profesional"
 
-### 2. Stepper / Progress -- Visual Upgrade
-- Ganti progress bar sederhana menjadi stepper visual dengan icon per step
-- Setiap step punya icon (ClipboardList, Settings, Calendar, FileCheck)
-- Active step dengan highlight, completed steps dengan checkmark
-- Connecting line antar steps
-- Animasi transisi saat pindah step
-
-### 3. Step 1: Basic Info -- Lebih Polished
-- Industry selector: ganti `<select>` menjadi icon-based grid cards (setiap industry punya icon)
-- Website Type cards: tambahkan deskripsi singkat dan estimasi harga mulai ("Mulai dari Rp X")
-- Pages slider: tambahkan visual indicator (icon halaman) dan info "5 halaman sudah termasuk"
+### 2. Contact Info Cards (3 kolom)
+- **Email**: hello@kawasandigital.com, icon Mail
+- **WhatsApp**: nomor/link, icon MessageCircle
+- **Jam Operasional**: Senin-Jumat 09:00-18:00, icon Clock
+- Hover effect: lift + border glow
 - Scroll-reveal animation
 
-### 4. Step 2: Features -- Lebih Engaging
-- Tambahkan badge "Popular" pada fitur tertentu (Ecommerce, Payment Gateway)
-- Tambahkan estimasi hari per fitur di samping harga ("+7 hari kerja")
-- Running total mini-bar di bawah feature list (total fitur terpilih + total biaya tambahan)
-- Hover effect lebih dramatis: border glow + subtle scale
-- Scroll-reveal animation
+### 3. Contact Form (kolom utama)
+- Layout 2 kolom pada desktop: form di kiri, info sidebar di kanan
+- Form fields:
+  - Nama (required)
+  - Email (required, validasi format)
+  - Subjek (dropdown: General, Technical Support, Custom Project, Partnership, Other)
+  - Pesan (required, min 10 karakter, max 1000)
+- Validasi menggunakan Zod schema
+- Submit menyimpan ke tabel `contact_messages` di database
+- Toast notification saat berhasil/gagal
+- Success state dengan animasi
 
-### 5. Step 3: Timeline & Budget -- Lebih Informatif
-- Deadline cards: tambahkan icon dan subtle description per opsi
-- Budget cards: tambahkan hint "Paling Populer" pada range tertentu
-- Tambahkan info box: "Estimasi sementara berdasarkan pilihan Anda" dengan preview harga realtime
-- Scroll-reveal animation
+### 4. Info Sidebar (di samping form)
+- Mengapa memilih kami? (3-4 value props dengan icon)
+- FAQ ringkas (3 pertanyaan populer dengan link ke `/store/help`)
+- Social proof: "100+ Proyek Selesai"
 
-### 6. Step 4: Summary -- Lebih Profesional
-- Layout 2 kolom pada desktop: detail di kiri, pricing card sticky di kanan
-- Summary detail dengan icon per item (bukan hanya grid text)
-- Pricing card dengan gradient background, breakdown harga (base + pages + features)
-- Tambahkan trust signals: "Garansi Uang Kembali", "Revisi Gratis", "NDA Available"
-- Tambahkan disclaimer: "Harga final akan dikonfirmasi setelah konsultasi"
-- CTA buttons lebih prominent dengan icon
+### 5. Map / Lokasi Section (opsional visual)
+- Kartu info lokasi dengan icon MapPin
+- Alamat bisnis (teks saja, tanpa embed map)
 
-### 7. Tambah Section: "Mengapa Custom?"
-- Tampilkan di bawah hero (sebelum wizard) atau sebagai collapsible section
-- 3-4 value propositions: "100% Sesuai Kebutuhan", "Tim Berpengalaman", "Support Berkelanjutan", "Full Ownership"
-- Icon grid layout dengan scroll-reveal
-
-### 8. Animasi Global
-- Fade-in transition saat pindah step (opacity + translateY)
-- Scroll-reveal pada hero dan "Mengapa Custom" section
-- Smooth transition pada running total dan estimasi harga
+### 6. Quick Links Section
+- Grid cards menuju halaman terkait (Templates, Custom Website, How It Works)
+- Konsisten dengan QuickLinks di halaman Help/FAQ
 
 ---
 
-## Detail Teknis
+## Perubahan Database
+
+### Tabel Baru: `contact_messages`
+```sql
+CREATE TABLE public.contact_messages (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  message TEXT NOT NULL,
+  status TEXT DEFAULT 'new',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
+
+-- Siapa saja bisa submit (public form)
+CREATE POLICY "Anyone can insert contact messages"
+  ON public.contact_messages FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+
+-- Hanya authenticated internal users yang bisa membaca
+CREATE POLICY "Authenticated users can read contact messages"
+  ON public.contact_messages FOR SELECT
+  TO authenticated
+  USING (true);
+```
+
+### File Baru
+- `src/pages/store/ContactPage.tsx` -- halaman utama
 
 ### File yang Dimodifikasi
-- `src/pages/store/CustomWebsitePage.tsx` -- refactor komprehensif
+- `src/App.tsx` -- tambah route `/store/contact`
+- `src/shared/components/layouts/StorefrontLayout.tsx` -- update nav link Contact dari `#contact` hash menjadi `/store/contact`
+- `src/features/storefront/components/home/FinalCTA.tsx` -- update link CTA ke `/store/contact`
+- `src/pages/store/HelpFAQPage.tsx` -- update ContactCTA link ke `/store/contact`
+- `src/shared/lib/validations.ts` -- tambah `contactSchema` Zod validation
 
 ### Pendekatan
-- Tidak ada perubahan database
-- Tidak ada dependency baru
 - Menggunakan `useScrollReveal` hook yang sudah ada
+- Validasi form menggunakan Zod (sudah terinstall)
+- Submit form langsung ke Supabase via client SDK
+- Toast notifications via `sonner` (sudah terinstall)
 - Semua styling menggunakan Tailwind classes
-- Logika estimasi (`estimate()`) tetap sama, hanya presentasi yang di-upgrade
-- Menambahkan icon mapping untuk industries dan step icons dari lucide-react
+- Tidak ada dependency baru
 
