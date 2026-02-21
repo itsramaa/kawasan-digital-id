@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 const navLinks = [
   { label: "Home", path: "/store" },
   { label: "Templates", path: "/store/templates" },
-  { label: "Custom Website", path: "/store/templates", hash: "#custom-section" },
+  { label: "Custom Website", path: "/store/custom" },
   { label: "Portfolio", path: "/store/showcase" },
 ];
 
@@ -83,9 +83,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const getNavTo = (link: typeof navLinks[number]) => {
-    if (link.hash && link.path === location.pathname) return link.hash;
-    if (link.hash) return link.path + link.hash;
+  const getNavTo = (link: { path: string }) => {
     return link.path;
   };
 
@@ -95,8 +93,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
     return link.path;
   };
 
-  const isActive = (link: typeof navLinks[number]) => {
-    if (link.hash) return false;
+  const isActive = (link: { path: string }) => {
     if (link.path === "/store") return location.pathname === "/store";
     return location.pathname.startsWith(link.path);
   };

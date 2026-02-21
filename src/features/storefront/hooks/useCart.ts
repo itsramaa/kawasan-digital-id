@@ -9,6 +9,8 @@ export interface CartItem {
   base_price: number;
   selected_features: Array<{ id: string; name: string; price: number }>;
   category: string | null;
+  thumbnail_url: string | null;
+  estimated_days: number | null;
 }
 
 const CART_STORAGE_KEY = "agencyos_cart";
@@ -45,7 +47,7 @@ export function useCart() {
         const templateIds = data.map((d) => d.template_id);
         const { data: templates } = await supabase
           .from("service_templates")
-          .select("id, name, base_price, category")
+          .select("id, name, base_price, category, thumbnail_url, estimated_days")
           .in("id", templateIds);
 
         const cartItems: CartItem[] = data.map((d) => {
@@ -57,6 +59,8 @@ export function useCart() {
             base_price: Number(tmpl?.base_price ?? 0),
             selected_features: features,
             category: tmpl?.category ?? null,
+            thumbnail_url: tmpl?.thumbnail_url ?? null,
+            estimated_days: tmpl?.estimated_days ?? null,
           };
         });
         setItems(cartItems);

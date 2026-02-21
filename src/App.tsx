@@ -35,6 +35,7 @@ import TemplateDetailPage from "./pages/store/TemplateDetailPage";
 import CheckoutPage from "./pages/store/CheckoutPage";
 import OrderSuccessPage from "./pages/store/OrderSuccessPage";
 import CartPage from "./pages/store/CartPage";
+import CustomWebsitePage from "./pages/store/CustomWebsitePage";
 import ClientOrders from "./pages/client/ClientOrders";
 
 const queryClient = new QueryClient();
@@ -83,6 +84,7 @@ const App = () => (
             <Route path="/store/checkout" element={<CheckoutPage />} />
             <Route path="/store/order-success" element={<OrderSuccessPage />} />
             <Route path="/store/cart" element={<CartPage />} />
+            <Route path="/store/custom" element={<CustomWebsitePage />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

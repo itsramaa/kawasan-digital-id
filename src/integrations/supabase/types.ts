@@ -148,6 +148,57 @@ export type Database = {
           },
         ]
       }
+      custom_inquiries: {
+        Row: {
+          budget_range: string | null
+          created_at: string
+          deadline: string | null
+          estimated_days_max: number
+          estimated_days_min: number
+          estimated_pages: number
+          estimated_price_max: number
+          estimated_price_min: number
+          id: string
+          industry: string
+          selected_features: Json
+          status: string
+          user_id: string | null
+          website_type: string
+        }
+        Insert: {
+          budget_range?: string | null
+          created_at?: string
+          deadline?: string | null
+          estimated_days_max?: number
+          estimated_days_min?: number
+          estimated_pages?: number
+          estimated_price_max?: number
+          estimated_price_min?: number
+          id?: string
+          industry: string
+          selected_features?: Json
+          status?: string
+          user_id?: string | null
+          website_type: string
+        }
+        Update: {
+          budget_range?: string | null
+          created_at?: string
+          deadline?: string | null
+          estimated_days_max?: number
+          estimated_days_min?: number
+          estimated_pages?: number
+          estimated_price_max?: number
+          estimated_price_min?: number
+          id?: string
+          industry?: string
+          selected_features?: Json
+          status?: string
+          user_id?: string | null
+          website_type?: string
+        }
+        Relationships: []
+      }
       domains: {
         Row: {
           auto_renew: boolean | null
