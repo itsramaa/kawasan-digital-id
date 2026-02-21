@@ -141,6 +141,9 @@ export type Database = {
           name: string
           status: string | null
           subject: string
+          unread_count: number
+          updated_at: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -150,6 +153,9 @@ export type Database = {
           name: string
           status?: string | null
           subject: string
+          unread_count?: number
+          updated_at?: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -159,6 +165,9 @@ export type Database = {
           name?: string
           status?: string | null
           subject?: string
+          unread_count?: number
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -471,6 +480,41 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_replies: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          message_id: string
+          sender_id: string | null
+          sender_type: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          message_id: string
+          sender_id?: string | null
+          sender_type: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          message_id?: string
+          sender_id?: string | null
+          sender_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_replies_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "contact_messages"
             referencedColumns: ["id"]
           },
         ]
