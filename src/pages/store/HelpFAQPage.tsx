@@ -180,10 +180,10 @@ function ContactCTA() {
         </div>
 
         <Link
-          to="/how-it-works"
+          to="/custom"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors text-sm"
         >
-          Lihat Cara Kerja <ArrowRight className="w-4 h-4" />
+          Konsultasi Gratis <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
     </div>
@@ -193,7 +193,7 @@ function ContactCTA() {
 function QuickLinks() {
   const { ref, isVisible } = useScrollReveal(0.1);
   const links = [
-    { icon: BookOpen, title: "Cara Kerja", desc: "Pelajari proses dari awal hingga launch", to: "/how-it-works" },
+    { icon: BookOpen, title: "Cara Kerja", desc: "Pelajari proses dari awal hingga launch", to: "/#how-it-works" },
     { icon: Palette, title: "Templates", desc: "Jelajahi koleksi template siap pakai", to: "/templates" },
     { icon: Star, title: "Custom Website", desc: "Buat website sesuai kebutuhan unik Anda", to: "/custom" },
   ];

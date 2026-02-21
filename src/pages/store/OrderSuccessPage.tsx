@@ -21,10 +21,10 @@ export default function OrderSuccessPage() {
         <CheckoutStepper activeStep={2} />
 
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-            <CheckCircle className="w-8 h-8 text-primary" />
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto animate-scale-in">
+            <CheckCircle className="w-8 h-8 text-primary animate-[fade-in_0.5s_ease-out_0.3s_both]" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Pesanan Berhasil Dibuat!</h1>
+          <h1 className="text-2xl font-bold text-foreground animate-fade-in">Pesanan Berhasil Dibuat!</h1>
           <p className="text-muted-foreground">
             Terima kasih atas pesanan Anda. Tim kami akan segera meninjau dan menghubungi Anda melalui email.
           </p>
