@@ -175,7 +175,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
             <div className="space-y-3">
               <h4 className="text-sm font-semibold text-foreground">Help</h4>
               <div className="space-y-2">
-                <Link to="/how-it-works" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">How It Works</Link>
+                <a href="/#how-it-works" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
                 <Link to="/help" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">FAQ</Link>
               </div>
             </div>
@@ -184,9 +184,9 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
             <div className="space-y-3">
               <h4 className="text-sm font-semibold text-foreground">Legal</h4>
               <div className="space-y-2">
-                <span className="block text-xs text-muted-foreground">Privacy Policy</span>
-                <span className="block text-xs text-muted-foreground">Terms of Service</span>
-                <span className="block text-xs text-muted-foreground">Refund Policy</span>
+                <Link to="/privacy" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link>
+                <Link to="/terms" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Terms of Service</Link>
+                <Link to="/refund" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Refund Policy</Link>
               </div>
             </div>
           </div>
