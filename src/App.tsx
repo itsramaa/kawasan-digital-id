@@ -38,9 +38,9 @@ import CartPage from "./pages/store/CartPage";
 import CustomWebsitePage from "./pages/store/CustomWebsitePage";
 import HowItWorksPage from "./pages/store/HowItWorksPage";
 import HelpFAQPage from "./pages/store/HelpFAQPage";
-import ContactPage from "./pages/store/ContactPage";
+
 import ClientOrders from "./pages/client/ClientOrders";
-import ClientMessages from "./pages/client/ClientMessages";
+
 
 const queryClient = new QueryClient();
 
@@ -66,7 +66,7 @@ const App = () => (
             <Route path="/custom" element={<CustomWebsitePage />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/help" element={<HelpFAQPage />} />
-            <Route path="/contact" element={<ContactPage />} />
+            
 
             {/* Admin/Internal Portal Routes */}
             <Route path="/admin" element={<ProtectedRoute requireInternal><Dashboard /></ProtectedRoute>} />
@@ -93,7 +93,7 @@ const App = () => (
             <Route path="/dashboard/support" element={<ProtectedRoute><ClientSupport /></ProtectedRoute>} />
             <Route path="/dashboard/account" element={<ProtectedRoute><ClientAccount /></ProtectedRoute>} />
             <Route path="/dashboard/orders" element={<ProtectedRoute><ClientOrders /></ProtectedRoute>} />
-            <Route path="/dashboard/messages" element={<ProtectedRoute><ClientMessages /></ProtectedRoute>} />
+            
 
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,7 +1,7 @@
-import { ReactNode, useEffect, useState, useRef } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/shared/utils/utils";
-import { Globe, Menu, X, ShoppingCart, ChevronDown } from "lucide-react";
+import { Globe, Menu, X, ShoppingCart } from "lucide-react";
 import { useCart } from "@/features/storefront/hooks/useCart";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -10,65 +10,12 @@ const navLinks = [
   { label: "Templates", path: "/templates" },
   { label: "Custom Website", path: "/custom" },
   { label: "Portfolio", path: "/showcase" },
-];
-
-const helpCenterLinks = [
   { label: "How It Works", path: "/how-it-works" },
-  { label: "Help / FAQ", path: "/help" },
 ];
-
-function HelpCenterDropdown({ location }: { location: ReturnType<typeof useLocation> }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  const getNavTo = (link: { path: string; hash?: string }) => {
-    if (link.hash && link.path === location.pathname) return link.hash;
-    if (link.hash) return link.path + link.hash;
-    return link.path;
-  };
-
-  return (
-    <div ref={ref} className="relative">
-      <button
-        onClick={() => setOpen(!open)}
-        className={cn(
-          "flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-          "text-muted-foreground hover:text-foreground hover:bg-muted"
-        )}
-      >
-        Help Center
-        <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", open && "rotate-180")} />
-      </button>
-      {open && (
-        <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-border bg-popover shadow-lg z-50 py-1">
-          {helpCenterLinks.map((link) => (
-            <Link
-              key={link.label}
-              to={getNavTo(link)}
-              onClick={() => setOpen(false)}
-              className="block px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export function StorefrontLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mobileHelpOpen, setMobileHelpOpen] = useState(false);
   const { itemCount } = useCart();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -81,16 +28,6 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
     });
     return () => subscription.unsubscribe();
   }, []);
-
-  const getNavTo = (link: { path: string }) => {
-    return link.path;
-  };
-
-  const getHelpNavTo = (link: typeof helpCenterLinks[number]) => {
-    if ('hash' in link && (link as any).hash && link.path === location.pathname) return (link as any).hash;
-    if ('hash' in link && (link as any).hash) return link.path + (link as any).hash;
-    return link.path;
-  };
 
   const isActive = (link: { path: string }) => {
     if (link.path === "/") return location.pathname === "/";
@@ -112,7 +49,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
             {navLinks.map((link) => (
               <Link
                 key={link.label}
-                to={getNavTo(link)}
+                to={link.path}
                 className={cn(
                   "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                   isActive(link)
@@ -123,7 +60,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
                 {link.label}
               </Link>
             ))}
-            <HelpCenterDropdown location={location} />
+            
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
@@ -175,7 +112,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
             {navLinks.map((link) => (
               <Link
                 key={link.label}
-                to={getNavTo(link)}
+                to={link.path}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
                   "block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
@@ -185,28 +122,6 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
                 {link.label}
               </Link>
             ))}
-            {/* Help Center accordion */}
-            <button
-              onClick={() => setMobileHelpOpen(!mobileHelpOpen)}
-              className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted transition-colors"
-            >
-              Help Center
-              <ChevronDown className={cn("w-4 h-4 transition-transform", mobileHelpOpen && "rotate-180")} />
-            </button>
-            {mobileHelpOpen && (
-              <div className="pl-4 space-y-1">
-                {helpCenterLinks.map((link) => (
-                  <Link
-                    key={link.label}
-                    to={getHelpNavTo(link)}
-                    onClick={() => { setMobileOpen(false); setMobileHelpOpen(false); }}
-                    className="block px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-muted transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            )}
             {isLoggedIn ? (
               <Link
                 to="/dashboard"
