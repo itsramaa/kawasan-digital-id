@@ -23,7 +23,7 @@ export function FAQSection({ faqs }: { faqs: { id: string; question: string; ans
         ))}
       </Accordion>
       <div className="text-center mt-6">
-        <Link to="/store/help" className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1">
+        <Link to="/help" className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1">
           Lihat Semua FAQ <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>

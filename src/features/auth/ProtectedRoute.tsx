@@ -28,7 +28,7 @@ export function ProtectedRoute({ children, requireInternal, requireClient, allow
   }
 
   if (requireInternal && !isInternal) {
-    return <Navigate to="/client" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   if (requireClient && !isClient && !isInternal) {

@@ -188,7 +188,7 @@ export default function CustomWebsitePage() {
 
   const handleDeposit = () => {
     const params = new URLSearchParams({ mode: "custom", industry, websiteType, pages: String(pages), features: selectedFeatures.join(","), deadline, budget, priceMin: String(est.priceMin), priceMax: String(est.priceMax), daysMin: String(est.daysMin), daysMax: String(est.daysMax) });
-    navigate(`/store/checkout?${params.toString()}`);
+    navigate(`/checkout?${params.toString()}`);
   };
 
   return (
@@ -414,7 +414,7 @@ export default function CustomWebsitePage() {
             </button>
           ) : (
             <div className="flex gap-3">
-              <Link to="/store" className="px-4 py-2.5 rounded-lg text-sm font-medium border border-border text-muted-foreground hover:bg-muted transition-colors flex items-center gap-2"><MessageSquare className="w-4 h-4" />Hubungi Kami</Link>
+              <Link to="/" className="px-4 py-2.5 rounded-lg text-sm font-medium border border-border text-muted-foreground hover:bg-muted transition-colors flex items-center gap-2"><MessageSquare className="w-4 h-4" />Hubungi Kami</Link>
               <button onClick={handleDeposit} className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">Bayar Deposit <ArrowRight className="w-4 h-4" /></button>
             </div>
           )}

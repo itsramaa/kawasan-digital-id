@@ -90,7 +90,7 @@ export default function TemplateDetailPage() {
       template_id: template.id,
       features: Array.from(selectedFeatureIds).join(","),
     });
-    navigate(`/store/checkout?${params.toString()}`);
+    navigate(`/checkout?${params.toString()}`);
   };
 
   return (

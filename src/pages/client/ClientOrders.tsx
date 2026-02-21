@@ -31,7 +31,7 @@ export default function ClientOrdersPage() {
             <p className="text-sm text-muted-foreground mt-1">Track your storefront orders</p>
           </div>
           <Link
-            to="/store/templates"
+            to="/templates"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
           >
             Browse Templates <ExternalLink className="w-3.5 h-3.5" />
@@ -48,7 +48,7 @@ export default function ClientOrdersPage() {
           <div className="text-center py-16 bg-card rounded-lg border border-border">
             <ShoppingBag className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
             <p className="text-muted-foreground">No orders yet.</p>
-            <Link to="/store/templates" className="text-sm text-primary hover:underline mt-2 inline-block">
+            <Link to="/templates" className="text-sm text-primary hover:underline mt-2 inline-block">
               Browse our templates
             </Link>
           </div>

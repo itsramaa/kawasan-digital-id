@@ -50,24 +50,24 @@ function LogoDropdown() {
   }, []);
 
   const sections = [
-    { label: "Dashboard", path: "/" },
-    { label: "Sales Pipeline", path: "/sales" },
-    { label: "Clients", path: "/sales/clients" },
-    { label: "Quotations", path: "/sales/quotations" },
-    { label: "Contracts", path: "/sales/contracts" },
-    { label: "Projects", path: "/projects" },
-    { label: "Tasks Board", path: "/projects/tasks" },
-    { label: "Finance", path: "/finance" },
-    { label: "Payments", path: "/finance/payments" },
-    { label: "Support", path: "/support" },
-    { label: "Infrastructure", path: "/infrastructure" },
-    { label: "Settings", path: "/settings" },
+    { label: "Dashboard", path: "/admin" },
+    { label: "Sales Pipeline", path: "/admin/sales" },
+    { label: "Clients", path: "/admin/sales/clients" },
+    { label: "Quotations", path: "/admin/sales/quotations" },
+    { label: "Contracts", path: "/admin/sales/contracts" },
+    { label: "Projects", path: "/admin/projects" },
+    { label: "Tasks Board", path: "/admin/projects/tasks" },
+    { label: "Finance", path: "/admin/finance" },
+    { label: "Payments", path: "/admin/finance/payments" },
+    { label: "Support", path: "/admin/support" },
+    { label: "Infrastructure", path: "/admin/infrastructure" },
+    { label: "Settings", path: "/admin/settings" },
     { label: "— Client Portal —", path: "", divider: true },
-    { label: "Client Dashboard", path: "/client" },
-    { label: "Client Projects", path: "/client/projects" },
-    { label: "Client Invoices", path: "/client/invoices" },
-    { label: "Client Support", path: "/client/support" },
-    { label: "Client Account", path: "/client/account" },
+    { label: "Client Dashboard", path: "/dashboard" },
+    { label: "Client Projects", path: "/dashboard/projects" },
+    { label: "Client Invoices", path: "/dashboard/invoices" },
+    { label: "Client Support", path: "/dashboard/support" },
+    { label: "Client Account", path: "/dashboard/account" },
   ] as { label: string; path: string; divider?: boolean }[];
 
   return (
@@ -118,52 +118,52 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "Dashboard", path: "/", icon: LayoutDashboard },
+  { label: "Dashboard", path: "/admin", icon: LayoutDashboard },
   {
     label: "Sales",
-    path: "/sales",
+    path: "/admin/sales",
     icon: TrendingUp,
     allowedRoles: ["super_admin", "sales"],
     children: [
-      { label: "Pipeline", path: "/sales" },
-      { label: "Clients", path: "/sales/clients" },
-      { label: "Quotations", path: "/sales/quotations" },
-      { label: "Contracts", path: "/sales/contracts" },
+      { label: "Pipeline", path: "/admin/sales" },
+      { label: "Clients", path: "/admin/sales/clients" },
+      { label: "Quotations", path: "/admin/sales/quotations" },
+      { label: "Contracts", path: "/admin/sales/contracts" },
     ],
   },
   {
     label: "Projects",
-    path: "/projects",
+    path: "/admin/projects",
     icon: FolderKanban,
     allowedRoles: ["super_admin", "project_manager", "developer"],
     children: [
-      { label: "All Projects", path: "/projects" },
-      { label: "Tasks", path: "/projects/tasks" },
+      { label: "All Projects", path: "/admin/projects" },
+      { label: "Tasks", path: "/admin/projects/tasks" },
     ],
   },
   {
     label: "Finance",
-    path: "/finance",
+    path: "/admin/finance",
     icon: Receipt,
     allowedRoles: ["super_admin", "finance"],
     children: [
-      { label: "Invoices", path: "/finance" },
-      { label: "Payments", path: "/finance/payments" },
+      { label: "Invoices", path: "/admin/finance" },
+      { label: "Payments", path: "/admin/finance/payments" },
     ],
   },
   {
     label: "Support",
-    path: "/support",
+    path: "/admin/support",
     icon: HeadphonesIcon,
     allowedRoles: ["super_admin", "support"],
   },
   {
     label: "Infrastructure",
-    path: "/infrastructure",
+    path: "/admin/infrastructure",
     icon: Server,
     allowedRoles: ["super_admin", "infra"],
   },
-  { label: "Settings", path: "/settings", icon: Settings, allowedRoles: ["super_admin"] },
+  { label: "Settings", path: "/admin/settings", icon: Settings, allowedRoles: ["super_admin"] },
 ];
 
 export function AppSidebar() {
@@ -182,7 +182,7 @@ export function AppSidebar() {
   };
 
   const isActive = (path: string) => {
-    if (path === "/") return location.pathname === "/";
+    if (path === "/admin") return location.pathname === "/admin";
     return location.pathname.startsWith(path);
   };
 

@@ -75,7 +75,7 @@ export function TemplateListItem({ template, index, onQuickView }: Props) {
               <Eye className="w-3.5 h-3.5" /> Quick View
             </button>
             <Link
-              to={`/store/templates/${template.id}`}
+              to={`/templates/${template.id}`}
               className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium flex items-center gap-1 hover:bg-primary/90 transition-colors"
             >
               Details <ArrowRight className="w-3.5 h-3.5" />

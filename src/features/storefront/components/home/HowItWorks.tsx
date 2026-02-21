@@ -44,7 +44,7 @@ export function HowItWorks() {
         </div>
 
         <div className="text-center mt-10">
-          <Link to="/store/how-it-works" className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1">
+          <Link to="/how-it-works" className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1">
             Pelajari Lebih Lanjut <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>

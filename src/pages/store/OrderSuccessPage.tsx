@@ -15,13 +15,13 @@ export default function OrderSuccessPage() {
         </p>
         <div className="flex justify-center gap-3">
           <Link
-            to="/store"
+            to="/"
             className="px-5 py-2.5 rounded-lg border border-border font-medium hover:bg-muted transition-colors text-sm"
           >
             Back to Home
           </Link>
           <Link
-            to="/store/templates"
+            to="/templates"
             className="px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors text-sm"
           >
             Browse More Templates
