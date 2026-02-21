@@ -10,7 +10,7 @@ const navLinks = [
   { label: "Templates", path: "/templates" },
   { label: "Custom Website", path: "/custom" },
   { label: "Portfolio", path: "/showcase" },
-  { label: "How It Works", path: "/how-it-works" },
+  { label: "Help / FAQ", path: "/help" },
 ];
 
 export function StorefrontLayout({ children }: { children: ReactNode }) {
@@ -175,7 +175,6 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
             <div className="space-y-3">
               <h4 className="text-sm font-semibold text-foreground">Help</h4>
               <div className="space-y-2">
-                <Link to="/how-it-works" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">How It Works</Link>
                 <Link to="/help" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">FAQ</Link>
               </div>
             </div>
