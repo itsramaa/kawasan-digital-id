@@ -39,26 +39,29 @@ export function DocumentUpload({ projectId }: { projectId: string }) {
   return (
     <div className="bg-card rounded-lg border border-border p-5 space-y-4">
       <h3 className="text-sm font-semibold flex items-center gap-2">
-        <FileText className="w-4 h-4 text-primary" /> Documents
+        <FileText className="w-4 h-4 text-primary" /> Dokumen
       </h3>
 
       {/* Upload area */}
       <div className="space-y-2">
         <input
           type="text"
-          placeholder="Description (optional)"
+          placeholder="Deskripsi (opsional)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="w-full px-3 py-2 text-sm bg-muted border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
-        <label className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary/40 hover:bg-muted/50 transition-colors">
+        <label
+          className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary/40 hover:bg-muted/50 transition-colors"
+          aria-label="Unggah file"
+        >
           {upload.isPending ? (
             <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
           ) : (
             <Upload className="w-4 h-4 text-muted-foreground" />
           )}
           <span className="text-sm text-muted-foreground">
-            {upload.isPending ? "Uploading..." : "Click to upload a file"}
+            {upload.isPending ? "Mengunggah..." : "Klik untuk mengunggah file"}
           </span>
           <input
             ref={fileRef}
@@ -73,9 +76,9 @@ export function DocumentUpload({ projectId }: { projectId: string }) {
 
       {/* Document list */}
       {isLoading ? (
-        <p className="text-sm text-muted-foreground text-center py-3">Loading...</p>
+        <p className="text-sm text-muted-foreground text-center py-3">Memuat...</p>
       ) : !documents?.length ? (
-        <p className="text-sm text-muted-foreground text-center py-3">No documents uploaded yet.</p>
+        <p className="text-sm text-muted-foreground text-center py-3" role="status">Belum ada dokumen yang diunggah.</p>
       ) : (
         <div className="space-y-2">
           {documents.map((doc) => (
@@ -93,7 +96,7 @@ export function DocumentUpload({ projectId }: { projectId: string }) {
               <button
                 onClick={() => handleDownload(doc.file_path, doc.file_name)}
                 className="p-1.5 rounded-md hover:bg-muted transition-colors flex-shrink-0"
-                title="Download"
+                aria-label={`Unduh ${doc.file_name}`}
               >
                 <Download className="w-3.5 h-3.5 text-muted-foreground" />
               </button>

@@ -3,9 +3,9 @@ import { FolderKanban, Receipt, HeadphonesIcon } from "lucide-react";
 import { StatusBadge } from "@/shared/components/common/StatusBadge";
 
 const typeConfig = {
-  project: { icon: FolderKanban, label: "Project" },
-  invoice: { icon: Receipt, label: "Invoice" },
-  ticket: { icon: HeadphonesIcon, label: "Ticket" },
+  project: { icon: FolderKanban, label: "Proyek" },
+  invoice: { icon: Receipt, label: "Tagihan" },
+  ticket: { icon: HeadphonesIcon, label: "Tiket" },
 };
 
 const statusVariant = (status: string): "info" | "success" | "warning" | "error" | "neutral" => {
@@ -21,7 +21,7 @@ interface ActivityTimelineProps {
 }
 
 export function ActivityTimeline({ items }: ActivityTimelineProps) {
-  if (!items.length) return <p className="text-sm text-muted-foreground text-center py-4">No recent activity.</p>;
+  if (!items.length) return <p className="text-sm text-muted-foreground text-center py-4" role="status">Belum ada aktivitas terbaru.</p>;
 
   return (
     <div className="space-y-1">

@@ -140,7 +140,7 @@ export default function ClientAccount() {
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-base flex items-center gap-2"><Building2 className="w-4 h-4 text-primary" />Informasi Perusahaan</CardTitle>
-                      <span className="text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full uppercase tracking-wider">Read Only</span>
+                      <span className="text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full uppercase tracking-wider">Hanya Baca</span>
                     </div>
                   </CardHeader>
                   <CardContent>
