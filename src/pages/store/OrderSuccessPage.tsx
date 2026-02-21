@@ -83,7 +83,7 @@ export default function OrderSuccessPage() {
         {/* Actions */}
         <div className="flex flex-col sm:flex-row justify-center gap-3">
           <Link
-            to="/client"
+            to="/dashboard"
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors text-sm"
           >
             Pantau Pesanan <ArrowRight className="w-4 h-4" />
