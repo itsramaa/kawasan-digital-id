@@ -1,124 +1,105 @@
 
 
-# Audit Komprehensif & Maksimalisasi Client Portal
+# Maksimalisasi Lanjutan: Lokalisasi, Accessibility, Responsive, dan Bug Fixes
 
-Berdasarkan analisis mendalam terhadap seluruh halaman client portal dan referensi dari `.trae/skills` (clean-architecture, responsive-design, accessibility-compliance, react-patterns, performance-optimization, security-auditor, design-system-patterns), berikut temuan dan rencana perbaikan:
+Berdasarkan audit menyeluruh terhadap seluruh codebase client portal dan referensi `.trae/skills`, berikut temuan yang belum diperbaiki dan rencana implementasinya.
 
 ---
 
-## Temuan Audit
+## Temuan yang Masih Tersisa
 
-### 1. DRY Violation: RevealCard Diduplikasi 10x
-Komponen `RevealCard` yang identik didefinisikan ulang di **setiap halaman client** (10 file). Ini melanggar prinsip DRY yang ditekankan di skill `clean-architecture` dan `react-patterns`.
+### 1. Lokalisasi Belum Tuntas (Bahasa Inggris Masih Tersebar)
+Beberapa komponen dan halaman masih menggunakan Bahasa Inggris:
 
-### 2. Accessibility (WCAG 2.2)
-Berdasarkan skill `accessibility-compliance`:
-- **Stat cards** tidak punya `aria-label` -- screen reader tidak bisa membaca konteks angka
-- **Tombol filter** di Support dan Messages tidak menggunakan `role="tablist"` / `role="tab"`
-- **DataTable** pagination buttons tidak punya `aria-label` ("Halaman sebelumnya", "Halaman 1", dll.)
-- **Overdue alerts** tidak menggunakan `role="alert"` untuk announce otomatis ke screen reader
-- **Mobile nav toggle** tidak punya `aria-expanded` state
-- **Search inputs** tidak punya `aria-label` yang deskriptif
-- **PieChart** di Dashboard tidak punya teks alternatif untuk screen reader
-- **Heading hierarchy**: beberapa halaman langsung skip ke `<h2>` tanpa section landmark
+| File | Teks Inggris | Harus |
+|------|-------------|-------|
+| `ClientLayout.tsx` | "Profile", "Logout" (dropdown) | "Profil", "Keluar" |
+| `ActivityTimeline.tsx` | "No recent activity.", "Project", "Invoice", "Ticket" | "Belum ada aktivitas terbaru.", "Proyek", "Tagihan", "Tiket" |
+| `ActivityLogList.tsx` | "Loading...", "No activity recorded yet." | "Memuat...", "Belum ada aktivitas tercatat." |
+| `DocumentUpload.tsx` | "Documents", "Uploading...", "Click to upload a file", "Description (optional)", "No documents uploaded yet.", "Loading...", "Download" | Semua ke Bahasa Indonesia |
+| `FeedbackSurvey.tsx` | "Feedback Submitted", "Overall", "Communication", "Quality", "Timeliness", "Would you recommend us?", "Yes", "No", "Any additional comments...", "Submit Feedback", "Submitting...", "How was your experience?" | Semua ke Bahasa Indonesia |
+| `ClientSupport.tsx` | Breadcrumb "Dashboard > Support" (baris 148-151), hero banner masih inline (tidak pakai shared `HeroBanner`) | Gunakan `HeroBanner` + lokalisasi |
+| `ClientMessages.tsx` | Hero banner masih inline (tidak pakai shared `HeroBanner`) | Gunakan `HeroBanner` |
+| `ClientAccount.tsx` | Breadcrumb "Dasbor > Profil" manual, hero masih inline, "Read Only" label | Gunakan `HeroBanner` + "Hanya Baca" |
 
-### 3. Responsive Design
-Berdasarkan skill `responsive-design`:
-- **DataTable** tidak memiliki responsive mobile view -- tabel horizontal scroll pada mobile kurang ideal
-- **Stat cards** menggunakan `grid-cols-2` yang sudah baik, tapi text `Rp XXM` bisa terpotong pada layar kecil
-- **Infrastructure** domain/hosting cards sudah responsive, tapi info grid `grid-cols-3` bisa terlalu sempit di mobile
-- **Support page** split layout `xl:grid-cols-3` tidak optimal, detail panel sticky terlalu panjang di tablet
+### 2. Konsistensi Komponen Shared (DRY)
+- `ClientSupport.tsx`: Masih menggunakan stat cards inline (baris 177-198) alih-alih shared `StatCards`
+- `ClientSupport.tsx`: Hero banner inline, bukan shared `HeroBanner`
+- `ClientMessages.tsx`: Hero banner inline, bukan shared `HeroBanner`
+- `ClientMessages.tsx`: Stat cards inline, bukan shared `StatCards`
+- `ClientAccount.tsx`: Hero banner inline, bukan shared `HeroBanner`
 
-### 4. Performance
-Berdasarkan skill `performance-optimization` dan `web-performance-optimization`:
-- **PieChart** dari recharts di-import tanpa lazy loading -- menambah bundle size meski hanya 1 halaman
-- **useScrollReveal** di setiap card membuat banyak `IntersectionObserver` instances -- bisa di-batch
-- **ClientDashboard** memanggil 6 hooks query secara paralel -- overhead tapi acceptable karena data ringan
+### 3. Accessibility Tambahan
+- `DocumentUpload.tsx`: Upload button tidak punya `aria-label`
+- `DocumentUpload.tsx`: Download button hanya punya `title`, perlu `aria-label`
+- `FeedbackSurvey.tsx`: Star rating tidak punya `aria-label` per bintang
+- `FeedbackSurvey.tsx`: Recommend buttons tidak punya `aria-pressed`
+- `ClientSupport.tsx`: Filter buttons masih tanpa `role="tablist"` / `role="tab"` / `aria-selected`
+- `ClientSupport.tsx`: Search input tidak punya `aria-label`
+- `EmptyState.tsx`: Tidak punya `role="status"` untuk screen reader
 
-### 5. Security (RLS)
-Berdasarkan skill `security-auditor` dan `api-security-best-practices`:
-- **RLS policies menggunakan `RESTRICTIVE` (Permissive: No)** -- ini berarti semua policy harus pass. Jika client punya 2 restrictive SELECT policies, keduanya harus true. Ini sudah benar untuk tabel yang punya policy "Internal" + "Client".
-- **Inquiries table** hanya punya policy untuk internal users -- klien tidak bisa lihat inquiry mereka sendiri (mungkin intentional)
-- **Activity logs INSERT** policy membutuhkan `user_id = auth.uid()` DAN `client_id = get_user_client_id()` -- ini sudah aman
+### 4. Loading State Bisa Ditingkatkan
+- Semua halaman client menampilkan teks "Memuat..." -- bisa diganti skeleton loading
+- `ActivityLogList.tsx`: "Loading..." tanpa skeleton
+- `DocumentUpload.tsx`: "Loading..." tanpa skeleton
 
-### 6. Konsistensi UI/UX
-Berdasarkan skill `design-system-patterns` dan `ui-ux-designer`:
-- **Pagination text** di DataTable menggunakan bahasa Inggris ("Showing 1-25 of 50", "rows") -- harus di-lokalisasi ke Indonesia
-- **Nav labels** di ClientLayout campur bahasa: "Dashboard", "Projects", "Support" (English) + "Pesan" (Indonesia)
-- **Hero banner** di setiap halaman sangat mirip -- bisa dijadikan shared component
-- **Loading state** hanya teks "Memuat..." -- bisa ditingkatkan dengan skeleton
-- **Empty state** tidak konsisten: beberapa halaman pakai `EmptyState` component, yang lain inline
-
-### 7. Console Errors
-- `FinalCTA` dan `Badge` component mendapat ref warning -- perlu `React.forwardRef`
+### 5. Bug Fix: FinalCTA ref Warning
+- `FinalCTA.tsx` menggunakan `useScrollReveal` yang mengembalikan `ref` langsung ke `<section>` -- ini sudah benar (bukan forwardRef issue)
+- Badge component sudah tidak pakai forwardRef -- ini sudah OK
 
 ---
 
 ## Rencana Implementasi
 
-### Fase 1: Extract Shared Components (DRY)
+### Fase 1: Lokalisasi Tuntas
 
-**1a. Extract `RevealCard` ke shared component**
-- Buat `src/shared/components/common/RevealCard.tsx`
-- Hapus 10 duplikasi dari semua halaman client
-- Import dari shared location
+**1a. `ActivityTimeline.tsx`**: Ganti semua teks Inggris ke Indonesia
+**1b. `ActivityLogList.tsx`**: Ganti "Loading..." dan empty state
+**1c. `DocumentUpload.tsx`**: Lokalisasi semua teks (judul, placeholder, status upload, empty state)
+**1d. `FeedbackSurvey.tsx`**: Lokalisasi semua teks (judul, label rating, tombol, placeholder)
+**1e. `ClientLayout.tsx`**: Ganti "Profile" dan "Logout" di dropdown
 
-**1b. Extract `HeroBanner` ke shared component**
-- Buat `src/shared/components/common/HeroBanner.tsx` dengan props: `icon`, `title`, `subtitle`, `breadcrumb`, `actions`
-- Refactor semua 10 halaman untuk menggunakan komponen ini
+### Fase 2: Konsistensi Shared Components
 
-**1c. Extract `StatCards` ke shared component**
-- Buat `src/shared/components/common/StatCards.tsx`
-- Menerima array `{ label, value, icon, color }` -- pattern yang sudah identik di semua halaman
+**2a. `ClientSupport.tsx`**: Refactor untuk menggunakan `HeroBanner` dan `StatCards` shared components, hapus inline hero/stat, tambah `role="tablist"` pada filter, `aria-label` pada search
+**2b. `ClientMessages.tsx`**: Refactor untuk menggunakan `HeroBanner`, hapus inline hero
+**2c. `ClientAccount.tsx`**: Ganti "Read Only" ke "Hanya Baca"
 
-### Fase 2: Accessibility (A11y)
+### Fase 3: Accessibility
 
-**2a. Alert banners**: Tambah `role="alert"` dan `aria-live="polite"` pada `AlertBanner` component
-**2b. Stat cards**: Tambah `aria-label` yang menggabungkan label + value (e.g. `"Proyek Aktif: 3"`)
-**2c. Filter buttons**: Gunakan `role="tablist"` dan `role="tab"` + `aria-selected` di Support & Messages
-**2d. Mobile nav**: Tambah `aria-expanded={mobileOpen}` dan `aria-label="Menu navigasi"`
-**2e. DataTable pagination**: Tambah `aria-label` pada semua button navigasi
-**2f. PieChart**: Tambah hidden `<p>` summary untuk screen reader
-**2g. Search inputs**: Tambah `aria-label` deskriptif
+**3a. `DocumentUpload.tsx`**: Tambah `aria-label` pada upload dan download buttons
+**3b. `FeedbackSurvey.tsx`**: Tambah `aria-label` per star, `aria-pressed` pada recommend buttons
+**3c. `EmptyState.tsx`**: Tambah `role="status"`
+**3d. `ClientSupport.tsx`**: Tambah `role="tablist"` dan `aria-selected` pada filter tabs
 
-### Fase 3: Lokalisasi & Konsistensi
+### Fase 4: Skeleton Loading
 
-**3a. DataTable pagination**: Ganti "Showing X-Y of Z" menjadi "Menampilkan X-Y dari Z", "rows" menjadi "baris"
-**3b. Nav labels**: Seragamkan ke Bahasa Indonesia -- "Dasbor", "Proyek", "Pesanan", "Kontrak", "Invoice", "Pembayaran", "Infrastruktur", "Bantuan", "Pesan"
-**3c. Empty states**: Standardisasi penggunaan `EmptyState` component di semua halaman yang belum menggunakannya
-
-### Fase 4: Responsive Optimization
-
-**4a. DataTable mobile**: Tambah responsive card view untuk layar < 768px sebagai alternatif tabel
-**4b. Infrastructure info grid**: Ubah `grid-cols-3` menjadi `grid-cols-2 sm:grid-cols-3` pada mobile
-**4c. Support detail panel**: Perbaiki sticky behavior dan ukuran pada tablet viewport
-
-### Fase 5: Bug Fixes
-
-**5a. Fix `forwardRef` warning**: Update `FinalCTA` dan `Badge` component agar menggunakan `React.forwardRef`
-**5b. Fix `useEffect` missing dependency**: Di `ClientMessages.tsx` ConversationPanel, `markAsRead` dalam dependency array bisa menyebabkan infinite loop -- gunakan ref
+**4a. Buat `LoadingSkeleton` component** di `src/shared/components/common/LoadingSkeleton.tsx` -- reusable skeleton untuk halaman client (stat cards skeleton, list skeleton, table skeleton)
+**4b. Ganti semua "Memuat..." text** dengan skeleton di semua halaman client yang masih menggunakan teks loading
 
 ---
 
 ## Detail Teknis
 
-### File yang Dibuat Baru
+### File Baru
 | File | Deskripsi |
 |------|-----------|
-| `src/shared/components/common/RevealCard.tsx` | Komponen animasi scroll-reveal reusable |
-| `src/shared/components/common/HeroBanner.tsx` | Banner header halaman reusable |
-| `src/shared/components/common/StatCards.tsx` | Grid kartu statistik reusable |
+| `src/shared/components/common/LoadingSkeleton.tsx` | Komponen skeleton loading reusable (page, stat, list, table varian) |
 
 ### File yang Dimodifikasi
 | File | Perubahan |
 |------|-----------|
-| 10x `src/pages/client/*.tsx` | Hapus duplikasi RevealCard, gunakan shared components |
-| `src/shared/components/common/DataTable.tsx` | Lokalisasi pagination, tambah a11y, responsive card view |
-| `src/shared/components/layouts/ClientLayout.tsx` | Lokalisasi nav labels, a11y pada mobile toggle |
-| `src/features/client/components/AlertBanner.tsx` | Tambah `role="alert"` |
-| `src/shared/components/ui/badge.tsx` | Fix forwardRef warning |
-| `src/features/storefront/components/home/FinalCTA.tsx` | Fix forwardRef warning |
+| `src/features/client/components/ActivityTimeline.tsx` | Lokalisasi teks |
+| `src/features/client/components/ActivityLogList.tsx` | Lokalisasi teks |
+| `src/features/client/components/DocumentUpload.tsx` | Lokalisasi + a11y (aria-label) |
+| `src/features/client/components/FeedbackSurvey.tsx` | Lokalisasi + a11y (aria-label, aria-pressed) |
+| `src/features/client/components/EmptyState.tsx` | Tambah `role="status"` |
+| `src/shared/components/layouts/ClientLayout.tsx` | "Profile" -> "Profil", "Logout" -> "Keluar" |
+| `src/pages/client/ClientSupport.tsx` | Gunakan `HeroBanner` + `StatCards`, tambah a11y pada filter/search |
+| `src/pages/client/ClientMessages.tsx` | Gunakan `HeroBanner` |
+| `src/pages/client/ClientAccount.tsx` | "Read Only" -> "Hanya Baca" |
+| Semua halaman dengan "Memuat..." | Ganti dengan skeleton loading |
 
 ### Tidak Ada Perubahan Schema/Database
-Semua perubahan hanya di frontend -- tidak ada migrasi database yang diperlukan.
+Semua perubahan hanya di frontend.
 
