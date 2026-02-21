@@ -1,24 +1,26 @@
 
-# Hapus "Contact" dari Navigasi Storefront
+# Ganti Section "How It Works" di Home dengan Konten Full Page
 
-## Perubahan
+## Apa yang Berubah
 
-Menghapus link "Contact" dari dropdown **Help Center** di navbar storefront. Setelah perubahan, dropdown Help Center hanya berisi:
-
-1. How It Works
-2. Help / FAQ
+Section "Cara Kerja" di halaman Home saat ini hanya menampilkan 5 langkah ringkas dengan link "Pelajari Lebih Lanjut". Rencana ini **mengganti seluruh isi** komponen `HowItWorks.tsx` dengan konten lengkap dari `HowItWorksPage.tsx` -- 4 fase, 10 langkah detail, zigzag layout, dan CTA section. Link "Pelajari Lebih Lanjut" dihapus karena semua konten sudah ditampilkan langsung di Home.
 
 ## Detail Teknis
 
-### File: `src/shared/components/layouts/StorefrontLayout.tsx`
+### File: `src/features/storefront/components/home/HowItWorks.tsx`
 
-**1. Update `helpCenterLinks` array (baris 15-19)**
-Hapus entry `{ label: "Contact", path: "/contact" }` sehingga hanya tersisa 2 item.
+Isi file diganti total. Komponen baru akan:
+- Menggunakan data `PHASES` (4 fase, 10 langkah) dari `HowItWorksPage.tsx`
+- Menampilkan `PhaseSection` dengan `StepCard` zigzag layout
+- Menampilkan `CTASection` dengan trust signals di bagian bawah
+- Menampilkan header section dengan badge "10 Langkah Mudah"
+- Menghapus link "Pelajari Lebih Lanjut" (tidak perlu lagi)
+- Tetap export sebagai named export `HowItWorks` agar `StorefrontHome.tsx` tidak perlu diubah
 
-**2. Update Footer section "Help" (baris 260-268)**
-Hapus link Contact dari kolom Help di footer, menyisakan "How It Works" dan "FAQ".
+### File: `src/pages/store/HowItWorksPage.tsx`
 
-### Tidak Dihapus
-- Route `/contact` di `App.tsx` tetap ada (halaman masih bisa diakses via URL langsung)
-- File `ContactPage.tsx` tidak dihapus
-- Nanti akan digantikan oleh floating live chat button
+Tidak diubah. Halaman `/how-it-works` tetap ada sebagai halaman mandiri yang bisa diakses dari navbar.
+
+### File yang Tidak Diubah
+- `StorefrontHome.tsx` -- tetap import `HowItWorks` seperti sekarang
+- `App.tsx` -- route `/how-it-works` tetap ada
