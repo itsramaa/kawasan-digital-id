@@ -22,8 +22,7 @@ import SettingsPage from "./pages/Settings";
 import ClientDashboard from "./pages/client/ClientDashboard";
 import ClientProjects from "./pages/client/ClientProjects";
 import ClientContracts from "./pages/client/ClientContracts";
-import ClientInvoices from "./pages/client/ClientInvoices";
-import ClientPayments from "./pages/client/ClientPayments";
+import ClientFinance from "./pages/client/ClientFinance";
 import ClientInfrastructure from "./pages/client/ClientInfrastructure";
 import ClientSupport from "./pages/client/ClientSupport";
 import ClientAccount from "./pages/client/ClientAccount";
@@ -95,8 +94,8 @@ const App = () => (
             <Route path="/dashboard" element={<ProtectedRoute><ClientDashboard /></ProtectedRoute>} />
             <Route path="/dashboard/projects" element={<ProtectedRoute><ClientProjects /></ProtectedRoute>} />
             <Route path="/dashboard/contracts" element={<ProtectedRoute><ClientContracts /></ProtectedRoute>} />
-            <Route path="/dashboard/invoices" element={<ProtectedRoute><ClientInvoices /></ProtectedRoute>} />
-            <Route path="/dashboard/payments" element={<ProtectedRoute><ClientPayments /></ProtectedRoute>} />
+            <Route path="/dashboard/invoices" element={<ProtectedRoute><ClientFinance /></ProtectedRoute>} />
+            <Route path="/dashboard/payments" element={<Navigate to="/dashboard/invoices" replace />} />
             <Route path="/dashboard/infrastructure" element={<ProtectedRoute><ClientInfrastructure /></ProtectedRoute>} />
             <Route path="/dashboard/support" element={<ProtectedRoute><ClientSupport /></ProtectedRoute>} />
             <Route path="/dashboard/account" element={<ProtectedRoute><ClientAccount /></ProtectedRoute>} />
