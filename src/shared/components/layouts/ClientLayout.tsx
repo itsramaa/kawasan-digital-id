@@ -2,7 +2,8 @@ import { ReactNode, useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavLink } from "@/shared/components/common/NavLink";
 import { useAuth } from "@/features/auth/AuthContext";
-import { LayoutDashboard, FolderKanban, Receipt, HeadphonesIcon, Globe, Menu, X, FileText, CreditCard, Server, ShoppingBag, Search, ChevronDown, User, LogOut } from "lucide-react";
+import { LayoutDashboard, FolderKanban, Receipt, HeadphonesIcon, Globe, Menu, X, FileText, CreditCard, Server, ShoppingBag, Search, ChevronDown, User, LogOut, MessageSquare } from "lucide-react";
+import { useUnreadCount } from "@/features/client/hooks/useClientMessages";
 import { cn } from "@/shared/utils/utils";
 
 interface ClientLayoutProps {
@@ -18,6 +19,7 @@ const navItems = [
   { label: "Payments", path: "/dashboard/payments", icon: CreditCard },
   { label: "Infrastructure", path: "/dashboard/infrastructure", icon: Server },
   { label: "Support", path: "/dashboard/support", icon: HeadphonesIcon },
+  { label: "Pesan", path: "/dashboard/messages", icon: MessageSquare },
 ];
 
 export function ClientLayout({ children }: ClientLayoutProps) {
@@ -27,6 +29,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { data: unreadCount = 0 } = useUnreadCount();
 
   const initials = profile?.full_name
     ?.split(" ")
@@ -119,7 +122,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors",
+                  "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors relative",
                   active
                     ? "border-primary text-primary"
                     : "border-transparent text-muted-foreground hover:text-foreground"
@@ -127,6 +130,11 @@ export function ClientLayout({ children }: ClientLayoutProps) {
               >
                 <item.icon className="w-4 h-4" />
                 {item.label}
+                {item.path === "/dashboard/messages" && unreadCount > 0 && (
+                  <span className="absolute -top-0.5 right-1 w-4 h-4 rounded-full bg-destructive text-destructive-foreground text-[10px] flex items-center justify-center font-bold">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
               </NavLink>
             );
           })}
@@ -144,12 +152,17 @@ export function ClientLayout({ children }: ClientLayoutProps) {
                 to={item.path}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
+                  "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors relative",
                   active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
                 )}
               >
                 <item.icon className="w-4 h-4" />
                 {item.label}
+                {item.path === "/dashboard/messages" && unreadCount > 0 && (
+                  <span className="ml-auto w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-[10px] flex items-center justify-center font-bold">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
               </NavLink>
             );
           })}

@@ -170,12 +170,16 @@ function ContactForm() {
     }
 
     setSending(true);
-    const { error } = await supabase.from("contact_messages").insert({
+    // Get current user if logged in
+    const { data: { user } } = await supabase.auth.getUser();
+    const insertData: any = {
       name: result.data.name,
       email: result.data.email,
       subject: result.data.subject,
       message: result.data.message,
-    });
+    };
+    if (user) insertData.user_id = user.id;
+    const { error } = await supabase.from("contact_messages").insert(insertData);
 
     setSending(false);
     if (error) {
