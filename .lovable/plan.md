@@ -1,80 +1,94 @@
 
 
-# Maksimalkan Halaman Infrastructure Client
+# Insert Dummy Data untuk Semua Flow Client Portal
 
 ## Ringkasan
-Upgrade halaman Infrastructure (`/dashboard/infrastructure`) agar konsisten dengan style halaman Profile dan Support yang sudah di-upgrade -- hero banner, summary stat cards, tab navigation, detail cards yang lebih polished, animasi scroll-reveal, dan teks UI dalam Bahasa Indonesia.
+Insert data dummy yang lengkap ke database agar semua halaman client portal (Dashboard, Projects, Invoices, Payments, Orders, Contracts, Infrastructure, Support) menampilkan data yang realistis dan semua flow berjalan dengan baik.
 
 ---
 
-## Perubahan yang Akan Dilakukan
+## Masalah Saat Ini
 
-### 1. Hero Banner + Breadcrumb
-- Breadcrumb: Dashboard > Infrastruktur
-- Gradient banner konsisten (`bg-gradient-to-br from-primary/10 via-primary/5 to-transparent`)
-- Icon Globe besar di banner
-- Judul "Infrastruktur" + subtitle "Domain, hosting, dan status layanan Anda"
+1. **Test user (`test@gmail.com`) memiliki `client_id: null`** di tabel profiles -- artinya semua RLS policy yang menggunakan `get_user_client_id()` mengembalikan null, sehingga user tidak bisa melihat data apapun di portal client.
+2. **Test user tidak punya role** di tabel `user_roles` -- beberapa fitur mungkin bergantung pada pengecekan role.
+3. **Tabel `orders` kosong** -- halaman Pesanan tidak menampilkan apa-apa.
+4. **Tabel `activity_logs` kosong** -- timeline aktivitas di dashboard kosong.
+5. **Data payments hanya 2 record** -- kurang bervariasi.
 
-### 2. Summary Stat Cards (4 kartu)
-- **Total Domain** -- icon Globe, jumlah domain
-- **Domain Kadaluarsa** -- icon AlertTriangle, jumlah expiring/expired, warna warning/error
-- **Total Hosting** -- icon Server, jumlah hosting aktif
-- **SSL Aktif** -- icon Shield, placeholder atau jumlah domain dengan auto_renew aktif
-- Masing-masing dengan `RevealCard` animasi
+---
 
-### 3. Tab Navigation (Domain & Hosting)
-- Menggunakan `Tabs` dari shadcn/ui untuk switch antara Domain dan Hosting
-- Tab icons: Globe untuk Domain, Server untuk Hosting
-- Jumlah item di setiap tab label (contoh: "Domain (5)")
+## Langkah-langkah Insert Data
 
-### 4. Domain Cards -- Upgrade Visual
-- Card yang lebih polished dengan layout terstruktur:
-  - Header: domain name (font-mono) + status badge
-  - Progress bar visual untuk sisa hari sebelum expired (hijau > 90 hari, kuning 30-90, merah < 30)
-  - Grid info: Registrar, Tanggal Kadaluarsa (formatted), Auto-Renew (icon check/cross)
-  - Border-left accent warna sesuai status (hijau = aktif, kuning = expiring, merah = expired)
-  - Hover shadow effect
-- Teks: "Registrar", "Kadaluarsa", "Perpanjangan Otomatis"
+### 1. Update Profile Test User
+Hubungkan test user ke client **PT Maju Sejahtera** (`a1b2c3d4-0001-4000-a000-000000000001`), update nama lengkap.
 
-### 5. Hosting Cards -- Upgrade Visual
-- Card yang lebih polished:
-  - Header: server name + status badge
-  - Badge server_type (VPS, Shared, Dedicated, dll)
-  - Grid info: Provider, Tipe, Kadaluarsa
-  - Border-left accent warna sesuai status
-  - Hover shadow effect
-- Teks: "Penyedia", "Tipe Server", "Kadaluarsa"
+```sql
+UPDATE profiles 
+SET client_id = 'a1b2c3d4-0001-4000-a000-000000000001',
+    full_name = 'Budi Santoso',
+    phone = '+62-812-3456-7890'
+WHERE user_id = 'e36854cb-9e1c-4b48-88b8-181700d6ae2c';
+```
 
-### 6. Alert Banners -- Upgrade
-- Tetap tampilkan alert untuk domain/hosting yang expiring
-- Teks dalam Bahasa Indonesia: "X domain akan kadaluarsa dalam 30 hari"
-- Style konsisten dengan halaman lain
+### 2. Insert Role untuk Test User
+Tambahkan role `client_admin` agar user dikenali sebagai client.
 
-### 7. Empty State -- Upgrade
-- Icon lebih besar dengan background circle
-- Teks dalam Bahasa Indonesia
-- Tampilan yang lebih polished
+```sql
+INSERT INTO user_roles (user_id, role) 
+VALUES ('e36854cb-9e1c-4b48-88b8-181700d6ae2c', 'client_admin');
+```
 
-### 8. Animasi Scroll-Reveal
-- `RevealCard` wrapper pada hero, stats, tabs, setiap card
-- Staggered delay untuk efek cascade
+### 3. Insert Orders (3 pesanan)
+Insert pesanan dengan berbagai status dan pembayaran, terhubung ke service templates yang sudah ada.
+
+- Order 1: Completed + Paid (Company Profile Website)
+- Order 2: In Progress + Paid (E-Commerce Starter)
+- Order 3: Pending + Unpaid (Landing Page Pro)
+
+### 4. Insert Payments Tambahan (2 record baru)
+Tambah variasi payment untuk invoice yang sudah ada, dengan metode berbeda (Credit Card, Bank Transfer).
+
+### 5. Insert Activity Logs (5-6 record)
+Aktivitas terbaru untuk client PT Maju Sejahtera yang tampil di dashboard:
+- Proyek baru dimulai
+- Invoice dibuat
+- Payment diterima
+- Ticket di-submit
+- Milestone disetujui
+
+### 6. Insert Client-Visible Tasks
+Update beberapa task yang sudah ada agar `is_client_visible = true`, sehingga muncul di halaman projects client.
 
 ---
 
 ## Detail Teknis
 
-### File yang Dimodifikasi
-- `src/pages/client/ClientInfrastructure.tsx` -- refactor komprehensif
+### Tabel yang Dimodifikasi (Data Only -- Tanpa Schema Change)
+| Tabel | Operasi | Jumlah |
+|-------|---------|--------|
+| `profiles` | UPDATE | 1 record |
+| `user_roles` | INSERT | 1 record |
+| `orders` | INSERT | 3 records |
+| `payments` | INSERT | 2 records |
+| `activity_logs` | INSERT | 6 records |
+| `tasks` | UPDATE | 4 records (set is_client_visible) |
+
+### Data Sudah Cukup (Tidak Perlu Insert Lagi)
+| Tabel | Status |
+|-------|--------|
+| `clients` | 5 records ada, PT Maju Sejahtera sebagai client utama |
+| `projects` | 4 records, 2 milik PT Maju Sejahtera |
+| `contracts` | 2 records milik PT Maju Sejahtera |
+| `invoices` | 5 records, 3 milik PT Maju Sejahtera |
+| `milestones` | 6 records, 4 di project Maju Sejahtera |
+| `tasks` | 6 records, 5 di project Maju Sejahtera |
+| `domains` | 5 records, 2 milik PT Maju Sejahtera |
+| `hostings` | 5 records, 2 milik PT Maju Sejahtera |
+| `support_tickets` | 5 records, 2 milik PT Maju Sejahtera |
 
 ### Pendekatan
-- Tidak ada perubahan database
-- Tidak ada dependency baru
-- Menggunakan `RevealCard` pattern dari `ClientAccount.tsx`
-- Menggunakan `useScrollReveal` hook yang sudah ada
-- Menggunakan `Card`, `CardContent`, `CardHeader` dari shadcn/ui
-- Menggunakan `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` dari shadcn/ui
-- Data yang sudah tersedia: domain_name, status, registrar, expiry_date, auto_renew, name, provider, server_type
-- Icon dari lucide-react: Globe, Server, Shield, AlertTriangle, CheckCircle, ChevronRight, Calendar, Clock
-- Responsive: grid 2 kolom di desktop, 1 kolom di mobile
-- Semua teks UI dalam Bahasa Indonesia
+- Semua insert menggunakan tool insert (bukan migration) karena ini operasi data, bukan schema change
+- Tidak ada perubahan schema/struktur database
+- Tidak ada perubahan kode -- hanya data
+- Setelah insert, semua halaman client portal akan menampilkan data karena RLS policy sudah benar, hanya perlu `client_id` di profile
 
