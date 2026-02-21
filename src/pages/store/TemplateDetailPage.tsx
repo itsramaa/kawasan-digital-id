@@ -86,6 +86,8 @@ export default function TemplateDetailPage() {
       base_price: template.base_price,
       selected_features: allSelected.map((f) => ({ id: f.id, name: f.name, price: f.price })),
       category: template.category,
+      thumbnail_url: template.thumbnail_url ?? null,
+      estimated_days: template.estimated_days ?? null,
     });
     toast.success("Added to cart!");
   };

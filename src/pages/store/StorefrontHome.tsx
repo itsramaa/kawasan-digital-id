@@ -59,9 +59,9 @@ function HeroSection() {
             </Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <a href="#custom-section">
+            <Link to="/store/custom">
               <Sparkles className="w-4 h-4" /> Custom Website
-            </a>
+            </Link>
           </Button>
         </div>
       </div>
@@ -159,7 +159,7 @@ function CustomHighlight() {
             Tim kami siap membangun website custom sesuai kebutuhan spesifik bisnis Anda — dari desain hingga deployment.
           </p>
           <Button asChild size="lg">
-            <Link to="/store/templates">
+            <Link to="/store/custom">
               Mulai Project Custom <ChevronRight className="w-4 h-4" />
             </Link>
           </Button>
