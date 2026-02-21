@@ -13,7 +13,7 @@ const navItems = [
   { label: "Dasbor", path: "/dashboard", icon: LayoutDashboard },
   { label: "Proyek", path: "/dashboard/projects", icon: FolderKanban },
   { label: "Pesanan", path: "/dashboard/orders", icon: ShoppingBag },
-  { label: "Keuangan", path: "/dashboard/invoices", icon: Receipt, activePaths: ["/dashboard/invoices", "/dashboard/payments"] },
+  { label: "Keuangan", path: "/dashboard/invoices", icon: Receipt },
   { label: "Infrastruktur", path: "/dashboard/infrastructure", icon: Server },
   { label: "Bantuan", path: "/dashboard/support", icon: HeadphonesIcon },
 ];
