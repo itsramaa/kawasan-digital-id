@@ -1,10 +1,11 @@
 import { ClientLayout } from "@/shared/components/layouts/ClientLayout";
 import { useAuth } from "@/features/auth/AuthContext";
-import { StatusBadge, KPICard } from "@/shared/components/common/StatusBadge";
+import { StatusBadge } from "@/shared/components/common/StatusBadge";
 import { AlertBanner } from "@/features/client/components/AlertBanner";
 import { ActivityTimeline } from "@/features/client/components/ActivityTimeline";
 import { ActivityLogList } from "@/features/client/components/ActivityLogList";
-import { FolderKanban, Receipt, HeadphonesIcon, ArrowUpRight, CheckCircle, AlertTriangle, Clock, Activity } from "lucide-react";
+import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
+import { FolderKanban, Receipt, HeadphonesIcon, ArrowUpRight, CheckCircle, AlertTriangle, Clock, LayoutDashboard } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useClientProjects } from "@/features/client/hooks/useClientProjects";
 import { useClientInvoices } from "@/features/client/hooks/useClientInvoices";
@@ -16,6 +17,20 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { differenceInDays, parseISO } from "date-fns";
 import { useState } from "react";
 import { cn } from "@/shared/utils/utils";
+import { Card, CardContent } from "@/shared/components/ui/card";
+
+function RevealCard({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const { ref, isVisible } = useScrollReveal(0.1);
+  return (
+    <div
+      ref={ref}
+      className={cn("transition-all duration-700 ease-out", isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4", className)}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
 
 const statusVariant: Record<string, "info" | "warning" | "hold" | "success" | "neutral"> = {
   Planning: "warning", "In Progress": "info", "On Hold": "hold", Completed: "success", Cancelled: "neutral",
@@ -39,185 +54,245 @@ export default function ClientDashboard() {
   const openTickets = tickets?.filter(t => ["Open", "In Progress"].includes(t.status)).length ?? 0;
   const overdueInv = invoices?.filter(i => i.status === "Overdue").length ?? 0;
 
-  // Alerts
   const expiringContracts = contracts?.filter(c => c.end_date && c.status === "Active" && differenceInDays(parseISO(c.end_date), new Date()) <= 60) ?? [];
   const expiringDomains = domains?.filter(d => d.status === "Active" && differenceInDays(parseISO(d.expiry_date), new Date()) <= 30) ?? [];
-
-  // Action items: pending milestone approvals + overdue invoices
   const pendingMilestones = projects?.flatMap(p => (p.milestones ?? []).filter(m => m.status === "Submitted").map(m => ({ ...m, projectName: p.name }))) ?? [];
 
   const invoicePie = [
-    { name: "Paid", value: paidAmt },
-    { name: "Outstanding", value: outstandingAmt },
+    { name: "Lunas", value: paidAmt },
+    { name: "Belum Lunas", value: outstandingAmt },
   ].filter(d => d.value > 0);
+
+  const stats = [
+    { label: "Proyek Aktif", value: String(activeProjects), icon: FolderKanban, color: "text-primary" },
+    { label: "Belum Dibayar", value: `Rp ${(outstandingAmt / 1e6).toFixed(0)}M`, icon: Receipt, color: "text-primary" },
+    { label: "Tiket Terbuka", value: String(openTickets), icon: HeadphonesIcon, color: "text-primary" },
+    { label: "Invoice Terlambat", value: String(overdueInv), icon: AlertTriangle, color: overdueInv > 0 ? "text-destructive" : "text-muted-foreground" },
+  ];
 
   return (
     <ClientLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            {profile?.full_name ? `Hello, ${profile.full_name}` : "My Dashboard"}
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">Your project and account overview</p>
-        </div>
+        {/* Hero Banner */}
+        <RevealCard>
+          <div className="relative rounded-xl overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-border">
+            <div className="px-6 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <LayoutDashboard className="w-7 h-7 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Dashboard</p>
+                  <h1 className="text-2xl font-bold tracking-tight">
+                    {profile?.full_name ? `Halo, ${profile.full_name}` : "Dashboard Saya"}
+                  </h1>
+                  <p className="text-sm text-muted-foreground mt-0.5">Ringkasan proyek dan akun Anda</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </RevealCard>
 
         {/* Alerts */}
-        {overdueInv > 0 && <AlertBanner variant="critical" title={`${overdueInv} overdue invoice(s)`} description="Please review and settle your outstanding invoices." />}
-        {expiringContracts.length > 0 && <AlertBanner variant="warning" title={`${expiringContracts.length} contract(s) expiring within 60 days`} description={expiringContracts.map(c => c.title).join(", ")} />}
-        {expiringDomains.length > 0 && <AlertBanner variant="warning" title={`${expiringDomains.length} domain(s) expiring within 30 days`} description={expiringDomains.map(d => d.domain_name).join(", ")} />}
+        <RevealCard delay={80}>
+          <div className="space-y-3">
+            {overdueInv > 0 && <AlertBanner variant="critical" title={`${overdueInv} invoice terlambat`} description="Segera tinjau dan selesaikan invoice yang belum dibayar." />}
+            {expiringContracts.length > 0 && <AlertBanner variant="warning" title={`${expiringContracts.length} kontrak akan berakhir dalam 60 hari`} description={expiringContracts.map(c => c.title).join(", ")} />}
+            {expiringDomains.length > 0 && <AlertBanner variant="warning" title={`${expiringDomains.length} domain akan kadaluarsa dalam 30 hari`} description={expiringDomains.map(d => d.domain_name).join(", ")} />}
+          </div>
+        </RevealCard>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          <KPICard title="Active Projects" value={String(activeProjects)} icon={FolderKanban} />
-          <KPICard title="Outstanding" value={`Rp ${(outstandingAmt / 1e6).toFixed(0)}M`} icon={Receipt} />
-          <KPICard title="Open Tickets" value={String(openTickets)} icon={HeadphonesIcon} />
-          <KPICard title="Overdue Invoices" value={String(overdueInv)} changeType={overdueInv > 0 ? "negative" : "neutral"} change={overdueInv > 0 ? "Action needed" : "All good"} icon={AlertTriangle} />
-        </div>
+        {/* Stat Cards */}
+        <RevealCard delay={100}>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {stats.map((s) => (
+              <Card key={s.label}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                    <s.icon className={cn("w-5 h-5", s.color)} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-lg font-bold truncate">{s.value}</p>
+                    <p className="text-xs text-muted-foreground">{s.label}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </RevealCard>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          {/* Projects + Action Items */}
+          {/* Left: Action Items + Projects */}
           <div className="xl:col-span-2 space-y-6">
             {/* Action Items */}
             {(pendingMilestones.length > 0 || overdueInv > 0) && (
-              <div className="bg-card rounded-lg border border-border p-5">
-                <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-primary" /> Action Items
-                </h2>
-                <div className="space-y-2">
-                  {pendingMilestones.map(m => (
-                    <div key={m.id} className="flex items-center justify-between py-2 px-3 rounded-md bg-status-warning/5 border border-status-warning/20">
-                      <div>
-                        <p className="text-sm">Milestone awaiting approval: <strong>{m.title}</strong></p>
-                        <p className="text-xs text-muted-foreground">{m.projectName}</p>
-                      </div>
-                      <StatusBadge status="Pending Review" variant="warning" className="text-[10px]" />
+              <RevealCard delay={130}>
+                <Card>
+                  <CardContent className="p-5">
+                    <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-primary" /> Item Tindakan
+                    </h2>
+                    <div className="space-y-2">
+                      {pendingMilestones.map(m => (
+                        <div key={m.id} className="flex items-center justify-between py-2 px-3 rounded-md bg-yellow-500/5 border border-yellow-500/20">
+                          <div>
+                            <p className="text-sm">Milestone menunggu persetujuan: <strong>{m.title}</strong></p>
+                            <p className="text-xs text-muted-foreground">{m.projectName}</p>
+                          </div>
+                          <StatusBadge status="Menunggu" variant="warning" className="text-[10px]" />
+                        </div>
+                      ))}
+                      {invoices?.filter(i => i.status === "Overdue").map(i => (
+                        <div key={i.id} className="flex items-center justify-between py-2 px-3 rounded-md bg-destructive/5 border border-destructive/20">
+                          <div>
+                            <p className="text-sm">Terlambat: <strong>{i.invoice_number}</strong> — Rp {Number(i.amount).toLocaleString("id-ID")}</p>
+                            <p className="text-xs text-muted-foreground">Tenggat: {i.due_date ? new Date(i.due_date).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }) : "—"}</p>
+                          </div>
+                          <StatusBadge status="Terlambat" variant="error" className="text-[10px]" />
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                  {invoices?.filter(i => i.status === "Overdue").map(i => (
-                    <div key={i.id} className="flex items-center justify-between py-2 px-3 rounded-md bg-status-error/5 border border-status-error/20">
-                      <div>
-                        <p className="text-sm">Overdue: <strong>{i.invoice_number}</strong> — Rp {Number(i.amount).toLocaleString("id-ID")}</p>
-                        <p className="text-xs text-muted-foreground">Due: {i.due_date ?? "—"}</p>
-                      </div>
-                      <StatusBadge status="Overdue" variant="error" className="text-[10px]" />
-                    </div>
-                  ))}
-                </div>
-              </div>
+                  </CardContent>
+                </Card>
+              </RevealCard>
             )}
 
             {/* Projects */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold flex items-center gap-2"><FolderKanban className="w-4 h-4 text-primary" /> My Projects</h2>
-                <Link to="/dashboard/projects" className="text-xs text-primary hover:underline flex items-center gap-1">View All <ArrowUpRight className="w-3 h-3" /></Link>
-              </div>
-              {!projects?.length ? (
-                <p className="text-sm text-muted-foreground bg-card rounded-lg border border-border p-6 text-center">No projects assigned yet.</p>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {projects.slice(0, 4).map(p => (
-                    <div key={p.id} className="bg-card rounded-lg border border-border p-4 hover:shadow-md transition-shadow">
-                      <div className="flex items-start justify-between mb-3">
-                        <h3 className="font-medium">{p.name}</h3>
-                        <StatusBadge status={p.status} variant={statusVariant[p.status] ?? "neutral"} />
-                      </div>
-                      <div className="space-y-1.5">
-                        <div className="flex justify-between text-xs">
-                          <span className="text-muted-foreground">Progress</span>
-                          <span className="font-mono font-medium">{p.progress}%</span>
-                        </div>
-                        <div className="h-2.5 bg-muted rounded-full overflow-hidden">
-                          <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${p.progress}%` }} />
-                        </div>
-                      </div>
-                      {p.milestones?.length > 0 && (
-                        <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
-                          <CheckCircle className="w-3 h-3" />
-                          {p.milestones.filter((m: any) => m.status === "Approved").length}/{p.milestones.length} milestones done
-                        </div>
-                      )}
-                    </div>
-                  ))}
+            <RevealCard delay={160}>
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-semibold flex items-center gap-2"><FolderKanban className="w-4 h-4 text-primary" /> Proyek Saya</h2>
+                  <Link to="/dashboard/projects" className="text-xs text-primary hover:underline flex items-center gap-1">Lihat Semua <ArrowUpRight className="w-3 h-3" /></Link>
                 </div>
-              )}
-            </div>
+                {!projects?.length ? (
+                  <Card>
+                    <CardContent className="p-6 text-center">
+                      <p className="text-sm text-muted-foreground">Belum ada proyek yang ditetapkan.</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {projects.slice(0, 4).map((p, idx) => (
+                      <Card key={p.id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-3">
+                            <h3 className="font-medium">{p.name}</h3>
+                            <StatusBadge status={p.status} variant={statusVariant[p.status] ?? "neutral"} />
+                          </div>
+                          <div className="space-y-1.5">
+                            <div className="flex justify-between text-xs">
+                              <span className="text-muted-foreground">Progres</span>
+                              <span className="font-mono font-medium">{p.progress}%</span>
+                            </div>
+                            <div className="h-2.5 bg-muted rounded-full overflow-hidden">
+                              <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${p.progress}%` }} />
+                            </div>
+                          </div>
+                          {p.milestones?.length > 0 && (
+                            <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
+                              <CheckCircle className="w-3 h-3" />
+                              {p.milestones.filter((m: any) => m.status === "Approved").length}/{p.milestones.length} milestone selesai
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </RevealCard>
           </div>
 
-          {/* Right sidebar: Pie + Activity + Recent Invoices */}
+          {/* Right Sidebar */}
           <div className="space-y-4">
+            {/* Pie Chart */}
             {invoicePie.length > 0 && (
-              <div className="bg-card rounded-lg border border-border p-5">
-                <h2 className="text-sm font-semibold mb-3 flex items-center gap-2"><Receipt className="w-4 h-4 text-primary" /> Payment Summary</h2>
-                <ResponsiveContainer width="100%" height={160}>
-                  <PieChart>
-                    <Pie data={invoicePie} cx="50%" cy="50%" innerRadius={40} outerRadius={65} paddingAngle={3} dataKey="value">
-                      {invoicePie.map((_, i) => <Cell key={i} fill={PIE_COLORS[i]} />)}
-                    </Pie>
-                    <Tooltip formatter={(val: number) => `Rp ${(val / 1e6).toFixed(1)}M`} contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="flex justify-center gap-4 mt-2">
-                  {invoicePie.map((d, i) => (
-                    <div key={d.name} className="flex items-center gap-1.5 text-xs">
-                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: PIE_COLORS[i] }} />
-                      {d.name}
+              <RevealCard delay={140}>
+                <Card>
+                  <CardContent className="p-5">
+                    <h2 className="text-sm font-semibold mb-3 flex items-center gap-2"><Receipt className="w-4 h-4 text-primary" /> Ringkasan Pembayaran</h2>
+                    <ResponsiveContainer width="100%" height={160}>
+                      <PieChart>
+                        <Pie data={invoicePie} cx="50%" cy="50%" innerRadius={40} outerRadius={65} paddingAngle={3} dataKey="value">
+                          {invoicePie.map((_, i) => <Cell key={i} fill={PIE_COLORS[i]} />)}
+                        </Pie>
+                        <Tooltip formatter={(val: number) => `Rp ${(val / 1e6).toFixed(1)}M`} contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="flex justify-center gap-4 mt-2">
+                      {invoicePie.map((d, i) => (
+                        <div key={d.name} className="flex items-center gap-1.5 text-xs">
+                          <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: PIE_COLORS[i] }} />
+                          {d.name}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </CardContent>
+                </Card>
+              </RevealCard>
             )}
 
-            {/* Recent Activity + Activity Log */}
-            <div className="bg-card rounded-lg border border-border p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <h2 className="text-sm font-semibold">Activity</h2>
-                <div className="flex gap-1 ml-auto">
-                  {(["recent", "log"] as const).map((tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => setActivityTab(tab)}
-                      className={cn(
-                        "px-2 py-1 rounded text-[10px] font-medium transition-colors",
-                        activityTab === tab ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
-                      )}
-                    >
-                      {tab === "recent" ? "Recent" : "Full Log"}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              {activityTab === "recent" ? (
-                <ActivityTimeline items={activity ?? []} />
-              ) : (
-                <ActivityLogList />
-              )}
-            </div>
+            {/* Activity */}
+            <RevealCard delay={180}>
+              <Card>
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <h2 className="text-sm font-semibold">Aktivitas</h2>
+                    <div className="flex gap-1 ml-auto">
+                      {(["recent", "log"] as const).map((tab) => (
+                        <button
+                          key={tab}
+                          onClick={() => setActivityTab(tab)}
+                          className={cn(
+                            "px-2 py-1 rounded text-[10px] font-medium transition-colors",
+                            activityTab === tab ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
+                          )}
+                        >
+                          {tab === "recent" ? "Terbaru" : "Semua Log"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {activityTab === "recent" ? (
+                    <ActivityTimeline items={activity ?? []} />
+                  ) : (
+                    <ActivityLogList />
+                  )}
+                </CardContent>
+              </Card>
+            </RevealCard>
 
             {/* Recent Invoices */}
-            <div className="bg-card rounded-lg border border-border p-5">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold">Recent Invoices</h2>
-                <Link to="/dashboard/invoices" className="text-xs text-primary hover:underline flex items-center gap-1">All <ArrowUpRight className="w-3 h-3" /></Link>
-              </div>
-              {!invoices?.length ? (
-                <p className="text-sm text-muted-foreground text-center py-4">No invoices yet.</p>
-              ) : (
-                <div className="space-y-2">
-                  {invoices.slice(0, 4).map(inv => (
-                    <div key={inv.id} className="flex items-center justify-between py-2">
-                      <div>
-                        <p className="font-mono text-xs">{inv.invoice_number}</p>
-                        <p className="text-xs text-muted-foreground">{inv.due_date ?? "—"}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-mono text-xs font-medium">Rp {Number(inv.amount).toLocaleString("id-ID")}</p>
-                        <StatusBadge status={inv.status} variant={inv.status === "Paid" ? "success" : inv.status === "Overdue" ? "error" : "info"} className="text-[9px] px-1.5 py-0" />
-                      </div>
+            <RevealCard delay={200}>
+              <Card>
+                <CardContent className="p-5">
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-sm font-semibold">Invoice Terbaru</h2>
+                    <Link to="/dashboard/invoices" className="text-xs text-primary hover:underline flex items-center gap-1">Semua <ArrowUpRight className="w-3 h-3" /></Link>
+                  </div>
+                  {!invoices?.length ? (
+                    <p className="text-sm text-muted-foreground text-center py-4">Belum ada invoice.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {invoices.slice(0, 4).map(inv => (
+                        <div key={inv.id} className="flex items-center justify-between py-2">
+                          <div>
+                            <p className="font-mono text-xs">{inv.invoice_number}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {inv.due_date ? new Date(inv.due_date).toLocaleDateString("id-ID", { day: "numeric", month: "short" }) : "—"}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-mono text-xs font-medium">Rp {Number(inv.amount).toLocaleString("id-ID")}</p>
+                            <StatusBadge status={inv.status} variant={inv.status === "Paid" ? "success" : inv.status === "Overdue" ? "error" : "info"} className="text-[9px] px-1.5 py-0" />
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                  )}
+                </CardContent>
+              </Card>
+            </RevealCard>
           </div>
         </div>
       </div>
