@@ -1,83 +1,90 @@
 
-
-# Maksimalkan Help Center Pages
+# Maksimalkan Portfolio / Showcase Page
 
 ## Ringkasan
-Upgrade dua halaman Help Center (`/store/how-it-works` dan `/store/help`) agar lebih profesional, engaging, dan sejajar dengan halaman lain yang sudah di-upgrade (Homepage, Templates, Detail).
+Upgrade halaman Portfolio listing (`/store/showcase`) dan detail (`/store/showcase/:id`) agar sejajar dengan halaman lain yang sudah di-upgrade -- dengan hero gradient, search, animasi, dan visual yang lebih profesional.
 
 ---
 
-## Halaman 1: How It Works (`HowItWorksPage.tsx`)
+## Halaman Listing (`/store/showcase`)
 
-### 1. Hero Section
-- Tambahkan hero banner dengan gradient background (konsisten dengan halaman lain)
-- Subtitle yang lebih deskriptif
-- Badge "10 Langkah Mudah" sebagai trust signal
+### 1. Hero Section -- Gradient Banner
+- Tambahkan hero banner dengan gradient background (konsisten: `bg-gradient-to-br from-primary/5 via-transparent to-primary/3`)
+- Badge "Portfolio" sebagai trust signal
+- Subtitle lebih deskriptif dalam Bahasa Indonesia
+- Stats ringkas: jumlah project, jumlah kategori
 
-### 2. Timeline Visual Upgrade
-- Card-based layout per step (bukan hanya text list)
-- Hover effect: lift + shadow + border glow pada setiap card
-- Alternating layout pada desktop (zigzag: kiri-kanan)
-- Nomor step yang lebih prominent (badge besar)
-- Scroll-reveal animation per step (staggered)
+### 2. Search Bar
+- Tambahkan search input di hero section
+- Filter project berdasarkan title, description, dan tech_stack
+- Highlight: tampilkan jumlah hasil ditemukan
 
-### 3. Phase Grouping
-- Kelompokkan 10 step menjadi 3-4 fase visual:
-  - Fase 1: Persiapan (Step 1-3)
-  - Fase 2: Pengerjaan (Step 4-6)
-  - Fase 3: Finalisasi (Step 7-9)
-  - Fase 4: After-Launch (Step 10)
-- Setiap fase punya heading + divider dekoratif
-
-### 4. CTA Section Upgrade
-- Gradient background pada CTA
-- Tambahkan trust signals (jumlah project selesai, rating)
-- Animasi scroll-reveal
-
----
-
-## Halaman 2: Help / FAQ (`HelpFAQPage.tsx`)
-
-### 1. Hero Section
-- Tambahkan hero banner dengan gradient background
-- Search bar untuk pencarian FAQ berdasarkan keyword
-- Stats: jumlah FAQ tersedia
-
-### 2. Category Filter Upgrade
-- Icon per kategori
-- Count badge per kategori (jumlah FAQ)
+### 3. Category Filter -- Lebih Polished
+- Tambahkan count badge per kategori (jumlah project)
 - Hover effect lebih prominent
+- Scroll-reveal animation pada filter bar
+
+### 4. Project Cards -- Visual Upgrade
+- Hover effect lebih dramatis: lift + shadow + border glow (konsisten dengan template cards)
+- Image zoom on hover (scale effect)
+- Tambahkan jumlah case study sections sebagai indicator ("4 studi kasus")
+- Staggered fade-in animation pada grid
+- Scroll-reveal pada keseluruhan grid
+
+### 5. Loading State -- Lebih Realistis
+- Skeleton shimmer yang lebih detail (hero, filter bar, cards)
+- Skeleton mengikuti layout asli
+
+### 6. Empty State -- Lebih Engaging
+- Ilustrasi lebih menarik dengan suggestion links (ke Templates, Custom)
+
+---
+
+## Halaman Detail (`/store/showcase/:id`)
+
+### 1. Breadcrumb
+- Ganti tombol "Back" menjadi breadcrumb trail: Home > Portfolio > [Category] > [Project Name]
+
+### 2. Hero Image -- Lebih Interaktif
+- Image zoom on hover
+- Overlay badge kategori dan tech stack count
+- Gradient overlay halus di bawah gambar
+
+### 3. Project Info -- Lebih Kaya
+- Tambahkan meta info bar: kategori, jumlah tech stack, tanggal dibuat
+- Scroll-reveal animation per section
+
+### 4. Case Study Sections -- Visual Upgrade
+- Hover effect pada setiap card (lift + border glow)
+- Staggered scroll-reveal animation per section
+- Numbered indicator (01, 02, 03, 04) di samping icon
+
+### 5. Tech Stack -- Lebih Prominent
+- Grid layout dengan icon dekoratif
+- Hover effect per tech badge
 - Scroll-reveal animation
 
-### 3. FAQ Cards Upgrade
-- Hover effect pada accordion items
-- Animasi stagger saat muncul
-- Highlight matched search text (jika search aktif)
-- Empty state yang lebih engaging dengan suggestions
+### 6. CTA Section -- Lebih Engaging
+- Tambahkan CTA "Mulai Project Serupa" dengan gradient background
+- Link ke `/store/templates` dan `/store/custom`
+- Trust signals
 
-### 4. Contact CTA Upgrade
-- Gradient background
-- Tambahkan info tambahan (response time, channel support)
-- Icon grid untuk berbagai channel kontak (email, WhatsApp hint)
-- Scroll-reveal animation
-
-### 5. Tambah Section: Quick Links
-- Grid cards menuju halaman terkait (How It Works, Templates, Custom)
-- Masing-masing dengan icon, judul, dan deskripsi singkat
+### 7. Tambah Section: Related Projects
+- Tampilkan 2-3 project lain dari kategori yang sama (jika ada)
+- Card style konsisten dengan listing page
 
 ---
 
 ## Detail Teknis
 
 ### File yang Dimodifikasi
-- `src/pages/store/HowItWorksPage.tsx` -- refactor komprehensif
-- `src/pages/store/HelpFAQPage.tsx` -- refactor komprehensif
+- `src/pages/store/ShowcasePage.tsx` -- refactor komprehensif (listing + detail)
 
 ### Pendekatan
 - Tidak ada perubahan database
 - Tidak ada dependency baru
 - Menggunakan `useScrollReveal` hook yang sudah ada
-- Data FAQ dari hook `useFAQs` yang sudah ada
+- Data dari hook `useShowcaseProjects` yang sudah ada
+- Related projects difilter dari data yang sudah ada (by category)
+- Menambahkan state `searchQuery` untuk fitur pencarian
 - Semua styling menggunakan Tailwind classes
-- Menambahkan `searchQuery` state pada FAQ page untuk fitur pencarian
-
