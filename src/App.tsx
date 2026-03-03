@@ -42,6 +42,12 @@ import PrivacyPolicyPage from "./pages/store/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/store/TermsOfServicePage";
 import RefundPolicyPage from "./pages/store/RefundPolicyPage";
 
+import LandingHome from "./pages/landing/LandingHome";
+import AboutPage from "./pages/landing/AboutPage";
+import ServicesPage from "./pages/landing/ServicesPage";
+import PortfolioPage from "./pages/landing/PortfolioPage";
+import ContactPage from "./pages/landing/ContactPage";
+
 import ClientOrders from "./pages/client/ClientOrders";
 
 
@@ -73,6 +79,13 @@ const App = () => (
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsOfServicePage />} />
             <Route path="/refund" element={<RefundPolicyPage />} />
+
+            {/* Landing / Company Profile Routes */}
+            <Route path="/landing" element={<LandingHome />} />
+            <Route path="/landing/about" element={<AboutPage />} />
+            <Route path="/landing/services" element={<ServicesPage />} />
+            <Route path="/landing/portfolio" element={<PortfolioPage />} />
+            <Route path="/landing/contact" element={<ContactPage />} />
 
 
             {/* Admin/Internal Portal Routes */}
