@@ -15,22 +15,22 @@ export function AddOnSection() {
   return (
     <section
       ref={ref}
-      className={`max-w-6xl mx-auto px-4 lg:px-8 py-14 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+      className={`max-w-7xl mx-auto px-4 lg:px-8 py-14 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
     >
-      <h2 className="text-xl font-bold text-foreground mb-6">Tingkatkan Website Anda</h2>
+      <h2 className="text-xl font-bold text-foreground mb-6">Tingkatkan <span className="gradient-text">Website Anda</span></h2>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {ADDONS.map((addon) => (
           <div
             key={addon.name}
-            className="relative p-5 rounded-xl border border-border bg-card space-y-3 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            className="relative p-5 rounded-xl border border-border glass-card space-y-3 hover-lift"
           >
             {addon.popular && (
-              <Badge className="absolute top-3 right-3 bg-primary/10 text-primary text-[10px] border-0">
+              <Badge className="absolute top-3 right-3 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-[10px] border-0">
                 Popular
               </Badge>
             )}
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <addon.icon className="w-5 h-5 text-primary" />
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+              <addon.icon className="w-5 h-5 text-primary-foreground" />
             </div>
             <h3 className="font-semibold text-foreground text-sm">{addon.name}</h3>
             <p className="text-xs text-muted-foreground">{addon.desc}</p>
