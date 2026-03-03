@@ -1,50 +1,64 @@
 
 
-## Plan: Maximize Content & Sections Across All Landing Pages
+## Plan: Align Storefront & Landing -- Remove Duplicates, Unify Style
 
-### Current State
-Each page has 2-4 sections. The Home page lacks demo/process content, About has no team section, Services lacks pricing/process, Portfolio is data-dependent, and Contact is minimal.
+### Problem
+Both pages share duplicated sections (How It Works, Testimonials, FAQ, CTA) and have inconsistent visual styling (different max-widths, card styles, icon treatments).
 
-### New Sections Per Page
+### Content Strategy
 
-#### 1. LandingHome.tsx (add 4 new sections)
-- **Trusted By / Client Logos**: Infinite scrolling marquee of client/partner logos (CSS-only marquee animation)
-- **How It Works / Process**: 3-step horizontal process flow (Konsultasi → Pengembangan → Launch) with numbered circles and connecting lines
-- **Live Demo Preview**: Interactive tabbed component showing before/after or device mockup previews (desktop/tablet/mobile) with animated device frames
-- **FAQ Accordion**: Common questions using Radix Accordion component, styled with gradient borders
+**Landing Page (`/landing`)** = Company brand & agency story. Answers "Who is Kawasan Digital?"
+**Storefront (`/`)** = Product catalog & buying flow. Answers "What can I buy?"
 
-#### 2. AboutPage.tsx (add 3 new sections)
-- **Team Section**: Grid of 4-6 team members with photo placeholders (gradient avatar circles), name, role, and social links. Hover effect reveals bio
-- **Company Numbers / Achievements**: Horizontal stats bar with icons (Projects Delivered, Years Experience, Team Members, Technologies Used) using the animated counter hook
-- **Tech Stack / Tools We Use**: Logo grid of technologies (React, TypeScript, Tailwind, Node.js, etc.) with subtle hover tooltips
+Each section lives in ONE place only:
 
-#### 3. ServicesPage.tsx (add 3 new sections)
-- **Process Timeline**: Horizontal 4-step process (Discovery → Design → Development → Deploy) with animated progress line
-- **Pricing Comparison Table**: 3-tier pricing cards (Starter, Professional, Enterprise) with feature comparison checkmarks, "Populer" badge on middle tier
-- **FAQ Section**: Service-specific questions using Accordion
+| Section | Keep In | Remove From | Reason |
+|---------|---------|-------------|--------|
+| How It Works (process) | Storefront | Landing | Purchase-flow content belongs in shop |
+| Testimonials | Storefront | Landing | Social proof for buying decisions |
+| FAQ | Storefront | Landing | Product/purchase FAQ belongs in shop |
+| Stats (counters) | Landing | -- | Company credibility, unique to landing |
+| Client Marquee | Landing | -- | Brand trust, unique to landing |
+| Device Preview | Landing | -- | Showcases capability, unique |
+| Why Us (highlights) | Landing | -- | Company differentiators |
+| Categories | Storefront | -- | Product browsing |
+| Featured Templates | Storefront | -- | Product showcase |
+| Add-ons | Storefront | -- | Product upsell |
+| Custom Highlight | Storefront | -- | Service upsell |
 
-#### 4. PortfolioPage.tsx (add 2 new sections)
-- **Stats Banner**: Project count, technologies used, industries served (using counter animation)
-- **CTA Section**: Bottom gradient CTA encouraging visitors to start their project
+### Landing Home: Replace removed sections with
+- **Services Overview**: 3 cards linking to `/landing/services` (Template, Custom, Maintenance) -- gives landing its own unique content instead of duplicating storefront
+- **Portfolio Showcase**: 2-3 highlight cards linking to `/landing/portfolio` -- drives traffic to other landing pages
+- Keep: Hero, Client Marquee, Stats, Highlights/Why Us, Device Preview, CTA (reworded to "Kunjungi Storefront")
 
-#### 5. ContactPage.tsx (add 2 new sections)
-- **FAQ Before Form**: 3-4 common pre-sales questions using Accordion
-- **Office Hours / Availability**: Card showing business hours, response time guarantee, and WhatsApp quick-contact button
+### Storefront: Visual upgrade to match Landing style
+Update all 7 storefront home components to use the same design language:
+- `max-w-6xl` → `max-w-7xl` across all sections
+- Add `gradient-text` to section headings
+- Add `glass-card` + `hover-lift` to cards
+- Icon containers: flat `bg-primary/10` → gradient `bg-gradient-to-br from-primary to-primary/70`
+- Section backgrounds: add subtle gradient overlays (`from-muted/30 via-background`)
+- CTA section: gradient background (`from-primary to-secondary`) instead of flat `bg-primary`
 
-### Interactive Components (pure CSS/React, no new deps)
-- **Marquee**: CSS `@keyframes` scroll animation for client logos
-- **Tabbed Device Preview**: useState toggle between desktop/tablet/mobile mockup frames
-- **Accordion**: Use existing `@radix-ui/react-accordion` (already installed)
-- **Animated counters**: Reuse existing `useCounter` hook from LandingHome
+### Files to modify
 
-### Files to Modify
-1. `src/pages/landing/LandingHome.tsx` -- add 4 sections
-2. `src/pages/landing/AboutPage.tsx` -- add 3 sections (team, stats, tech stack)
-3. `src/pages/landing/ServicesPage.tsx` -- add 3 sections (process, pricing, FAQ)
-4. `src/pages/landing/PortfolioPage.tsx` -- add 2 sections
-5. `src/pages/landing/ContactPage.tsx` -- add 2 sections
-6. `src/index.css` -- add marquee keyframes
+1. **`LandingHome.tsx`** -- Remove: Process section, Testimonials section, FAQ section. Add: Services Overview cards, Portfolio Showcase cards. Reword CTA.
 
-### Design Consistency
-All new sections follow existing patterns: `RevealCard` for scroll animations, `glass-card` + `hover-lift` for cards, gradient icon containers, `gradient-text` for headings, consistent `max-w-7xl` containers, and the established color accent system (primary/secondary/accent/destructive).
+2. **Storefront components (7 files)** -- Visual upgrade only, no content changes:
+   - `HeroSection.tsx` -- gradient text, floating shapes, badge styling
+   - `CategorySection.tsx` -- `max-w-7xl`, gradient icon bg, `hover-lift`
+   - `FeaturedSection.tsx` -- `max-w-7xl`, `glass-card`, gradient heading
+   - `CustomHighlight.tsx` -- `max-w-7xl`, gradient accents
+   - `AddOnSection.tsx` -- `max-w-7xl`, `glass-card`, `hover-lift`, gradient icons
+   - `TestimonialsSection.tsx` -- `max-w-7xl`, `glass-card`, gradient quote icon, colored stars
+   - `FAQSection.tsx` -- `max-w-7xl`, gradient heading, styled accordion
+   - `FinalCTA.tsx` -- gradient bg (`from-primary to-secondary`), floating decorative shapes
+   - `HowItWorks.tsx` -- gradient phase badges, `glass-card` step cards
+
+### Design tokens used consistently everywhere
+- Headings: `gradient-text` class
+- Cards: `glass-card hover-lift` + `border border-border`
+- Icons: `bg-gradient-to-br from-{color} to-{color}/70`
+- Sections: alternating `bg-gradient-to-br from-muted/30` backgrounds
+- Container: `max-w-7xl mx-auto px-4 lg:px-8`
 
