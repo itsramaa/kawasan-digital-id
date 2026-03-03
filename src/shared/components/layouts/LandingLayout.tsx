@@ -40,7 +40,6 @@ function Navbar() {
           <span className="gradient-text">Kawasan Digital</span>
         </Link>
 
-        {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-1">
           {navLinks.map((l) => (
             <Link
@@ -62,13 +61,11 @@ function Navbar() {
           </Button>
         </nav>
 
-        {/* Mobile toggle */}
         <button className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors" onClick={() => setOpen(!open)}>
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
-      {/* Mobile nav */}
       {open && (
         <nav className="md:hidden border-t border-border bg-background/95 backdrop-blur-xl px-4 pb-4 space-y-1 animate-fade-in">
           {navLinks.map((l) => (
@@ -97,31 +94,26 @@ function Navbar() {
 
 function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-gradient-to-br from-sidebar-background via-sidebar-background to-primary/20">
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-60 h-60 bg-secondary/5 rounded-full blur-3xl" />
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+    <footer className="border-t border-border bg-card">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
-          <div className="md:col-span-2 space-y-4">
-            <div className="flex items-center gap-2.5 font-bold text-xl">
-              <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <Globe className="h-5 w-5 text-primary-foreground" />
+          <div className="col-span-2 md:col-span-1 space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <Globe className="w-3.5 h-3.5 text-primary-foreground" />
               </div>
-              <span className="text-sidebar-primary-foreground">Kawasan Digital</span>
+              <span className="text-sm font-bold gradient-text">Kawasan Digital</span>
             </div>
-            <p className="text-sm leading-relaxed text-sidebar-foreground/70 max-w-sm">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               Partner terpercaya untuk solusi digital bisnis Anda. Kami membantu membangun kehadiran online yang profesional dan berdampak.
             </p>
-            {/* Social icons */}
-            <div className="flex gap-3 pt-2">
+            <div className="flex gap-2 pt-1">
               {["Instagram", "LinkedIn", "WhatsApp"].map((s) => (
                 <a
                   key={s}
                   href="#"
-                  className="h-10 w-10 rounded-lg bg-sidebar-accent flex items-center justify-center text-sidebar-foreground/60 hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
+                  className="h-8 w-8 rounded-md bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-200"
                   title={s}
                 >
                   <span className="text-xs font-bold">{s[0]}</span>
@@ -130,48 +122,59 @@ function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Navigasi */}
           <div className="space-y-3">
-            <h4 className="font-semibold text-sidebar-primary-foreground text-sm uppercase tracking-wider">Navigasi</h4>
-            {navLinks.map((l) => (
-              <Link
-                key={l.to}
-                to={l.to}
-                className="block text-sm text-sidebar-foreground/70 hover:text-primary transition-colors duration-200 hover:translate-x-1 transform"
-              >
-                {l.label}
-              </Link>
-            ))}
+            <h4 className="text-sm font-semibold text-foreground">Navigasi</h4>
+            <div className="space-y-2">
+              {navLinks.map((l) => (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  className="block text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          {/* Contact */}
+          {/* Layanan */}
           <div className="space-y-3">
-            <h4 className="font-semibold text-sidebar-primary-foreground text-sm uppercase tracking-wider">Kontak</h4>
-            <div className="space-y-3 text-sm text-sidebar-foreground/70">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-md bg-primary/20 flex items-center justify-center flex-shrink-0">
-                  <Mail className="h-3.5 w-3.5 text-primary" />
-                </div>
+            <h4 className="text-sm font-semibold text-foreground">Layanan</h4>
+            <div className="space-y-2">
+              <Link to="/" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Storefront</Link>
+              <Link to="/templates" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Templates</Link>
+              <Link to="/custom" className="block text-xs text-muted-foreground hover:text-foreground transition-colors">Custom Website</Link>
+            </div>
+          </div>
+
+          {/* Kontak */}
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-foreground">Kontak</h4>
+            <div className="space-y-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Mail className="h-3.5 w-3.5 text-primary flex-shrink-0" />
                 info@kawasandigital.com
               </div>
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-md bg-secondary/20 flex items-center justify-center flex-shrink-0">
-                  <Phone className="h-3.5 w-3.5 text-secondary" />
-                </div>
+              <div className="flex items-center gap-2">
+                <Phone className="h-3.5 w-3.5 text-secondary flex-shrink-0" />
                 +62 812 3456 7890
               </div>
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-md bg-accent/20 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="h-3.5 w-3.5 text-accent" />
-                </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-3.5 w-3.5 text-accent flex-shrink-0" />
                 Jakarta, Indonesia
               </div>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-sidebar-border/50 mt-12 pt-8 text-center text-xs text-sidebar-foreground/40">
-          © {new Date().getFullYear()} Kawasan Digital. All rights reserved.
+        <div className="border-t border-border pt-6 flex flex-col md:flex-row justify-between items-center gap-3">
+          <p className="text-xs text-muted-foreground">
+            © {new Date().getFullYear()} Kawasan Digital. All rights reserved.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            hello@kawasandigital.com
+          </p>
         </div>
       </div>
     </footer>
