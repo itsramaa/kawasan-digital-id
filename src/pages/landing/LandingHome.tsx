@@ -1,6 +1,7 @@
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
 import { FloatingElements } from "@/shared/components/common/FloatingElements";
+import { WavePattern, TopographyPattern, GridLinesPattern, AbstractBlobPattern, ImageOverlay } from "@/shared/components/common/BackgroundPatterns";
 import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
 import { useCounter } from "@/shared/hooks/useCounter";
 import { Button } from "@/shared/components/ui/button";
@@ -135,6 +136,8 @@ export default function LandingHome() {
       <FloatingElements variant="default" />
       {/* Hero */}
       <section className="relative overflow-hidden py-24 sm:py-32 lg:py-40">
+        <ImageOverlay src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1920&q=20&blur=20" />
+        <WavePattern />
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <div className="absolute top-16 left-[15%] w-80 h-80 rounded-full bg-primary/8 blur-3xl" style={{ animation: "float-slow 8s ease-in-out infinite" }} />
           <div className="absolute top-40 right-[10%] w-64 h-64 rounded-full bg-secondary/10 blur-3xl" style={{ animation: "float-medium 6s ease-in-out infinite 1s" }} />
@@ -194,7 +197,8 @@ export default function LandingHome() {
       </section>
 
       {/* Stats */}
-      <section className="py-20 border-b border-border bg-gradient-to-br from-muted/30 via-background to-muted/30">
+      <section className="relative py-20 border-b border-border bg-gradient-to-br from-muted/30 via-background to-muted/30">
+        <div className="dot-grid absolute inset-0 pointer-events-none -z-10" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
             {stats.map((s, i) => (
@@ -205,7 +209,8 @@ export default function LandingHome() {
       </section>
 
       {/* Highlights / Why Us */}
-      <section className="py-20 sm:py-28">
+      <section className="relative py-20 sm:py-28">
+        <TopographyPattern />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealCard className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -231,8 +236,9 @@ export default function LandingHome() {
         </div>
       </section>
 
-      {/* Services Overview (unique to Landing) */}
-      <section className="py-20 sm:py-28 bg-gradient-to-br from-muted/30 via-background to-primary/5 border-y border-border">
+      {/* Services Overview */}
+      <section className="relative py-20 sm:py-28 bg-gradient-to-br from-muted/30 via-background to-primary/5 border-y border-border">
+        <GridLinesPattern />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealCard className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -277,8 +283,9 @@ export default function LandingHome() {
         </div>
       </section>
 
-      {/* Portfolio Showcase (unique to Landing) */}
-      <section className="py-20 sm:py-28 bg-gradient-to-br from-muted/30 via-background to-secondary/5 border-y border-border">
+      {/* Portfolio Showcase */}
+      <section className="relative py-20 sm:py-28 bg-gradient-to-br from-muted/30 via-background to-secondary/5 border-y border-border">
+        <AbstractBlobPattern />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealCard className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -312,8 +319,9 @@ export default function LandingHome() {
         </div>
       </section>
 
-      {/* CTA - Unique side-by-side layout (different from storefront gradient CTA) */}
-      <section className="py-20 sm:py-28">
+      {/* CTA */}
+      <section className="relative py-20 sm:py-28">
+        <div className="dot-grid absolute inset-0 pointer-events-none -z-10" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <RevealCard>

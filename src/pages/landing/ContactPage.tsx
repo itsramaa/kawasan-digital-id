@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
 import { FloatingElements } from "@/shared/components/common/FloatingElements";
+import { ImageOverlay } from "@/shared/components/common/BackgroundPatterns";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Textarea } from "@/shared/components/ui/textarea";
@@ -12,12 +13,10 @@ import { Mail, Phone, MapPin, Send, CheckCircle2, MessageSquare, HelpCircle, Clo
 import { useToast } from "@/shared/hooks/use-toast";
 
 const allFaqs = [
-  // Pre-sales
   { q: "Berapa biaya pembuatan website?", a: "Biaya tergantung pada jenis layanan. Template mulai dari Rp 2.5 juta, custom development mulai dari Rp 7.5 juta. Hubungi kami untuk penawaran spesifik." },
   { q: "Apakah ada konsultasi gratis?", a: "Ya! Kami menyediakan sesi konsultasi gratis untuk mendiskusikan kebutuhan proyek Anda sebelum memutuskan." },
   { q: "Berapa lama waktu pengerjaan?", a: "Template website 3-5 hari kerja, custom development 2-6 minggu. Timeline akan disepakati di awal proyek." },
   { q: "Metode pembayaran apa yang diterima?", a: "Kami menerima transfer bank (BCA, Mandiri, BNI), e-wallet, dan pembayaran bertahap sesuai milestone." },
-  // Merged from Services FAQ
   { q: "Apa perbedaan template dan custom development?", a: "Template menggunakan desain yang sudah jadi dan tinggal dikustomisasi konten & warnanya. Custom development dibangun dari nol sesuai kebutuhan spesifik Anda, termasuk fitur-fitur unik." },
   { q: "Berapa lama garansi maintenance?", a: "Garansi maintenance tergantung paket yang dipilih. Paket Professional mendapat 3 bulan, sedangkan Enterprise mendapat 12 bulan maintenance gratis." },
   { q: "Apakah bisa upgrade paket nanti?", a: "Tentu! Anda bisa upgrade kapan saja. Kami akan memperhitungkan sisa value dari paket sebelumnya sebagai kredit." },
@@ -62,6 +61,7 @@ export default function ContactPage() {
     <LandingLayout>
       <FloatingElements variant="minimal" />
       <section className="relative py-20 sm:py-28 overflow-hidden">
+        <ImageOverlay src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=20&blur=20" />
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-10 right-1/4 w-72 h-72 bg-primary/8 rounded-full blur-3xl" style={{ animation: "float-slow 8s ease-in-out infinite" }} />
           <div className="absolute bottom-10 left-1/4 w-60 h-60 bg-secondary/8 rounded-full blur-3xl" style={{ animation: "float-medium 6s ease-in-out infinite 1s" }} />
@@ -116,12 +116,13 @@ export default function ContactPage() {
                   </Button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5 p-8 rounded-xl glass-card">
-                  <div className="flex items-center gap-2 mb-2">
+                <form onSubmit={handleSubmit} className="relative space-y-5 p-8 rounded-xl glass-card">
+                  <div className="dot-grid absolute inset-0 rounded-xl pointer-events-none" />
+                  <div className="flex items-center gap-2 mb-2 relative">
                     <MessageSquare className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-lg">Kirim Pesan</h3>
                   </div>
-                  <div className="grid sm:grid-cols-2 gap-5">
+                  <div className="grid sm:grid-cols-2 gap-5 relative">
                     <div className="space-y-2">
                       <Label htmlFor="name">Nama</Label>
                       <Input id="name" placeholder="Nama lengkap" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="transition-all duration-200 focus:ring-2 focus:ring-primary/30" />
@@ -131,15 +132,15 @@ export default function ContactPage() {
                       <Input id="email" type="email" placeholder="email@contoh.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="transition-all duration-200 focus:ring-2 focus:ring-primary/30" />
                     </div>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 relative">
                     <Label htmlFor="subject">Subjek</Label>
                     <Input id="subject" placeholder="Subjek pesan" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className="transition-all duration-200 focus:ring-2 focus:ring-primary/30" />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 relative">
                     <Label htmlFor="message">Pesan</Label>
                     <Textarea id="message" placeholder="Tulis pesan Anda..." rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="transition-all duration-200 focus:ring-2 focus:ring-primary/30" />
                   </div>
-                  <Button type="submit" disabled={loading} className="gap-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity border-0 shadow-lg colored-shadow-primary">
+                  <Button type="submit" disabled={loading} className="relative gap-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity border-0 shadow-lg colored-shadow-primary">
                     <Send className="h-4 w-4" /> {loading ? "Mengirim..." : "Kirim Pesan"}
                   </Button>
                 </form>
