@@ -1,35 +1,50 @@
 
 
-## Plan: Unify Storefront & Landing Page Design
+## Plan: Maximize Content & Sections Across All Landing Pages
 
-**Goal**: Make both layouts visually consistent, using the Landing Page navbar style as the reference and the Storefront footer style as the reference.
+### Current State
+Each page has 2-4 sections. The Home page lacks demo/process content, About has no team section, Services lacks pricing/process, Portfolio is data-dependent, and Contact is minimal.
 
-### Key Differences to Resolve
+### New Sections Per Page
 
-| Element | Storefront (current) | Landing (reference) | Action |
-|---------|---------------------|---------------------|--------|
-| **Navbar logo** | Flat `bg-primary`, no gradient text | Gradient `from-primary to-secondary`, `.gradient-text` | Update Storefront to match Landing |
-| **Navbar container** | Always `bg-card/80 backdrop-blur-lg` | Scroll-aware: transparent → solid | Update Storefront to match Landing |
-| **Nav link style** | `bg-primary/10` active, `hover:bg-muted` | Underline animation (`after:` pseudo), no bg | Update Storefront to match Landing |
-| **Max width** | `max-w-6xl` | `max-w-7xl` | Unify to `max-w-7xl` |
-| **Footer** | Clean 4-col grid, `bg-card`, clear structure | Dark gradient `bg-sidebar-background`, decorative blurs | Update Landing footer to match Storefront's clean structure |
+#### 1. LandingHome.tsx (add 4 new sections)
+- **Trusted By / Client Logos**: Infinite scrolling marquee of client/partner logos (CSS-only marquee animation)
+- **How It Works / Process**: 3-step horizontal process flow (Konsultasi → Pengembangan → Launch) with numbered circles and connecting lines
+- **Live Demo Preview**: Interactive tabbed component showing before/after or device mockup previews (desktop/tablet/mobile) with animated device frames
+- **FAQ Accordion**: Common questions using Radix Accordion component, styled with gradient borders
 
-### Changes (2 files)
+#### 2. AboutPage.tsx (add 3 new sections)
+- **Team Section**: Grid of 4-6 team members with photo placeholders (gradient avatar circles), name, role, and social links. Hover effect reveals bio
+- **Company Numbers / Achievements**: Horizontal stats bar with icons (Projects Delivered, Years Experience, Team Members, Technologies Used) using the animated counter hook
+- **Tech Stack / Tools We Use**: Logo grid of technologies (React, TypeScript, Tailwind, Node.js, etc.) with subtle hover tooltips
 
-#### 1. `StorefrontLayout.tsx` -- Update Navbar to match Landing style
-- Add scroll-aware background (transparent at top → solid on scroll)
-- Logo: gradient icon (`from-primary to-secondary`) + `.gradient-text` on brand name
-- Nav links: replace `bg-primary/10` active style with underline animation using `after:` pseudo-element
-- CTA button: gradient style (`from-primary to-secondary`)
-- Max width: `max-w-6xl` → `max-w-7xl`
-- Mobile nav: add `backdrop-blur-xl` and match styling
+#### 3. ServicesPage.tsx (add 3 new sections)
+- **Process Timeline**: Horizontal 4-step process (Discovery → Design → Development → Deploy) with animated progress line
+- **Pricing Comparison Table**: 3-tier pricing cards (Starter, Professional, Enterprise) with feature comparison checkmarks, "Populer" badge on middle tier
+- **FAQ Section**: Service-specific questions using Accordion
 
-#### 2. `LandingLayout.tsx` -- Update Footer to match Storefront style
-- Replace dark gradient background with clean `bg-card border-t border-border`
-- Use Storefront's 4-column grid structure (Brand, Services→Navigasi, Help→Layanan, Contact)
-- Use `text-foreground` / `text-muted-foreground` instead of `sidebar-*` tokens
-- Keep contact info (email, phone, address) but style them like Storefront's clean text links
-- Keep social icons but adapt to light card background
-- Add Storefront's email in bottom bar
-- Max width stays `max-w-7xl` (consistent with Landing navbar)
+#### 4. PortfolioPage.tsx (add 2 new sections)
+- **Stats Banner**: Project count, technologies used, industries served (using counter animation)
+- **CTA Section**: Bottom gradient CTA encouraging visitors to start their project
+
+#### 5. ContactPage.tsx (add 2 new sections)
+- **FAQ Before Form**: 3-4 common pre-sales questions using Accordion
+- **Office Hours / Availability**: Card showing business hours, response time guarantee, and WhatsApp quick-contact button
+
+### Interactive Components (pure CSS/React, no new deps)
+- **Marquee**: CSS `@keyframes` scroll animation for client logos
+- **Tabbed Device Preview**: useState toggle between desktop/tablet/mobile mockup frames
+- **Accordion**: Use existing `@radix-ui/react-accordion` (already installed)
+- **Animated counters**: Reuse existing `useCounter` hook from LandingHome
+
+### Files to Modify
+1. `src/pages/landing/LandingHome.tsx` -- add 4 sections
+2. `src/pages/landing/AboutPage.tsx` -- add 3 sections (team, stats, tech stack)
+3. `src/pages/landing/ServicesPage.tsx` -- add 3 sections (process, pricing, FAQ)
+4. `src/pages/landing/PortfolioPage.tsx` -- add 2 sections
+5. `src/pages/landing/ContactPage.tsx` -- add 2 sections
+6. `src/index.css` -- add marquee keyframes
+
+### Design Consistency
+All new sections follow existing patterns: `RevealCard` for scroll animations, `glass-card` + `hover-lift` for cards, gradient icon containers, `gradient-text` for headings, consistent `max-w-7xl` containers, and the established color accent system (primary/secondary/accent/destructive).
 
