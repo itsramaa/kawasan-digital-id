@@ -1,6 +1,27 @@
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
-import { Target, Eye, Heart, Lightbulb, Users, Award } from "lucide-react";
+import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
+import { Target, Eye, Heart, Lightbulb, Users, Award, Linkedin, Github, Globe, Code2, Palette, Server, Database, Cpu, Layers, BarChart3 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+
+function useCounter(target: number, duration = 2000) {
+  const [count, setCount] = useState(0);
+  const { ref, isVisible } = useScrollReveal(0.3);
+  const started = useRef(false);
+  useEffect(() => {
+    if (!isVisible || started.current) return;
+    started.current = true;
+    const start = performance.now();
+    const step = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(eased * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [isVisible, target, duration]);
+  return { ref, count };
+}
 
 const values = [
   { icon: Heart, title: "Dedikasi", desc: "Kami berkomitmen penuh pada setiap proyek klien.", color: "primary" as const },
@@ -10,10 +31,10 @@ const values = [
 ];
 
 const colorMap = {
-  primary: { bg: "bg-primary/10", text: "text-primary", border: "border-t-primary", gradient: "from-primary to-primary/60" },
-  secondary: { bg: "bg-secondary/10", text: "text-secondary", border: "border-t-secondary", gradient: "from-secondary to-secondary/60" },
-  accent: { bg: "bg-accent/10", text: "text-accent", border: "border-t-accent", gradient: "from-accent to-accent/60" },
-  destructive: { bg: "bg-destructive/10", text: "text-destructive", border: "border-t-destructive", gradient: "from-destructive to-destructive/60" },
+  primary: { border: "border-t-primary", gradient: "from-primary to-primary/60" },
+  secondary: { border: "border-t-secondary", gradient: "from-secondary to-secondary/60" },
+  accent: { border: "border-t-accent", gradient: "from-accent to-accent/60" },
+  destructive: { border: "border-t-destructive", gradient: "from-destructive to-destructive/60" },
 };
 
 const milestones = [
@@ -23,6 +44,48 @@ const milestones = [
   { year: "2023", event: "Ekspansi tim dan layanan maintenance 24/7" },
   { year: "2024", event: "50+ klien aktif & 100+ website terdelivery" },
 ];
+
+const teamMembers = [
+  { name: "Ahmad Rizky", role: "CEO & Founder", bio: "Visionary leader dengan 10+ tahun pengalaman di industri digital.", gradient: "from-primary to-secondary", socials: ["linkedin", "github"] },
+  { name: "Sari Dewi", role: "Lead Designer", bio: "Expert UI/UX yang mengubah ide menjadi pengalaman digital yang indah.", gradient: "from-secondary to-accent", socials: ["linkedin"] },
+  { name: "Budi Santoso", role: "Tech Lead", bio: "Full-stack developer berpengalaman dalam arsitektur scalable.", gradient: "from-accent to-primary", socials: ["linkedin", "github"] },
+  { name: "Maya Putri", role: "Project Manager", bio: "Ahli dalam mengelola proyek kompleks tepat waktu dan budget.", gradient: "from-primary to-destructive", socials: ["linkedin"] },
+  { name: "Dian Pratama", role: "Frontend Developer", bio: "Spesialis React & TypeScript dengan passion untuk clean code.", gradient: "from-secondary to-primary", socials: ["github"] },
+  { name: "Rina Kusuma", role: "Marketing Lead", bio: "Strategist digital marketing dengan track record ROI tinggi.", gradient: "from-destructive to-secondary", socials: ["linkedin"] },
+];
+
+const achievementStats = [
+  { value: 100, suffix: "+", label: "Proyek Selesai", icon: BarChart3, color: "from-primary to-primary/70" },
+  { value: 5, suffix: "+", label: "Tahun Pengalaman", icon: Award, color: "from-secondary to-secondary/70" },
+  { value: 15, suffix: "+", label: "Anggota Tim", icon: Users, color: "from-accent to-accent/70" },
+  { value: 20, suffix: "+", label: "Teknologi Dikuasai", icon: Cpu, color: "from-destructive to-destructive/70" },
+];
+
+const techStack = [
+  { name: "React", icon: Code2 },
+  { name: "TypeScript", icon: Code2 },
+  { name: "Tailwind CSS", icon: Palette },
+  { name: "Node.js", icon: Server },
+  { name: "PostgreSQL", icon: Database },
+  { name: "Next.js", icon: Layers },
+  { name: "Figma", icon: Palette },
+  { name: "AWS", icon: Globe },
+];
+
+function AchievementCard({ stat, delay }: { stat: typeof achievementStats[0]; delay: number }) {
+  const { ref, count } = useCounter(stat.value);
+  return (
+    <div ref={ref} className="text-center hover-lift" style={{ animationDelay: `${delay}ms` }}>
+      <div className={`h-14 w-14 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+        <stat.icon className="h-7 w-7 text-primary-foreground" />
+      </div>
+      <div className="text-3xl sm:text-4xl font-extrabold text-foreground tabular-nums">
+        {count}{stat.suffix}
+      </div>
+      <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
+    </div>
+  );
+}
 
 export default function AboutPage() {
   return (
@@ -45,8 +108,19 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Achievement Stats */}
+      <section className="py-16 border-y border-border bg-gradient-to-br from-muted/30 via-background to-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
+            {achievementStats.map((s, i) => (
+              <AchievementCard key={i} stat={s} delay={i * 100} />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Vision & Mission */}
-      <section className="py-16 bg-gradient-to-br from-muted/30 via-background to-primary/5 border-y border-border">
+      <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12">
           <RevealCard className="p-8 rounded-xl glass-card hover-lift">
             <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mb-5 shadow-lg">
@@ -80,7 +154,7 @@ export default function AboutPage() {
       </section>
 
       {/* Values */}
-      <section className="py-20">
+      <section className="py-20 bg-gradient-to-br from-muted/30 via-background to-primary/5 border-y border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealCard className="text-center mb-14">
             <h2 className="text-3xl font-bold mb-3">
@@ -109,8 +183,79 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Timeline */}
+      {/* Team Section */}
+      <section className="py-20 sm:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <RevealCard className="text-center mb-14">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              Tim <span className="gradient-text">Kami</span>
+            </h2>
+            <p className="text-muted-foreground max-w-xl mx-auto">Profesional berdedikasi yang siap membantu bisnis Anda tumbuh.</p>
+          </RevealCard>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {teamMembers.map((member, i) => (
+              <RevealCard
+                key={i}
+                delay={i * 100}
+                className="group p-6 rounded-xl border border-border bg-card hover-lift glass-card text-center"
+              >
+                {/* Avatar placeholder */}
+                <div className={`h-24 w-24 rounded-full bg-gradient-to-br ${member.gradient} mx-auto mb-4 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                  <span className="text-2xl font-bold text-primary-foreground">
+                    {member.name.split(" ").map(n => n[0]).join("")}
+                  </span>
+                </div>
+                <h3 className="font-bold text-lg">{member.name}</h3>
+                <p className="text-sm text-primary font-medium mb-2">{member.role}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-0 group-hover:h-auto overflow-hidden">
+                  {member.bio}
+                </p>
+                <div className="flex justify-center gap-2">
+                  {member.socials.includes("linkedin") && (
+                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center hover:bg-primary/10 transition-colors cursor-pointer">
+                      <Linkedin className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                  )}
+                  {member.socials.includes("github") && (
+                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center hover:bg-primary/10 transition-colors cursor-pointer">
+                      <Github className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
+              </RevealCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Tech Stack */}
       <section className="py-20 bg-gradient-to-br from-muted/30 via-background to-secondary/5 border-y border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <RevealCard className="text-center mb-14">
+            <h2 className="text-3xl font-bold mb-3">
+              Teknologi <span className="gradient-text">yang Kami Gunakan</span>
+            </h2>
+            <p className="text-muted-foreground">Stack modern untuk performa dan skalabilitas terbaik.</p>
+          </RevealCard>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+            {techStack.map((tech, i) => (
+              <RevealCard
+                key={i}
+                delay={i * 80}
+                className="group flex flex-col items-center gap-3 p-6 rounded-xl border border-border bg-card hover-lift glass-card cursor-default"
+              >
+                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center group-hover:from-primary/20 group-hover:to-secondary/20 transition-all duration-300">
+                  <tech.icon className="h-6 w-6 text-primary" />
+                </div>
+                <span className="text-sm font-medium text-foreground">{tech.name}</span>
+              </RevealCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Timeline */}
+      <section className="py-20">
         <div className="max-w-3xl mx-auto px-4">
           <RevealCard className="text-center mb-14">
             <h2 className="text-3xl font-bold mb-3">
@@ -118,13 +263,10 @@ export default function AboutPage() {
             </h2>
           </RevealCard>
           <div className="relative">
-            {/* Vertical line */}
             <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-secondary to-accent" />
-
             <div className="space-y-10">
               {milestones.map((m, i) => (
                 <RevealCard key={i} delay={i * 100} className="flex gap-6 items-start relative">
-                  {/* Dot */}
                   <div className="relative z-10 flex-shrink-0 w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg colored-shadow-primary">
                     <span className="text-sm font-bold text-primary-foreground">{m.year}</span>
                   </div>

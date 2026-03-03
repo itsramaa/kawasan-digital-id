@@ -1,12 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
+import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
 import { Button } from "@/shared/components/ui/button";
-import { ExternalLink, FolderOpen, ArrowRight } from "lucide-react";
+import { ExternalLink, FolderOpen, ArrowRight, BarChart3, Layers, Globe } from "lucide-react";
 import { cn } from "@/shared/utils/utils";
 import { Link } from "react-router-dom";
+
+function useCounter(target: number, duration = 2000) {
+  const [count, setCount] = useState(0);
+  const { ref, isVisible } = useScrollReveal(0.3);
+  const started = useRef(false);
+  useEffect(() => {
+    if (!isVisible || started.current) return;
+    started.current = true;
+    const start = performance.now();
+    const step = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(eased * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [isVisible, target, duration]);
+  return { ref, count };
+}
+
+const portfolioStats = [
+  { value: 100, suffix: "+", label: "Proyek Selesai", icon: BarChart3, color: "from-primary to-primary/70" },
+  { value: 20, suffix: "+", label: "Teknologi", icon: Layers, color: "from-secondary to-secondary/70" },
+  { value: 10, suffix: "+", label: "Industri Dilayani", icon: Globe, color: "from-accent to-accent/70" },
+];
 
 export default function PortfolioPage() {
   const [activeCategory, setActiveCategory] = useState("Semua");
@@ -46,9 +72,28 @@ export default function PortfolioPage() {
         </div>
       </section>
 
-      <section className="pb-20 sm:pb-28">
+      {/* Stats Banner */}
+      <section className="py-14 border-y border-border bg-gradient-to-br from-muted/30 via-background to-muted/30">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-3 gap-8">
+            {portfolioStats.map((s, i) => {
+              const { ref, count } = useCounter(s.value);
+              return (
+                <div key={i} ref={ref} className="text-center">
+                  <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center mx-auto mb-3 shadow-lg`}>
+                    <s.icon className="h-6 w-6 text-primary-foreground" />
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-foreground tabular-nums">{count}{s.suffix}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{s.label}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 sm:pb-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Filter */}
           {categories.length > 1 && (
             <div className="flex flex-wrap gap-2 justify-center mb-12">
               {categories.map((c) => (
@@ -90,7 +135,6 @@ export default function PortfolioPage() {
                         No Preview
                       </div>
                     )}
-                    {/* Hover overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center pb-6">
                       {p.demo_url && (
                         <a
@@ -135,6 +179,23 @@ export default function PortfolioPage() {
               </Button>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-95" />
+        <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-white/5" style={{ animation: "float-slow 8s ease-in-out infinite" }} />
+        <div className="absolute bottom-10 right-10 w-24 h-24 rounded-full bg-white/5" style={{ animation: "float-medium 6s ease-in-out infinite 1s" }} />
+
+        <div className="relative max-w-3xl mx-auto px-4 text-center text-primary-foreground">
+          <RevealCard>
+            <h2 className="text-3xl font-bold mb-4">Ingin Proyek Seperti Ini?</h2>
+            <p className="opacity-90 mb-8 text-lg">Mari wujudkan ide Anda menjadi website yang memukau.</p>
+            <Button asChild size="lg" className="gap-2 bg-white text-primary hover:bg-white/90 text-lg px-8 shadow-lg">
+              <Link to="/landing/contact">Mulai Proyek Anda <ArrowRight className="h-5 w-5" /></Link>
+            </Button>
+          </RevealCard>
         </div>
       </section>
     </LandingLayout>
