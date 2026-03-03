@@ -1,35 +1,59 @@
 
 
-## Plan: Align Landing Services with Storefront Content
+## Plan: Add Decorative Background Elements to All Landing Pages
 
-### Remaining Mismatches Found
+### Problem
+All landing pages currently have plain white/gradient backgrounds with only 2-3 blurred circles in hero sections. The rest of each page is visually empty, making the experience feel flat.
 
-| Issue | Landing Page | Storefront | Fix |
-|---|---|---|---|
-| **Services list mismatch** | ServicesPage has 4 services: Template, Custom, Maintenance, SEO & Digital Marketing | Storefront offers: Templates (6 categories), Custom Website, Add-ons (SEO, Extra Page, Speed Opt, Maintenance) | Landing services must reflect exactly what storefront sells -- 3 core services + add-ons as features, not a 4th service |
-| **Pricing mismatch** | ServicesPage hardcodes 3 tiers (Rp 2.5jt / 7.5jt / 15jt) with static features | Storefront has dynamic pricing from DB (`service_templates.base_price`) + add-on pricing (500rb, 300rb, 400rb, 200rb/bln) | Remove static pricing from Landing (conflicts with real storefront prices). Replace with "mulai dari" teaser linking to storefront |
-| **Category mismatch** | LandingHome "Services Overview" shows 3 generic cards (Template, Custom, Maintenance) | Storefront CategorySection has 6 specific categories (Ecommerce, Company Profile, Landing Page, Portfolio, Blog, UMKM) | Landing services teaser should reference the same 6 categories |
-| **Add-on content duplication** | ServicesPage Maintenance card features overlap with Storefront AddOnSection items | Add-ons exist only in storefront | Landing should reference add-ons without duplicating details |
-| **"SEO & Digital Marketing" service** | Listed as 4th service on ServicesPage | Not sold as standalone in storefront -- SEO is an add-on (Rp 500rb) | Remove as standalone service, mention as part of add-ons |
-| **Custom features mismatch** | ServicesPage Custom card: "Analisis kebutuhan, UI/UX custom, API, Testing" | Storefront CustomHighlight: "Desain Eksklusif, Full Ownership, SEO Ready, Clean Code, Support Prioritas" | Align feature lists |
-| **CTA links** | ServicesPage links to `/templates` and `/custom` | Correct storefront routes | OK, these match |
+### Approach
+Create a reusable `FloatingElements` component that renders lightweight CSS-only decorative shapes (no heavy libraries). These are pure CSS geometric elements with existing `float-slow`/`float-medium` keyframes -- zero bundle cost, no 3D or Lottie needed for this level of visual richness.
 
-### Changes
+### New Component: `src/shared/components/common/FloatingElements.tsx`
 
-#### 1. `ServicesPage.tsx` -- Major content alignment
-- **Services grid**: Reduce to 3 services matching storefront: Template Website, Custom Development, Maintenance & Support
-  - Template card: features match storefront categories (Ecommerce, Company Profile, Landing Page, etc.), CTA links to `/templates`
-  - Custom card: features match storefront CustomHighlight (Desain Eksklusif, Full Ownership, SEO Ready, Clean Code, Support Prioritas), CTA links to `/custom`
-  - Maintenance card: features match storefront AddOnSection items (SEO Setup, Extra Page, Speed Optimization, Maintenance Plan)
-- **Remove**: Static pricing section entirely (conflicts with dynamic storefront prices)
-- **Add**: Simple "Harga" teaser section -- 1 card per service showing "mulai dari Rp X" with CTA to storefront, pulling price context from what storefront actually charges
-- **Keep**: Tech Stack, CTA sections (no changes)
+A set of CSS-animated decorative shapes (circles, rings, dots, rounded squares, gradient lines) scattered across sections. Each page gets a unique `variant` prop for visual variety:
 
-#### 2. `LandingHome.tsx` -- Services overview alignment
-- Update the 3 service cards to briefly mention storefront categories (e.g., "Template: Ecommerce, Company Profile, Landing Page, dan lainnya")
-- Ensure descriptions match storefront messaging
+- **`default`** (LandingHome) -- Mixed shapes: rings, dots, gradient bars
+- **`organic`** (AboutPage) -- Softer: circles, rounded blobs
+- **`tech`** (ServicesPage) -- Geometric: squares, code brackets, grid dots
+- **`creative`** (PortfolioPage) -- Dynamic: diamond shapes, diagonal lines
+- **`minimal`** (ContactPage) -- Subtle: small dots, thin rings
+
+Each variant places 8-12 absolutely-positioned elements with:
+- `opacity-[0.04]` to `opacity-[0.08]` (very subtle, not distracting)
+- Existing `float-slow` / `float-medium` animations
+- `pointer-events-none` so they don't interfere with interaction
+- Mix of `border` shapes (no fill = very lightweight) and small gradient fills
+
+### New CSS additions to `index.css`
+- `@keyframes float-diagonal` -- slight diagonal drift for variety
+- `@keyframes spin-slow` -- very slow rotation (30s cycle) for geometric shapes
+- `.dot-grid` -- repeating dot pattern background using `radial-gradient`
+
+### Changes Per Page
+
+All pages get `<FloatingElements variant="..." />` placed as a fixed/absolute layer behind content in the main wrapper (inside `<LandingLayout>` children, before sections).
+
+Additionally, enhance empty section backgrounds:
+
+| Page | Sections Enhanced |
+|---|---|
+| **LandingHome** | Stats, Why Us, Device Preview, CTA -- add dot grid bg + floating rings |
+| **AboutPage** | Vision/Mission, Team, Timeline -- add organic blobs + soft gradient patches |
+| **ServicesPage** | Services Grid, Tech Stack, CTA -- add geometric shapes + grid pattern |
+| **PortfolioPage** | Project grid area, CTA -- add creative shapes between cards |
+| **ContactPage** | Form area, FAQ -- add minimal dots + thin accent lines |
 
 ### Files to modify
-1. `src/pages/landing/ServicesPage.tsx` -- Align services, remove static pricing, add teaser pricing
-2. `src/pages/landing/LandingHome.tsx` -- Update service card descriptions
+1. **NEW** `src/shared/components/common/FloatingElements.tsx` -- Reusable decorative layer
+2. `src/index.css` -- Add 2 new keyframes + dot-grid utility
+3. `src/pages/landing/LandingHome.tsx` -- Add FloatingElements + section bg decorations
+4. `src/pages/landing/AboutPage.tsx` -- Add FloatingElements + section bg decorations
+5. `src/pages/landing/ServicesPage.tsx` -- Add FloatingElements + section bg decorations
+6. `src/pages/landing/PortfolioPage.tsx` -- Add FloatingElements + section bg decorations
+7. `src/pages/landing/ContactPage.tsx` -- Add FloatingElements + section bg decorations
+
+### Performance
+- Pure CSS only -- no JS runtime cost, no external libraries
+- All elements use `will-change: transform` via the existing keyframes
+- Very low opacity ensures they enhance without overwhelming
 
