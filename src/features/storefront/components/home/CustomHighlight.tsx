@@ -21,13 +21,13 @@ export function CustomHighlight() {
     <section
       ref={ref}
       id="custom-section"
-      className={`bg-muted/50 border-y border-border transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+      className={`bg-gradient-to-br from-muted/50 via-background to-primary/5 border-y border-border transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
     >
-      <div className="max-w-6xl mx-auto px-4 lg:px-8 py-16 flex flex-col lg:flex-row items-center gap-10">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-16 flex flex-col lg:flex-row items-center gap-10">
         <div className="flex-1 space-y-5">
-          <Badge variant="secondary">Custom Project</Badge>
-          <h2 className="text-2xl lg:text-3xl font-bold text-foreground">
-            Butuh Website yang Unik?
+          <Badge variant="secondary" className="border border-primary/20">Custom Project</Badge>
+          <h2 className="text-2xl lg:text-3xl font-bold">
+            Butuh Website yang <span className="gradient-text">Unik</span>?
           </h2>
           <p className="text-muted-foreground max-w-lg">
             Tim kami siap membangun website custom sesuai kebutuhan spesifik bisnis Anda — dari desain hingga deployment.
@@ -40,7 +40,7 @@ export function CustomHighlight() {
               </li>
             ))}
           </ul>
-          <Button asChild size="lg">
+          <Button asChild size="lg" className="bg-gradient-to-r from-primary to-primary/80 hover:opacity-90 transition-opacity border-0 shadow-lg colored-shadow-primary">
             <Link to="/custom">
               Mulai Project Custom <ChevronRight className="w-4 h-4" />
             </Link>
@@ -51,7 +51,7 @@ export function CustomHighlight() {
           {GRID_ICONS.map((Icon, i) => (
             <div
               key={i}
-              className="rounded-xl bg-background/60 backdrop-blur flex items-center justify-center hover:scale-110 transition-transform duration-300"
+              className="rounded-xl glass-card flex items-center justify-center hover:scale-110 transition-transform duration-300"
             >
               <Icon className="w-6 h-6 text-primary/60" />
             </div>

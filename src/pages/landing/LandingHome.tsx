@@ -1,11 +1,9 @@
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
-import { useTestimonials } from "@/features/storefront/hooks/useTestimonials";
 import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
 import { Button } from "@/shared/components/ui/button";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/components/ui/accordion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Code2, Palette, Server, Shield, Star, Users, Globe, Zap, Quote, Monitor, Tablet, Smartphone, Search, Headphones, HelpCircle } from "lucide-react";
+import { ArrowRight, Code2, Palette, Server, Shield, Star, Users, Globe, Zap, Monitor, Tablet, Smartphone, Search, Layers, Wrench, Briefcase, Image } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 /* Animated counter hook */
@@ -63,18 +61,16 @@ const clientLogos = [
   "DataFlow", "CreativeHub", "SmartBiz", "NetSolutions", "AppForge",
 ];
 
-const processSteps = [
-  { num: "01", title: "Konsultasi", desc: "Diskusi mendalam tentang kebutuhan & tujuan bisnis Anda", icon: Headphones, color: "from-primary to-primary/70" },
-  { num: "02", title: "Pengembangan", desc: "Desain & development dengan update progress berkala", icon: Code2, color: "from-secondary to-secondary/70" },
-  { num: "03", title: "Launch", desc: "Testing, deployment, dan dukungan pasca-launch", icon: Zap, color: "from-accent to-accent/70" },
+const services = [
+  { icon: Layers, title: "Template Website", desc: "Pilih dari koleksi template profesional siap pakai. Cepat, terjangkau, dan sudah dioptimasi.", link: "/landing/services", color: "from-primary to-primary/70" },
+  { icon: Code2, title: "Custom Development", desc: "Website unik sesuai kebutuhan spesifik bisnis Anda. Dari desain hingga deployment.", link: "/landing/services", color: "from-secondary to-secondary/70" },
+  { icon: Wrench, title: "Maintenance & Support", desc: "Perawatan rutin, update keamanan, dan dukungan teknis berkelanjutan.", link: "/landing/services", color: "from-accent to-accent/70" },
 ];
 
-const faqs = [
-  { q: "Berapa lama waktu pengerjaan website?", a: "Untuk template website, pengerjaan memakan waktu 3-5 hari kerja. Untuk custom development, biasanya 2-6 minggu tergantung kompleksitas proyek." },
-  { q: "Apakah sudah termasuk domain dan hosting?", a: "Layanan kami fokus pada pengembangan website. Namun kami menyediakan layanan hosting dan domain terpisah dengan harga kompetitif." },
-  { q: "Bagaimana proses revisi?", a: "Setiap paket menyertakan revisi. Template mendapat 2 revisi, sedangkan custom development mendapat revisi sesuai milestone yang disepakati." },
-  { q: "Apakah website mobile-friendly?", a: "Ya! Semua website yang kami buat sudah responsif dan dioptimalkan untuk semua ukuran layar — desktop, tablet, dan mobile." },
-  { q: "Bagaimana sistem pembayaran?", a: "Kami menggunakan sistem milestone. Pembayaran dibagi menjadi beberapa tahap sesuai progress pengerjaan proyek." },
+const portfolioHighlights = [
+  { title: "E-Commerce Platform", category: "Ecommerce", desc: "Toko online modern dengan payment gateway terintegrasi.", image: null },
+  { title: "Company Profile", category: "Company Profile", desc: "Website profesional untuk perusahaan manufaktur nasional.", image: null },
+  { title: "SaaS Landing Page", category: "Landing Page", desc: "Landing page high-converting untuk startup teknologi.", image: null },
 ];
 
 function StatCard({ stat, delay }: { stat: typeof stats[0]; delay: number }) {
@@ -122,7 +118,6 @@ function DevicePreview() {
       <div className="flex justify-center">
         <div className={`${widthMap[device]} transition-all duration-500 ease-out`}>
           <div className="rounded-2xl border-4 border-foreground/10 bg-card overflow-hidden shadow-2xl">
-            {/* Browser chrome */}
             <div className="bg-muted px-4 py-3 flex items-center gap-2 border-b border-border">
               <div className="flex gap-1.5">
                 <div className="w-3 h-3 rounded-full bg-destructive/60" />
@@ -134,7 +129,6 @@ function DevicePreview() {
                 kawasandigital.com
               </div>
             </div>
-            {/* Content mockup */}
             <div className="p-6 space-y-4">
               <div className="h-8 w-3/4 rounded bg-gradient-to-r from-primary/20 to-secondary/20 animate-pulse" />
               <div className="h-4 w-full rounded bg-muted" />
@@ -156,9 +150,6 @@ function DevicePreview() {
 }
 
 export default function LandingHome() {
-  const { data: testimonials } = useTestimonials();
-  const published = testimonials?.filter((t) => t.is_published).slice(0, 3);
-
   return (
     <LandingLayout>
       {/* Hero */}
@@ -232,7 +223,7 @@ export default function LandingHome() {
         </div>
       </section>
 
-      {/* Highlights */}
+      {/* Highlights / Why Us */}
       <section className="py-20 sm:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealCard className="text-center mb-16">
@@ -259,33 +250,38 @@ export default function LandingHome() {
         </div>
       </section>
 
-      {/* How It Works / Process */}
+      {/* Services Overview (unique to Landing) */}
       <section className="py-20 sm:py-28 bg-gradient-to-br from-muted/30 via-background to-primary/5 border-y border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealCard className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Bagaimana <span className="gradient-text">Kami Bekerja</span>
+              Layanan <span className="gradient-text">Kami</span>
             </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">Proses sederhana dan transparan dari awal hingga akhir.</p>
+            <p className="text-muted-foreground max-w-xl mx-auto">Solusi lengkap untuk kebutuhan digital bisnis Anda.</p>
           </RevealCard>
-          <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Connecting line */}
-            <div className="hidden md:block absolute top-20 left-[20%] right-[20%] h-0.5 bg-gradient-to-r from-primary via-secondary to-accent" />
-            {processSteps.map((step, i) => (
-              <RevealCard key={i} delay={i * 150} className="text-center relative">
-                <div className={`h-16 w-16 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center mx-auto mb-5 shadow-xl relative z-10`}>
-                  <step.icon className="h-8 w-8 text-primary-foreground" />
-                </div>
-                <div className="text-xs font-bold text-primary/50 mb-2">{step.num}</div>
-                <h3 className="text-xl font-bold mb-2">{step.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
+          <div className="grid sm:grid-cols-3 gap-8">
+            {services.map((svc, i) => (
+              <RevealCard key={i} delay={i * 120}>
+                <Link
+                  to={svc.link}
+                  className="block p-8 rounded-2xl border border-border bg-card hover-lift glass-card group h-full"
+                >
+                  <div className={`h-14 w-14 rounded-xl bg-gradient-to-br ${svc.color} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                    <svc.icon className="h-7 w-7 text-primary-foreground" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">{svc.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{svc.desc}</p>
+                  <span className="text-sm font-medium text-primary inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                    Pelajari Lebih Lanjut <ArrowRight className="h-4 w-4" />
+                  </span>
+                </Link>
               </RevealCard>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Live Demo Preview */}
+      {/* Device Preview */}
       <section className="py-20 sm:py-28">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealCard className="text-center mb-12">
@@ -300,69 +296,42 @@ export default function LandingHome() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      {published && published.length > 0 && (
-        <section className="py-20 bg-gradient-to-br from-muted/30 via-background to-primary/5 border-y border-border">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <RevealCard className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-3">Apa Kata <span className="gradient-text">Klien Kami</span></h2>
-              <p className="text-muted-foreground">Kepercayaan klien adalah kebanggaan kami.</p>
-            </RevealCard>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {published.map((t, i) => (
-                <RevealCard
-                  key={t.id}
-                  delay={i * 100}
-                  className="p-6 rounded-xl bg-card border border-border hover-lift glass-card group"
-                >
-                  <Quote className="h-8 w-8 text-primary/20 mb-3 group-hover:text-primary/40 transition-colors" />
-                  <div className="flex gap-1 mb-3">
-                    {Array.from({ length: t.rating }).map((_, j) => (
-                      <Star key={j} className="h-4 w-4 fill-secondary text-secondary" />
-                    ))}
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-4 leading-relaxed italic">"{t.content}"</p>
-                  <div className="border-t border-border pt-3">
-                    <div className="font-medium text-sm">{t.client_name}</div>
-                    {t.client_company && <div className="text-xs text-muted-foreground">{t.client_company}</div>}
-                  </div>
-                </RevealCard>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* FAQ */}
-      <section className="py-20 sm:py-28">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <RevealCard className="text-center mb-12">
-            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto mb-5 shadow-lg">
-              <HelpCircle className="h-7 w-7 text-primary-foreground" />
-            </div>
+      {/* Portfolio Showcase (unique to Landing) */}
+      <section className="py-20 sm:py-28 bg-gradient-to-br from-muted/30 via-background to-secondary/5 border-y border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <RevealCard className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Pertanyaan <span className="gradient-text">Umum</span>
+              Hasil Karya <span className="gradient-text">Kami</span>
             </h2>
-            <p className="text-muted-foreground">Jawaban untuk pertanyaan yang sering diajukan.</p>
+            <p className="text-muted-foreground max-w-xl mx-auto">Beberapa proyek terbaik yang telah kami selesaikan.</p>
           </RevealCard>
-          <RevealCard delay={100}>
-            <Accordion type="single" collapsible className="space-y-3">
-              {faqs.map((faq, i) => (
-                <AccordionItem key={i} value={`faq-${i}`} className="border rounded-xl px-5 bg-card glass-card data-[state=open]:border-primary/30 transition-colors">
-                  <AccordionTrigger className="hover:no-underline text-left font-semibold">
-                    {faq.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground leading-relaxed">
-                    {faq.a}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+          <div className="grid sm:grid-cols-3 gap-8">
+            {portfolioHighlights.map((project, i) => (
+              <RevealCard key={i} delay={i * 120}>
+                <div className="rounded-2xl border border-border bg-card overflow-hidden hover-lift glass-card group">
+                  <div className="aspect-video bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 flex items-center justify-center">
+                    <Image className="h-10 w-10 text-muted-foreground/30 group-hover:scale-110 transition-transform" />
+                  </div>
+                  <div className="p-6 space-y-2">
+                    <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">{project.category}</span>
+                    <h3 className="text-lg font-bold group-hover:text-primary transition-colors">{project.title}</h3>
+                    <p className="text-sm text-muted-foreground">{project.desc}</p>
+                  </div>
+                </div>
+              </RevealCard>
+            ))}
+          </div>
+          <RevealCard delay={400} className="text-center mt-10">
+            <Button asChild variant="outline" size="lg" className="gap-2">
+              <Link to="/landing/portfolio">
+                Lihat Semua Portfolio <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
           </RevealCard>
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA - directs to Storefront */}
       <section className="py-20 sm:py-28 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-95" />
         <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-white/5" style={{ animation: "float-slow 8s ease-in-out infinite" }} />
@@ -372,13 +341,13 @@ export default function LandingHome() {
         <div className="relative max-w-3xl mx-auto px-4 text-center text-primary-foreground">
           <RevealCard>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Siap Memulai Proyek Digital Anda?</h2>
-            <p className="opacity-90 mb-8 text-lg">Konsultasikan kebutuhan Anda dan dapatkan penawaran terbaik dari tim kami.</p>
+            <p className="opacity-90 mb-8 text-lg">Kunjungi storefront kami untuk melihat template atau konsultasikan kebutuhan custom Anda.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg" className="gap-2 bg-white text-primary hover:bg-white/90 text-lg px-8 shadow-lg">
-                <Link to="/landing/contact">Konsultasi Gratis <ArrowRight className="h-5 w-5" /></Link>
+                <Link to="/templates">Kunjungi Storefront <ArrowRight className="h-5 w-5" /></Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10 text-lg px-8">
-                <Link to="/landing/portfolio">Lihat Portfolio</Link>
+                <Link to="/landing/contact">Konsultasi Gratis</Link>
               </Button>
             </div>
           </RevealCard>

@@ -13,10 +13,10 @@ export function FAQSection({ faqs }: { faqs: { id: string; question: string; ans
       id="faq-section"
       className={`max-w-3xl mx-auto px-4 lg:px-8 py-14 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
     >
-      <h2 className="text-xl font-bold text-foreground text-center mb-8">Pertanyaan Umum</h2>
+      <h2 className="text-xl font-bold text-foreground text-center mb-8">Pertanyaan <span className="gradient-text">Umum</span></h2>
       <Accordion type="single" collapsible className="w-full space-y-2">
         {faqs.map((faq) => (
-          <AccordionItem key={faq.id} value={faq.id} className="border border-border rounded-lg px-4 bg-card">
+          <AccordionItem key={faq.id} value={faq.id} className="border border-border rounded-lg px-4 glass-card data-[state=open]:border-primary/30 transition-colors">
             <AccordionTrigger className="text-left text-sm hover:no-underline">{faq.question}</AccordionTrigger>
             <AccordionContent className="text-muted-foreground text-sm">{faq.answer}</AccordionContent>
           </AccordionItem>

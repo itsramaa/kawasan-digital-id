@@ -8,7 +8,7 @@ function TemplateCard({ template, index }: { template: ServiceTemplate; index: n
   return (
     <Link
       to={`/templates/${template.id}`}
-      className="group rounded-xl border border-border bg-card overflow-hidden hover:shadow-xl hover:border-primary/30 hover:-translate-y-1 transition-all duration-300"
+      className="group rounded-xl border border-border glass-card overflow-hidden hover-lift hover:border-primary/30 transition-all duration-300"
     >
       <div className="relative aspect-video bg-muted flex items-center justify-center overflow-hidden">
         {template.thumbnail_url ? (
@@ -17,7 +17,7 @@ function TemplateCard({ template, index }: { template: ServiceTemplate; index: n
           <Sparkles className="w-10 h-10 text-muted-foreground/40" />
         )}
         {index === 0 && (
-          <Badge className="absolute top-2 left-2 bg-primary text-primary-foreground text-[10px]">
+          <Badge className="absolute top-2 left-2 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-[10px] border-0">
             Best Seller
           </Badge>
         )}
@@ -54,10 +54,10 @@ export function FeaturedSection({ templates }: { templates: ServiceTemplate[] })
   return (
     <section
       ref={ref}
-      className={`max-w-6xl mx-auto px-4 lg:px-8 py-14 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+      className={`max-w-7xl mx-auto px-4 lg:px-8 py-14 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
     >
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-foreground">Template Terlaris</h2>
+        <h2 className="text-xl font-bold text-foreground">Template <span className="gradient-text">Terlaris</span></h2>
         <Link to="/templates" className="text-sm font-medium text-primary hover:underline flex items-center gap-1">
           Lihat Semua <ArrowRight className="w-3.5 h-3.5" />
         </Link>
