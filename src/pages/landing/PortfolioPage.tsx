@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
 import { Button } from "@/shared/components/ui/button";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, FolderOpen, ArrowRight } from "lucide-react";
 import { cn } from "@/shared/utils/utils";
+import { Link } from "react-router-dom";
 
 export default function PortfolioPage() {
   const [activeCategory, setActiveCategory] = useState("Semua");
@@ -28,10 +29,16 @@ export default function PortfolioPage() {
 
   return (
     <LandingLayout>
-      <section className="py-20 sm:py-28 text-center">
+      <section className="relative py-20 sm:py-28 text-center overflow-hidden">
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-10 left-1/3 w-72 h-72 bg-secondary/8 rounded-full blur-3xl" style={{ animation: "float-slow 8s ease-in-out infinite" }} />
+          <div className="absolute bottom-10 right-1/3 w-60 h-60 bg-accent/8 rounded-full blur-3xl" style={{ animation: "float-medium 6s ease-in-out infinite 1s" }} />
+        </div>
         <div className="max-w-3xl mx-auto px-4">
           <RevealCard>
-            <h1 className="text-4xl sm:text-5xl font-extrabold mb-6">Portfolio</h1>
+            <h1 className="text-4xl sm:text-5xl font-extrabold mb-6">
+              <span className="gradient-text">Portfolio</span>
+            </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
               Proyek-proyek yang telah kami kerjakan untuk klien di berbagai industri.
             </p>
@@ -49,8 +56,10 @@ export default function PortfolioPage() {
                   key={c}
                   onClick={() => setActiveCategory(c)}
                   className={cn(
-                    "px-4 py-2 rounded-full text-sm font-medium transition-colors",
-                    activeCategory === c ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
+                    "px-5 py-2 rounded-full text-sm font-medium transition-all duration-300",
+                    activeCategory === c
+                      ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg colored-shadow-primary"
+                      : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary"
                   )}
                 >
                   {c}
@@ -68,41 +77,62 @@ export default function PortfolioPage() {
           ) : filtered && filtered.length > 0 ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {filtered.map((p, i) => (
-                <RevealCard key={p.id} delay={i * 100} className="group rounded-xl border border-border bg-card overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="aspect-[4/3] bg-muted overflow-hidden">
+                <RevealCard
+                  key={p.id}
+                  delay={i * 100}
+                  className="group rounded-xl border border-border bg-card overflow-hidden hover-lift glass-card"
+                >
+                  <div className="aspect-[4/3] bg-muted overflow-hidden relative">
                     {p.thumbnail_url ? (
-                      <img src={p.thumbnail_url} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={p.thumbnail_url} alt={p.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">No Preview</div>
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm bg-gradient-to-br from-muted to-muted/50">
+                        No Preview
+                      </div>
                     )}
+                    {/* Hover overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center pb-6">
+                      {p.demo_url && (
+                        <a
+                          href={p.demo_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-5 py-2 rounded-full bg-white text-primary text-sm font-medium flex items-center gap-1.5 hover:scale-105 transition-transform"
+                        >
+                          View Project <ExternalLink className="h-3.5 w-3.5" />
+                        </a>
+                      )}
+                    </div>
                   </div>
                   <div className="p-5">
                     {p.category && (
-                      <span className="inline-block text-xs font-medium text-primary bg-primary/10 rounded-full px-2.5 py-0.5 mb-2">{p.category}</span>
+                      <span className="inline-block text-xs font-medium bg-gradient-to-r from-primary/10 to-secondary/10 text-primary rounded-full px-3 py-0.5 mb-2">
+                        {p.category}
+                      </span>
                     )}
                     <h3 className="font-semibold text-lg mb-1">{p.title}</h3>
                     {p.description && <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{p.description}</p>}
                     {p.tech_stack && p.tech_stack.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mb-3">
+                      <div className="flex flex-wrap gap-1.5">
                         {p.tech_stack.map((t) => (
-                          <span key={t} className="text-xs bg-muted rounded px-2 py-0.5 text-muted-foreground">{t}</span>
+                          <span key={t} className="text-xs bg-muted rounded-full px-2.5 py-0.5 text-muted-foreground">{t}</span>
                         ))}
                       </div>
-                    )}
-                    {p.demo_url && (
-                      <Button asChild variant="outline" size="sm" className="gap-1.5">
-                        <a href={p.demo_url} target="_blank" rel="noopener noreferrer">
-                          Live Demo <ExternalLink className="h-3.5 w-3.5" />
-                        </a>
-                      </Button>
                     )}
                   </div>
                 </RevealCard>
               ))}
             </div>
           ) : (
-            <div className="text-center py-20 text-muted-foreground">
-              <p>Belum ada proyek yang ditampilkan.</p>
+            <div className="text-center py-20">
+              <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center mx-auto mb-6">
+                <FolderOpen className="h-10 w-10 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Belum ada proyek</h3>
+              <p className="text-muted-foreground mb-6">Proyek portfolio akan segera ditampilkan di sini.</p>
+              <Button asChild className="gap-2 bg-gradient-to-r from-primary to-secondary border-0">
+                <Link to="/landing/contact">Mulai Proyek Bersama Kami <ArrowRight className="h-4 w-4" /></Link>
+              </Button>
             </div>
           )}
         </div>
