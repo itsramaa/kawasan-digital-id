@@ -41,9 +41,9 @@ const clientLogos = [
 ];
 
 const services = [
-  { icon: Layers, title: "Template Website", desc: "Pilih dari koleksi template profesional siap pakai. Cepat, terjangkau, dan sudah dioptimasi.", link: "/landing/services", color: "from-primary to-primary/70" },
-  { icon: Code2, title: "Custom Development", desc: "Website unik sesuai kebutuhan spesifik bisnis Anda. Dari desain hingga deployment.", link: "/landing/services", color: "from-secondary to-secondary/70" },
-  { icon: Wrench, title: "Maintenance & Support", desc: "Perawatan rutin, update keamanan, dan dukungan teknis berkelanjutan.", link: "/landing/services", color: "from-accent to-accent/70" },
+  { icon: Layers, title: "Template Website", desc: "Koleksi template untuk Ecommerce, Company Profile, Landing Page, Portfolio, Blog & UMKM — responsif dan SEO-ready.", link: "/templates", color: "from-primary to-primary/70" },
+  { icon: Code2, title: "Custom Development", desc: "Desain eksklusif, full ownership, SEO ready, clean code & support prioritas — dibangun khusus untuk bisnis Anda.", link: "/custom", color: "from-secondary to-secondary/70" },
+  { icon: Wrench, title: "Maintenance & Support", desc: "SEO setup, speed optimization, extra page & maintenance plan — jaga website tetap optimal.", link: "/landing/services", color: "from-accent to-accent/70" },
 ];
 
 const portfolioHighlights = [
