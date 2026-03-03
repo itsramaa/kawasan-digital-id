@@ -1,5 +1,6 @@
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
+import { FloatingElements } from "@/shared/components/common/FloatingElements";
 import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
 import { useCounter } from "@/shared/hooks/useCounter";
 import { Button } from "@/shared/components/ui/button";
@@ -131,6 +132,7 @@ function DevicePreview() {
 export default function LandingHome() {
   return (
     <LandingLayout>
+      <FloatingElements variant="default" />
       {/* Hero */}
       <section className="relative overflow-hidden py-24 sm:py-32 lg:py-40">
         <div className="absolute inset-0 -z-10 overflow-hidden">

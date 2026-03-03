@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
+import { FloatingElements } from "@/shared/components/common/FloatingElements";
 import { Button } from "@/shared/components/ui/button";
 import { ExternalLink, FolderOpen, ArrowRight, Briefcase } from "lucide-react";
 import { cn } from "@/shared/utils/utils";
@@ -30,6 +31,7 @@ export default function PortfolioPage() {
 
   return (
     <LandingLayout>
+      <FloatingElements variant="creative" />
       <section className="relative py-20 sm:py-28 text-center overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-10 left-1/3 w-72 h-72 bg-secondary/8 rounded-full blur-3xl" style={{ animation: "float-slow 8s ease-in-out infinite" }} />

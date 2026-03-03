@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
+import { FloatingElements } from "@/shared/components/common/FloatingElements";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Textarea } from "@/shared/components/ui/textarea";
@@ -59,6 +60,7 @@ export default function ContactPage() {
 
   return (
     <LandingLayout>
+      <FloatingElements variant="minimal" />
       <section className="relative py-20 sm:py-28 overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-10 right-1/4 w-72 h-72 bg-primary/8 rounded-full blur-3xl" style={{ animation: "float-slow 8s ease-in-out infinite" }} />

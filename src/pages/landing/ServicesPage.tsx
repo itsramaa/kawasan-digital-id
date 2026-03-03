@@ -1,5 +1,6 @@
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
+import { FloatingElements } from "@/shared/components/common/FloatingElements";
 import { Button } from "@/shared/components/ui/button";
 import { Link } from "react-router-dom";
 import {
@@ -80,6 +81,7 @@ const techStack = [
 export default function ServicesPage() {
   return (
     <LandingLayout>
+      <FloatingElements variant="tech" />
       {/* Hero */}
       <section className="relative py-20 sm:py-28 text-center overflow-hidden">
         <div className="absolute inset-0 -z-10">
