@@ -1,4 +1,5 @@
 import { useState } from "react";
+// De-duplicated: stats section removed (kept in LandingHome only)
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
