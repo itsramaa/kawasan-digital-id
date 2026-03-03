@@ -1,59 +1,67 @@
 
 
-## Plan: Add Decorative Background Elements to All Landing Pages
+## Plan: Add Aesthetic Background Image Assets to All Landing Pages
 
-### Problem
-All landing pages currently have plain white/gradient backgrounds with only 2-3 blurred circles in hero sections. The rest of each page is visually empty, making the experience feel flat.
+### Current State
+All landing pages use only CSS geometric shapes (FloatingElements) and blurred gradient circles. No actual image assets are used anywhere -- the backgrounds feel flat and code-generated.
 
 ### Approach
-Create a reusable `FloatingElements` component that renders lightweight CSS-only decorative shapes (no heavy libraries). These are pure CSS geometric elements with existing `float-slow`/`float-medium` keyframes -- zero bundle cost, no 3D or Lottie needed for this level of visual richness.
+Add aesthetic, lightweight background images using two strategies:
+1. **Inline SVG patterns** -- topography lines, wave shapes, grid patterns rendered as CSS `background-image` data URIs (zero network requests, tiny size)
+2. **Curated stock photos from Unsplash** -- used as subtle section background images with dark/gradient overlays so text remains readable
 
-### New Component: `src/shared/components/common/FloatingElements.tsx`
+### Changes
 
-A set of CSS-animated decorative shapes (circles, rings, dots, rounded squares, gradient lines) scattered across sections. Each page gets a unique `variant` prop for visual variety:
+#### 1. `src/shared/components/common/BackgroundPatterns.tsx` (NEW)
+Reusable components for SVG-based background patterns:
+- `WavePattern` -- flowing wave SVG for hero sections
+- `TopographyPattern` -- topographic contour lines
+- `GridLinesPattern` -- subtle grid for tech sections
+- `AbstractBlobPattern` -- organic blob shapes
 
-- **`default`** (LandingHome) -- Mixed shapes: rings, dots, gradient bars
-- **`organic`** (AboutPage) -- Softer: circles, rounded blobs
-- **`tech`** (ServicesPage) -- Geometric: squares, code brackets, grid dots
-- **`creative`** (PortfolioPage) -- Dynamic: diamond shapes, diagonal lines
-- **`minimal`** (ContactPage) -- Subtle: small dots, thin rings
+Each accepts `className` and renders as an absolutely-positioned, pointer-events-none div with inline SVG as `background-image`.
 
-Each variant places 8-12 absolutely-positioned elements with:
-- `opacity-[0.04]` to `opacity-[0.08]` (very subtle, not distracting)
-- Existing `float-slow` / `float-medium` animations
-- `pointer-events-none` so they don't interfere with interaction
-- Mix of `border` shapes (no fill = very lightweight) and small gradient fills
+#### 2. Each landing page gets section-specific image backgrounds:
 
-### New CSS additions to `index.css`
-- `@keyframes float-diagonal` -- slight diagonal drift for variety
-- `@keyframes spin-slow` -- very slow rotation (30s cycle) for geometric shapes
-- `.dot-grid` -- repeating dot pattern background using `radial-gradient`
+| Page | Section | Background Treatment |
+|---|---|---|
+| **LandingHome** | Hero | Wave SVG pattern + Unsplash tech workspace photo (opacity 5%, blur) |
+| **LandingHome** | Why Us | Topography SVG pattern |
+| **LandingHome** | Services | Grid lines pattern |
+| **LandingHome** | Portfolio showcase | Abstract gradient mesh |
+| **AboutPage** | Hero | Unsplash team/office photo (opacity 5%, overlay) |
+| **AboutPage** | Values | Organic blob SVG pattern |
+| **AboutPage** | Timeline | Topography lines |
+| **ServicesPage** | Hero | Unsplash code/development photo (opacity 5%, overlay) |
+| **ServicesPage** | Tech Stack | Grid dots + circuit SVG pattern |
+| **ServicesPage** | Add-ons | Subtle gradient mesh |
+| **PortfolioPage** | Hero | Unsplash creative workspace photo (opacity 5%, overlay) |
+| **PortfolioPage** | Projects grid | Subtle diagonal lines pattern |
+| **ContactPage** | Hero | Unsplash office/cityscape photo (opacity 5%, overlay) |
+| **ContactPage** | Form area | Minimal dot grid enhancement |
 
-### Changes Per Page
+#### 3. `src/index.css` -- Add new CSS utilities
+- `.bg-pattern-wave`, `.bg-pattern-topo`, `.bg-pattern-grid` -- SVG data URI backgrounds
+- `.bg-image-overlay` -- standard overlay treatment for stock photos (gradient + blur + low opacity)
 
-All pages get `<FloatingElements variant="..." />` placed as a fixed/absolute layer behind content in the main wrapper (inside `<LandingLayout>` children, before sections).
-
-Additionally, enhance empty section backgrounds:
-
-| Page | Sections Enhanced |
-|---|---|
-| **LandingHome** | Stats, Why Us, Device Preview, CTA -- add dot grid bg + floating rings |
-| **AboutPage** | Vision/Mission, Team, Timeline -- add organic blobs + soft gradient patches |
-| **ServicesPage** | Services Grid, Tech Stack, CTA -- add geometric shapes + grid pattern |
-| **PortfolioPage** | Project grid area, CTA -- add creative shapes between cards |
-| **ContactPage** | Form area, FAQ -- add minimal dots + thin accent lines |
+### Implementation Details
+- Stock photos use Unsplash CDN with `w=1920&q=20&blur=20` params for tiny file size (~10-20KB each) and pre-blurred aesthetic
+- All background images get `loading="lazy"` via CSS or img elements
+- Overlays use `bg-gradient-to-b from-background/95 via-background/90 to-background/95` to ensure text readability
+- FloatingElements remain on top of these backgrounds for layered depth
 
 ### Files to modify
-1. **NEW** `src/shared/components/common/FloatingElements.tsx` -- Reusable decorative layer
-2. `src/index.css` -- Add 2 new keyframes + dot-grid utility
-3. `src/pages/landing/LandingHome.tsx` -- Add FloatingElements + section bg decorations
-4. `src/pages/landing/AboutPage.tsx` -- Add FloatingElements + section bg decorations
-5. `src/pages/landing/ServicesPage.tsx` -- Add FloatingElements + section bg decorations
-6. `src/pages/landing/PortfolioPage.tsx` -- Add FloatingElements + section bg decorations
-7. `src/pages/landing/ContactPage.tsx` -- Add FloatingElements + section bg decorations
+1. **NEW** `src/shared/components/common/BackgroundPatterns.tsx`
+2. `src/index.css` -- Add SVG pattern utilities
+3. `src/pages/landing/LandingHome.tsx` -- Add background images to 4 sections
+4. `src/pages/landing/AboutPage.tsx` -- Add background images to 3 sections
+5. `src/pages/landing/ServicesPage.tsx` -- Add background images to 3 sections
+6. `src/pages/landing/PortfolioPage.tsx` -- Add background images to 2 sections
+7. `src/pages/landing/ContactPage.tsx` -- Add background images to 2 sections
 
 ### Performance
-- Pure CSS only -- no JS runtime cost, no external libraries
-- All elements use `will-change: transform` via the existing keyframes
-- Very low opacity ensures they enhance without overwhelming
+- SVG patterns are inline data URIs (~1-2KB each, no network requests)
+- Stock photos use heavily compressed + blurred Unsplash URLs (~10-20KB each)
+- All decorative, lazy-loaded, no layout shift
+- Total added weight: ~100KB across all 5 pages
 
