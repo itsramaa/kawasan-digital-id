@@ -1,68 +1,35 @@
 
 
-## Plan: Landing Pages -- Interactive, Colorful, High-Craft UI/UX
+## Plan: Unify Storefront & Landing Page Design
 
-### Aesthetic Direction
-**Industrial Digital** -- leveraging the existing Navy/Blue (#3D6CB9) + Cyan (#00D1FF) + Teal (#00FFF0) color palette with bold gradient sections, animated counters, hover microinteractions, and scroll-triggered reveals.
+**Goal**: Make both layouts visually consistent, using the Landing Page navbar style as the reference and the Storefront footer style as the reference.
 
-### Changes Overview
+### Key Differences to Resolve
 
-**7 files to modify/create:**
+| Element | Storefront (current) | Landing (reference) | Action |
+|---------|---------------------|---------------------|--------|
+| **Navbar logo** | Flat `bg-primary`, no gradient text | Gradient `from-primary to-secondary`, `.gradient-text` | Update Storefront to match Landing |
+| **Navbar container** | Always `bg-card/80 backdrop-blur-lg` | Scroll-aware: transparent → solid | Update Storefront to match Landing |
+| **Nav link style** | `bg-primary/10` active, `hover:bg-muted` | Underline animation (`after:` pseudo), no bg | Update Storefront to match Landing |
+| **Max width** | `max-w-6xl` | `max-w-7xl` | Unify to `max-w-7xl` |
+| **Footer** | Clean 4-col grid, `bg-card`, clear structure | Dark gradient `bg-sidebar-background`, decorative blurs | Update Landing footer to match Storefront's clean structure |
 
-#### 1. `LandingLayout.tsx` -- Enhanced Navbar & Footer
-- Navbar: scroll-aware background (transparent at top, solid on scroll), smooth hover underline animations on nav links
-- Footer: gradient background using primary/secondary colors instead of flat sidebar color, social media icons (Instagram, LinkedIn, WhatsApp), hover-scale on links
+### Changes (2 files)
 
-#### 2. `LandingHome.tsx` -- Full Redesign
-- **Hero**: Animated gradient background with floating geometric shapes (CSS-only), larger typography with gradient text using primary→secondary colors, animated badge pill
-- **Stats**: Animated counting numbers (useEffect counter), cards with colored left borders (each stat a different accent color), hover lift effect
-- **Highlights**: Cards with colored top gradient border, icon containers with distinct colors per card (primary, secondary, accent, destructive), hover transform + shadow
-- **Testimonials**: Colored quote marks, star ratings with fill animation, card hover with subtle border color change
-- **CTA**: Full-width gradient section (primary→secondary) with white text, floating decorative circles
+#### 1. `StorefrontLayout.tsx` -- Update Navbar to match Landing style
+- Add scroll-aware background (transparent at top → solid on scroll)
+- Logo: gradient icon (`from-primary to-secondary`) + `.gradient-text` on brand name
+- Nav links: replace `bg-primary/10` active style with underline animation using `after:` pseudo-element
+- CTA button: gradient style (`from-primary to-secondary`)
+- Max width: `max-w-6xl` → `max-w-7xl`
+- Mobile nav: add `backdrop-blur-xl` and match styling
 
-#### 3. `AboutPage.tsx` -- More Visual
-- Vision/Mission cards with gradient icon backgrounds (not just primary/10)
-- Values section: each card has a unique color accent (blue, cyan, teal, amber)
-- Timeline: vertical line connector with animated dots, gradient year badges, alternating left/right layout on desktop
-
-#### 4. `ServicesPage.tsx` -- Interactive Cards
-- Service cards: colored top border per service (different color each), icon with matching gradient background
-- Feature list items: animated checkmarks on scroll reveal
-- Hover: card lifts with colored shadow matching its accent
-- Pricing hint badges (e.g., "Populer" tag on Custom Dev)
-
-#### 5. `PortfolioPage.tsx` -- Gallery Polish
-- Filter pills with smooth color transition animation
-- Card overlay on hover: gradient overlay with "View Project" CTA
-- Image zoom effect on hover (already exists, enhance)
-- Empty state: illustrated placeholder with CTA button
-
-#### 6. `ContactPage.tsx` -- Engaging Form
-- Form card with subtle gradient border (primary→secondary)
-- Input focus states with colored ring animation
-- Contact info cards with colored icon backgrounds (each different)
-- Success state: confetti-style checkmark animation
-
-#### 7. CSS additions in `index.css`
-- Add `@keyframes` for floating shapes, gradient shift, counter fade
-- Add utility classes: `.gradient-text`, `.glass-card`, `.colored-shadow`
-- Add smooth gradient animations for hero backgrounds
-
-### Interaction Patterns (from uploaded skills)
-- **Hover**: scale(1.02) + shadow elevation on cards (200ms ease-out)
-- **Scroll reveal**: staggered fade-up with delay cascade (already exists, enhance timing)
-- **Buttons**: subtle scale on hover (1.02) and tap (0.98) via CSS transitions
-- **Links**: underline slide-in animation on hover
-- **Stats counter**: number count-up animation on scroll into view
-- **Navigation**: smooth scroll-aware opacity transition
-
-### Color Usage Strategy
-Using the existing palette intentionally:
-- **Primary (#3D6CB9)**: Main CTAs, active states, primary accents
-- **Secondary (#00D1FF)**: Gradient endpoints, highlight badges, secondary accents
-- **Accent (#00FFF0)**: Hover states, decorative elements, tertiary highlights
-- **Gradients**: `primary → secondary` for hero/CTA sections, `primary → accent` for icon backgrounds
-
-### No new dependencies needed
-All animations via CSS transitions/keyframes + existing hooks.
+#### 2. `LandingLayout.tsx` -- Update Footer to match Storefront style
+- Replace dark gradient background with clean `bg-card border-t border-border`
+- Use Storefront's 4-column grid structure (Brand, Services→Navigasi, Help→Layanan, Contact)
+- Use `text-foreground` / `text-muted-foreground` instead of `sidebar-*` tokens
+- Keep contact info (email, phone, address) but style them like Storefront's clean text links
+- Keep social icons but adapt to light card background
+- Add Storefront's email in bottom bar
+- Max width stays `max-w-7xl` (consistent with Landing navbar)
 
