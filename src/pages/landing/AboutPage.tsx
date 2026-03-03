@@ -1,5 +1,6 @@
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
+import { FloatingElements } from "@/shared/components/common/FloatingElements";
 import { Target, Eye, Heart, Lightbulb, Users, Award, Linkedin, Github } from "lucide-react";
 
 const values = [
@@ -36,6 +37,7 @@ const teamMembers = [
 export default function AboutPage() {
   return (
     <LandingLayout>
+      <FloatingElements variant="organic" />
       {/* Hero */}
       <section className="relative py-20 sm:py-28 text-center overflow-hidden">
         <div className="absolute inset-0 -z-10">
