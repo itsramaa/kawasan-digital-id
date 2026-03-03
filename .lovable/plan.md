@@ -1,66 +1,35 @@
 
 
-## Plan: De-duplicate & Align Landing Pages with Storefront
+## Plan: Align Landing Services with Storefront Content
 
-### Audit Results -- Duplications Found
+### Remaining Mismatches Found
 
-| Duplicated Content | Where It Appears | Resolution |
-|---|---|---|
-| **Stats counters** (50+ Klien, 100+ Proyek, etc.) | Landing Home, About Page, Portfolio Page, Storefront Hero | Keep only in: Landing Home (company-level) + Storefront Hero (social proof). Remove from About & Portfolio |
-| **CTA gradient section** (identical design) | Landing Home, Services, Portfolio, Storefront FinalCTA | Keep in Storefront FinalCTA. Landing pages get unique CTAs per page (not identical copies) |
-| **Process/How It Works** | Storefront HowItWorks (detailed 4-phase), Services "Proses Kerja Kami" (4-step) | Keep detailed version in Storefront only. Remove from Services page |
-| **FAQ sections** | Storefront FAQ, Services FAQ, Contact FAQ | Keep Storefront FAQ (product). Services FAQ overlaps with Contact FAQ -- merge into Contact only |
-| **"Why Us" / Values** | Landing Home "Mengapa Kawasan Digital" (4 cards), About "Nilai-Nilai Kami" (4 cards) | Keep "Why Us" in Landing Home (customer-facing benefits). Keep "Values" in About (internal culture). Make content clearly distinct |
-| **Services overview** | Landing Home "Layanan Kami" (3 cards), Services page (4 cards) | Landing Home becomes a teaser (3 cards pointing to Services). Services page is the full detail. Remove overlap in descriptions |
-| **Portfolio teaser** | Landing Home "Hasil Karya Kami" (3 static cards) | Keep as teaser -- this is intentional (links to full portfolio page) |
-| **`useCounter` hook** | Duplicated in 3 files | Extract to shared hook |
+| Issue | Landing Page | Storefront | Fix |
+|---|---|---|---|
+| **Services list mismatch** | ServicesPage has 4 services: Template, Custom, Maintenance, SEO & Digital Marketing | Storefront offers: Templates (6 categories), Custom Website, Add-ons (SEO, Extra Page, Speed Opt, Maintenance) | Landing services must reflect exactly what storefront sells -- 3 core services + add-ons as features, not a 4th service |
+| **Pricing mismatch** | ServicesPage hardcodes 3 tiers (Rp 2.5jt / 7.5jt / 15jt) with static features | Storefront has dynamic pricing from DB (`service_templates.base_price`) + add-on pricing (500rb, 300rb, 400rb, 200rb/bln) | Remove static pricing from Landing (conflicts with real storefront prices). Replace with "mulai dari" teaser linking to storefront |
+| **Category mismatch** | LandingHome "Services Overview" shows 3 generic cards (Template, Custom, Maintenance) | Storefront CategorySection has 6 specific categories (Ecommerce, Company Profile, Landing Page, Portfolio, Blog, UMKM) | Landing services teaser should reference the same 6 categories |
+| **Add-on content duplication** | ServicesPage Maintenance card features overlap with Storefront AddOnSection items | Add-ons exist only in storefront | Landing should reference add-ons without duplicating details |
+| **"SEO & Digital Marketing" service** | Listed as 4th service on ServicesPage | Not sold as standalone in storefront -- SEO is an add-on (Rp 500rb) | Remove as standalone service, mention as part of add-ons |
+| **Custom features mismatch** | ServicesPage Custom card: "Analisis kebutuhan, UI/UX custom, API, Testing" | Storefront CustomHighlight: "Desain Eksklusif, Full Ownership, SEO Ready, Clean Code, Support Prioritas" | Align feature lists |
+| **CTA links** | ServicesPage links to `/templates` and `/custom` | Correct storefront routes | OK, these match |
 
-### Inconsistent Data
+### Changes
 
-| Issue | Fix |
-|---|---|
-| "50+ Klien" in Landing vs "100+ Proyek" in About -- confusing overlap | Landing: company metrics (Klien, Website, Kepuasan, Support). About: remove stat section entirely |
-| Storefront Hero: "50+ Klien, 100+ Website, 4.9 Rating" vs Landing: same numbers | OK -- both are social proof but for different audiences |
+#### 1. `ServicesPage.tsx` -- Major content alignment
+- **Services grid**: Reduce to 3 services matching storefront: Template Website, Custom Development, Maintenance & Support
+  - Template card: features match storefront categories (Ecommerce, Company Profile, Landing Page, etc.), CTA links to `/templates`
+  - Custom card: features match storefront CustomHighlight (Desain Eksklusif, Full Ownership, SEO Ready, Clean Code, Support Prioritas), CTA links to `/custom`
+  - Maintenance card: features match storefront AddOnSection items (SEO Setup, Extra Page, Speed Optimization, Maintenance Plan)
+- **Remove**: Static pricing section entirely (conflicts with dynamic storefront prices)
+- **Add**: Simple "Harga" teaser section -- 1 card per service showing "mulai dari Rp X" with CTA to storefront, pulling price context from what storefront actually charges
+- **Keep**: Tech Stack, CTA sections (no changes)
 
-### Changes Per File
+#### 2. `LandingHome.tsx` -- Services overview alignment
+- Update the 3 service cards to briefly mention storefront categories (e.g., "Template: Ecommerce, Company Profile, Landing Page, dan lainnya")
+- Ensure descriptions match storefront messaging
 
-#### 1. `src/shared/hooks/useCounter.ts` (NEW)
-- Extract the duplicated `useCounter` hook into shared location
-
-#### 2. `LandingHome.tsx`
-- Import `useCounter` from shared hook
-- Keep: Hero, Marquee, Stats, Why Us, Services teaser, Device Preview, Portfolio teaser
-- **Change CTA**: Make it unique -- "Siap Mulai?" with buttons to `/` (storefront) and `/landing/contact`, remove identical gradient bubble decorations, use a different layout (e.g., side-by-side text + illustration instead of centered)
-
-#### 3. `AboutPage.tsx`
-- Import `useCounter` from shared hook
-- **Remove**: Achievement Stats section (duplicates Landing Home stats)
-- **Remove**: Tech Stack section (move to Services page where it's more relevant)
-- Keep: Hero, Vision/Mission, Values, Team, Timeline
-- These are all unique company-culture content with no storefront overlap
-
-#### 4. `ServicesPage.tsx`
-- **Remove**: Process Timeline section (duplicates Storefront HowItWorks)
-- **Remove**: FAQ section (overlaps with Contact FAQ and Storefront FAQ)
-- **Add**: Tech Stack section (moved from About -- fits better here as "what we build with")
-- **Change CTA**: Unique wording, link to `/landing/contact` for consultation
-- Keep: Hero, Services Grid, Pricing
-
-#### 5. `PortfolioPage.tsx`
-- Import `useCounter` from shared hook
-- **Remove**: Stats Banner (duplicates Landing Home stats)
-- **Change CTA**: Unique design -- not the same gradient bubble pattern as every other page
-- Keep: Hero, Category filter, Project grid
-
-#### 6. `ContactPage.tsx`
-- **Merge in**: Service FAQ questions from ServicesPage (the 4 questions about template vs custom, maintenance, upgrades, etc.)
-- Combine with existing pre-sales FAQ into one comprehensive "Pertanyaan Umum" section
-- Keep everything else as-is
-
-### Summary of Removals
-- About: -2 sections (stats, tech stack)
-- Services: -2 sections (process, FAQ), +1 section (tech stack from About)
-- Portfolio: -1 section (stats)
-- Contact: expand FAQ with merged questions
-- All: extract shared `useCounter` hook, differentiate CTA sections
+### Files to modify
+1. `src/pages/landing/ServicesPage.tsx` -- Align services, remove static pricing, add teaser pricing
+2. `src/pages/landing/LandingHome.tsx` -- Update service card descriptions
 
