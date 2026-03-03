@@ -10,11 +10,17 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Mail, Phone, MapPin, Send, CheckCircle2, MessageSquare, HelpCircle, Clock, MessageCircle } from "lucide-react";
 import { useToast } from "@/shared/hooks/use-toast";
 
-const preSalesFaqs = [
+const allFaqs = [
+  // Pre-sales
   { q: "Berapa biaya pembuatan website?", a: "Biaya tergantung pada jenis layanan. Template mulai dari Rp 2.5 juta, custom development mulai dari Rp 7.5 juta. Hubungi kami untuk penawaran spesifik." },
   { q: "Apakah ada konsultasi gratis?", a: "Ya! Kami menyediakan sesi konsultasi gratis untuk mendiskusikan kebutuhan proyek Anda sebelum memutuskan." },
   { q: "Berapa lama waktu pengerjaan?", a: "Template website 3-5 hari kerja, custom development 2-6 minggu. Timeline akan disepakati di awal proyek." },
   { q: "Metode pembayaran apa yang diterima?", a: "Kami menerima transfer bank (BCA, Mandiri, BNI), e-wallet, dan pembayaran bertahap sesuai milestone." },
+  // Merged from Services FAQ
+  { q: "Apa perbedaan template dan custom development?", a: "Template menggunakan desain yang sudah jadi dan tinggal dikustomisasi konten & warnanya. Custom development dibangun dari nol sesuai kebutuhan spesifik Anda, termasuk fitur-fitur unik." },
+  { q: "Berapa lama garansi maintenance?", a: "Garansi maintenance tergantung paket yang dipilih. Paket Professional mendapat 3 bulan, sedangkan Enterprise mendapat 12 bulan maintenance gratis." },
+  { q: "Apakah bisa upgrade paket nanti?", a: "Tentu! Anda bisa upgrade kapan saja. Kami akan memperhitungkan sisa value dari paket sebelumnya sebagai kredit." },
+  { q: "Bagaimana jika saya butuh fitur di luar paket?", a: "Kami menyediakan layanan add-on untuk fitur tambahan. Hubungi tim kami untuk konsultasi dan penawaran khusus." },
 ];
 
 export default function ContactPage() {
@@ -69,17 +75,17 @@ export default function ContactPage() {
             </p>
           </RevealCard>
 
-          {/* FAQ Before Form */}
+          {/* Comprehensive FAQ */}
           <div className="max-w-3xl mx-auto mb-16">
             <RevealCard>
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
                   <HelpCircle className="h-5 w-5 text-primary-foreground" />
                 </div>
-                <h2 className="text-xl font-bold">Pertanyaan Umum Sebelum Menghubungi</h2>
+                <h2 className="text-xl font-bold">Pertanyaan Umum</h2>
               </div>
               <Accordion type="single" collapsible className="space-y-3">
-                {preSalesFaqs.map((faq, i) => (
+                {allFaqs.map((faq, i) => (
                   <AccordionItem key={i} value={`faq-${i}`} className="border rounded-xl px-5 bg-card glass-card data-[state=open]:border-primary/30 transition-colors">
                     <AccordionTrigger className="hover:no-underline text-left font-semibold text-sm">
                       {faq.q}

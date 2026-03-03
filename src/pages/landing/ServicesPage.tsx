@@ -1,9 +1,8 @@
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
 import { Button } from "@/shared/components/ui/button";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/components/ui/accordion";
 import { Link } from "react-router-dom";
-import { Palette, Code2, Wrench, TrendingUp, ArrowRight, CheckCircle2, Sparkles, Search, PenTool, Rocket, HelpCircle, X, Check } from "lucide-react";
+import { Palette, Code2, Wrench, TrendingUp, ArrowRight, CheckCircle2, Sparkles, X, Check, Globe, Server, Database, Layers, MessageCircle } from "lucide-react";
 
 const services = [
   {
@@ -50,13 +49,6 @@ const colorConfig = {
   accent: { border: "border-t-accent", gradient: "from-accent to-accent/60", shadow: "colored-shadow-accent", check: "text-accent" },
   destructive: { border: "border-t-destructive", gradient: "from-destructive to-destructive/60", shadow: "", check: "text-destructive" },
 };
-
-const processSteps = [
-  { num: "01", title: "Discovery", desc: "Memahami kebutuhan & tujuan bisnis Anda", icon: Search, color: "from-primary to-primary/70" },
-  { num: "02", title: "Design", desc: "Membuat wireframe & mockup visual", icon: PenTool, color: "from-secondary to-secondary/70" },
-  { num: "03", title: "Development", desc: "Coding dengan standar kualitas tinggi", icon: Code2, color: "from-accent to-accent/70" },
-  { num: "04", title: "Deploy", desc: "Testing, launch & dukungan berkelanjutan", icon: Rocket, color: "from-destructive to-destructive/70" },
-];
 
 const pricingPlans = [
   {
@@ -112,11 +104,15 @@ const pricingPlans = [
   },
 ];
 
-const serviceFaqs = [
-  { q: "Apa perbedaan template dan custom development?", a: "Template menggunakan desain yang sudah jadi dan tinggal dikustomisasi konten & warnanya. Custom development dibangun dari nol sesuai kebutuhan spesifik Anda, termasuk fitur-fitur unik." },
-  { q: "Berapa lama garansi maintenance?", a: "Garansi maintenance tergantung paket yang dipilih. Paket Professional mendapat 3 bulan, sedangkan Enterprise mendapat 12 bulan maintenance gratis." },
-  { q: "Apakah bisa upgrade paket nanti?", a: "Tentu! Anda bisa upgrade kapan saja. Kami akan memperhitungkan sisa value dari paket sebelumnya sebagai kredit." },
-  { q: "Bagaimana jika saya butuh fitur di luar paket?", a: "Kami menyediakan layanan add-on untuk fitur tambahan. Hubungi tim kami untuk konsultasi dan penawaran khusus." },
+const techStack = [
+  { name: "React", icon: Code2 },
+  { name: "TypeScript", icon: Code2 },
+  { name: "Tailwind CSS", icon: Palette },
+  { name: "Node.js", icon: Server },
+  { name: "PostgreSQL", icon: Database },
+  { name: "Next.js", icon: Layers },
+  { name: "Figma", icon: Palette },
+  { name: "AWS", icon: Globe },
 ];
 
 export default function ServicesPage() {
@@ -179,26 +175,26 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Process Timeline */}
-      <section className="py-20 sm:py-28 bg-gradient-to-br from-muted/30 via-background to-primary/5 border-y border-border">
+      {/* Tech Stack (moved from About) */}
+      <section className="py-20 bg-gradient-to-br from-muted/30 via-background to-secondary/5 border-y border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <RevealCard className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Proses <span className="gradient-text">Kerja Kami</span>
+          <RevealCard className="text-center mb-14">
+            <h2 className="text-3xl font-bold mb-3">
+              Teknologi <span className="gradient-text">yang Kami Gunakan</span>
             </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">Metodologi terstruktur untuk hasil yang optimal.</p>
+            <p className="text-muted-foreground">Stack modern untuk performa dan skalabilitas terbaik.</p>
           </RevealCard>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 relative">
-            {/* Connecting line */}
-            <div className="hidden lg:block absolute top-16 left-[15%] right-[15%] h-0.5 bg-gradient-to-r from-primary via-secondary via-accent to-destructive" />
-            {processSteps.map((step, i) => (
-              <RevealCard key={i} delay={i * 120} className="text-center relative">
-                <div className={`h-16 w-16 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center mx-auto mb-5 shadow-xl relative z-10`}>
-                  <step.icon className="h-8 w-8 text-primary-foreground" />
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+            {techStack.map((tech, i) => (
+              <RevealCard
+                key={i}
+                delay={i * 80}
+                className="group flex flex-col items-center gap-3 p-6 rounded-xl border border-border bg-card hover-lift glass-card cursor-default"
+              >
+                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center group-hover:from-primary/20 group-hover:to-secondary/20 transition-all duration-300">
+                  <tech.icon className="h-6 w-6 text-primary" />
                 </div>
-                <div className="text-xs font-bold text-primary/50 mb-2">{step.num}</div>
-                <h3 className="text-lg font-bold mb-2">{step.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
+                <span className="text-sm font-medium text-foreground">{tech.name}</span>
               </RevealCard>
             ))}
           </div>
@@ -257,47 +253,22 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="py-20 sm:py-28 bg-gradient-to-br from-muted/30 via-background to-secondary/5 border-t border-border">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <RevealCard className="text-center mb-12">
-            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto mb-5 shadow-lg">
-              <HelpCircle className="h-7 w-7 text-primary-foreground" />
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Pertanyaan <span className="gradient-text">Seputar Layanan</span>
-            </h2>
-          </RevealCard>
-          <RevealCard delay={100}>
-            <Accordion type="single" collapsible className="space-y-3">
-              {serviceFaqs.map((faq, i) => (
-                <AccordionItem key={i} value={`faq-${i}`} className="border rounded-xl px-5 bg-card glass-card data-[state=open]:border-primary/30 transition-colors">
-                  <AccordionTrigger className="hover:no-underline text-left font-semibold">
-                    {faq.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground leading-relaxed">
-                    {faq.a}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </RevealCard>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-95" />
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-white/5" style={{ animation: "float-slow 8s ease-in-out infinite" }} />
-        <div className="absolute bottom-10 right-10 w-24 h-24 rounded-full bg-white/5" style={{ animation: "float-medium 6s ease-in-out infinite 1s" }} />
-
-        <div className="relative max-w-3xl mx-auto px-4 text-center text-primary-foreground">
+      {/* CTA - Unique design: card-based with consultation focus */}
+      <section className="py-20 sm:py-28 bg-gradient-to-br from-muted/30 via-background to-primary/5 border-t border-border">
+        <div className="max-w-3xl mx-auto px-4 text-center">
           <RevealCard>
-            <h2 className="text-3xl font-bold mb-4">Butuh Solusi Khusus?</h2>
-            <p className="opacity-90 mb-8 text-lg">Tim kami siap mendiskusikan kebutuhan spesifik bisnis Anda.</p>
-            <Button asChild size="lg" className="gap-2 bg-white text-primary hover:bg-white/90 text-lg px-8 shadow-lg">
-              <Link to="/landing/contact">Konsultasi Gratis <ArrowRight className="h-5 w-5" /></Link>
-            </Button>
+            <div className="p-10 rounded-2xl glass-card border border-border">
+              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto mb-6 shadow-xl">
+                <MessageCircle className="h-8 w-8 text-primary-foreground" />
+              </div>
+              <h2 className="text-3xl font-bold mb-4">Butuh Solusi Khusus?</h2>
+              <p className="text-muted-foreground mb-8 leading-relaxed">
+                Tim kami siap mendiskusikan kebutuhan spesifik bisnis Anda. Dapatkan konsultasi gratis dan penawaran yang disesuaikan.
+              </p>
+              <Button asChild size="lg" className="gap-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity border-0 shadow-lg colored-shadow-primary text-lg px-8">
+                <Link to="/landing/contact">Konsultasi Gratis <ArrowRight className="h-5 w-5" /></Link>
+              </Button>
+            </div>
           </RevealCard>
         </div>
       </section>
