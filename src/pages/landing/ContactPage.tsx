@@ -6,8 +6,16 @@ import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { Label } from "@/shared/components/ui/label";
-import { Mail, Phone, MapPin, Send, CheckCircle2, MessageSquare } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/components/ui/accordion";
+import { Mail, Phone, MapPin, Send, CheckCircle2, MessageSquare, HelpCircle, Clock, MessageCircle } from "lucide-react";
 import { useToast } from "@/shared/hooks/use-toast";
+
+const preSalesFaqs = [
+  { q: "Berapa biaya pembuatan website?", a: "Biaya tergantung pada jenis layanan. Template mulai dari Rp 2.5 juta, custom development mulai dari Rp 7.5 juta. Hubungi kami untuk penawaran spesifik." },
+  { q: "Apakah ada konsultasi gratis?", a: "Ya! Kami menyediakan sesi konsultasi gratis untuk mendiskusikan kebutuhan proyek Anda sebelum memutuskan." },
+  { q: "Berapa lama waktu pengerjaan?", a: "Template website 3-5 hari kerja, custom development 2-6 minggu. Timeline akan disepakati di awal proyek." },
+  { q: "Metode pembayaran apa yang diterima?", a: "Kami menerima transfer bank (BCA, Mandiri, BNI), e-wallet, dan pembayaran bertahap sesuai milestone." },
+];
 
 export default function ContactPage() {
   const { toast } = useToast();
@@ -61,6 +69,30 @@ export default function ContactPage() {
             </p>
           </RevealCard>
 
+          {/* FAQ Before Form */}
+          <div className="max-w-3xl mx-auto mb-16">
+            <RevealCard>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
+                  <HelpCircle className="h-5 w-5 text-primary-foreground" />
+                </div>
+                <h2 className="text-xl font-bold">Pertanyaan Umum Sebelum Menghubungi</h2>
+              </div>
+              <Accordion type="single" collapsible className="space-y-3">
+                {preSalesFaqs.map((faq, i) => (
+                  <AccordionItem key={i} value={`faq-${i}`} className="border rounded-xl px-5 bg-card glass-card data-[state=open]:border-primary/30 transition-colors">
+                    <AccordionTrigger className="hover:no-underline text-left font-semibold text-sm">
+                      {faq.q}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-muted-foreground leading-relaxed text-sm">
+                      {faq.a}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </RevealCard>
+          </div>
+
           <div className="grid lg:grid-cols-5 gap-12">
             {/* Form */}
             <RevealCard className="lg:col-span-3">
@@ -84,52 +116,22 @@ export default function ContactPage() {
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div className="space-y-2">
                       <Label htmlFor="name">Nama</Label>
-                      <Input
-                        id="name"
-                        placeholder="Nama lengkap"
-                        value={form.name}
-                        onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        className="transition-all duration-200 focus:ring-2 focus:ring-primary/30"
-                      />
+                      <Input id="name" placeholder="Nama lengkap" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="transition-all duration-200 focus:ring-2 focus:ring-primary/30" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="email@contoh.com"
-                        value={form.email}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        className="transition-all duration-200 focus:ring-2 focus:ring-primary/30"
-                      />
+                      <Input id="email" type="email" placeholder="email@contoh.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="transition-all duration-200 focus:ring-2 focus:ring-primary/30" />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="subject">Subjek</Label>
-                    <Input
-                      id="subject"
-                      placeholder="Subjek pesan"
-                      value={form.subject}
-                      onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/30"
-                    />
+                    <Input id="subject" placeholder="Subjek pesan" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className="transition-all duration-200 focus:ring-2 focus:ring-primary/30" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="message">Pesan</Label>
-                    <Textarea
-                      id="message"
-                      placeholder="Tulis pesan Anda..."
-                      rows={5}
-                      value={form.message}
-                      onChange={(e) => setForm({ ...form, message: e.target.value })}
-                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/30"
-                    />
+                    <Textarea id="message" placeholder="Tulis pesan Anda..." rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="transition-all duration-200 focus:ring-2 focus:ring-primary/30" />
                   </div>
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="gap-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity border-0 shadow-lg colored-shadow-primary"
-                  >
+                  <Button type="submit" disabled={loading} className="gap-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity border-0 shadow-lg colored-shadow-primary">
                     <Send className="h-4 w-4" /> {loading ? "Mengirim..." : "Kirim Pesan"}
                   </Button>
                 </form>
@@ -137,7 +139,7 @@ export default function ContactPage() {
             </RevealCard>
 
             {/* Sidebar Info */}
-            <RevealCard delay={200} className="lg:col-span-2 space-y-8">
+            <RevealCard delay={200} className="lg:col-span-2 space-y-6">
               <div className="space-y-5">
                 {contactInfo.map((c, i) => (
                   <div key={i} className="flex gap-4 items-start p-4 rounded-xl glass-card hover-lift">
@@ -152,7 +154,43 @@ export default function ContactPage() {
                 ))}
               </div>
 
-              {/* Map embed */}
+              {/* Office Hours */}
+              <div className="p-6 rounded-xl glass-card border border-border">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-secondary to-accent flex items-center justify-center shadow-lg">
+                    <Clock className="h-5 w-5 text-primary-foreground" />
+                  </div>
+                  <h3 className="font-semibold">Jam Operasional</h3>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Senin - Jumat</span>
+                    <span className="font-medium">09:00 - 18:00 WIB</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Sabtu</span>
+                    <span className="font-medium">09:00 - 14:00 WIB</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Minggu</span>
+                    <span className="font-medium text-destructive">Tutup</span>
+                  </div>
+                </div>
+                <div className="mt-4 pt-4 border-t border-border">
+                  <p className="text-xs text-muted-foreground mb-3">⚡ Rata-rata waktu respon: &lt; 2 jam</p>
+                  <a
+                    href="https://wa.me/6281234567890"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium hover:opacity-90 transition-opacity shadow-lg"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    Chat WhatsApp
+                  </a>
+                </div>
+              </div>
+
+              {/* Map */}
               <div className="rounded-xl overflow-hidden border border-border aspect-[4/3] shadow-lg">
                 <iframe
                   title="Lokasi Kawasan Digital"
