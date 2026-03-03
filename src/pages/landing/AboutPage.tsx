@@ -1,27 +1,6 @@
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
-import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
-import { Target, Eye, Heart, Lightbulb, Users, Award, Linkedin, Github, Globe, Code2, Palette, Server, Database, Cpu, Layers, BarChart3 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-
-function useCounter(target: number, duration = 2000) {
-  const [count, setCount] = useState(0);
-  const { ref, isVisible } = useScrollReveal(0.3);
-  const started = useRef(false);
-  useEffect(() => {
-    if (!isVisible || started.current) return;
-    started.current = true;
-    const start = performance.now();
-    const step = (now: number) => {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(eased * target));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [isVisible, target, duration]);
-  return { ref, count };
-}
+import { Target, Eye, Heart, Lightbulb, Users, Award, Linkedin, Github } from "lucide-react";
 
 const values = [
   { icon: Heart, title: "Dedikasi", desc: "Kami berkomitmen penuh pada setiap proyek klien.", color: "primary" as const },
@@ -54,39 +33,6 @@ const teamMembers = [
   { name: "Rina Kusuma", role: "Marketing Lead", bio: "Strategist digital marketing dengan track record ROI tinggi.", gradient: "from-destructive to-secondary", socials: ["linkedin"] },
 ];
 
-const achievementStats = [
-  { value: 100, suffix: "+", label: "Proyek Selesai", icon: BarChart3, color: "from-primary to-primary/70" },
-  { value: 5, suffix: "+", label: "Tahun Pengalaman", icon: Award, color: "from-secondary to-secondary/70" },
-  { value: 15, suffix: "+", label: "Anggota Tim", icon: Users, color: "from-accent to-accent/70" },
-  { value: 20, suffix: "+", label: "Teknologi Dikuasai", icon: Cpu, color: "from-destructive to-destructive/70" },
-];
-
-const techStack = [
-  { name: "React", icon: Code2 },
-  { name: "TypeScript", icon: Code2 },
-  { name: "Tailwind CSS", icon: Palette },
-  { name: "Node.js", icon: Server },
-  { name: "PostgreSQL", icon: Database },
-  { name: "Next.js", icon: Layers },
-  { name: "Figma", icon: Palette },
-  { name: "AWS", icon: Globe },
-];
-
-function AchievementCard({ stat, delay }: { stat: typeof achievementStats[0]; delay: number }) {
-  const { ref, count } = useCounter(stat.value);
-  return (
-    <div ref={ref} className="text-center hover-lift" style={{ animationDelay: `${delay}ms` }}>
-      <div className={`h-14 w-14 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mx-auto mb-4 shadow-lg`}>
-        <stat.icon className="h-7 w-7 text-primary-foreground" />
-      </div>
-      <div className="text-3xl sm:text-4xl font-extrabold text-foreground tabular-nums">
-        {count}{stat.suffix}
-      </div>
-      <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
-    </div>
-  );
-}
-
 export default function AboutPage() {
   return (
     <LandingLayout>
@@ -105,17 +51,6 @@ export default function AboutPage() {
               Kami adalah tim profesional yang berdedikasi membantu bisnis Indonesia membangun kehadiran digital yang kuat dan berdampak.
             </p>
           </RevealCard>
-        </div>
-      </section>
-
-      {/* Achievement Stats */}
-      <section className="py-16 border-y border-border bg-gradient-to-br from-muted/30 via-background to-muted/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
-            {achievementStats.map((s, i) => (
-              <AchievementCard key={i} stat={s} delay={i * 100} />
-            ))}
-          </div>
         </div>
       </section>
 
@@ -199,7 +134,6 @@ export default function AboutPage() {
                 delay={i * 100}
                 className="group p-6 rounded-xl border border-border bg-card hover-lift glass-card text-center"
               >
-                {/* Avatar placeholder */}
                 <div className={`h-24 w-24 rounded-full bg-gradient-to-br ${member.gradient} mx-auto mb-4 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                   <span className="text-2xl font-bold text-primary-foreground">
                     {member.name.split(" ").map(n => n[0]).join("")}
@@ -228,34 +162,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Tech Stack */}
-      <section className="py-20 bg-gradient-to-br from-muted/30 via-background to-secondary/5 border-y border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <RevealCard className="text-center mb-14">
-            <h2 className="text-3xl font-bold mb-3">
-              Teknologi <span className="gradient-text">yang Kami Gunakan</span>
-            </h2>
-            <p className="text-muted-foreground">Stack modern untuk performa dan skalabilitas terbaik.</p>
-          </RevealCard>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-            {techStack.map((tech, i) => (
-              <RevealCard
-                key={i}
-                delay={i * 80}
-                className="group flex flex-col items-center gap-3 p-6 rounded-xl border border-border bg-card hover-lift glass-card cursor-default"
-              >
-                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center group-hover:from-primary/20 group-hover:to-secondary/20 transition-all duration-300">
-                  <tech.icon className="h-6 w-6 text-primary" />
-                </div>
-                <span className="text-sm font-medium text-foreground">{tech.name}</span>
-              </RevealCard>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Timeline */}
-      <section className="py-20">
+      <section className="py-20 bg-gradient-to-br from-muted/30 via-background to-secondary/5 border-t border-border">
         <div className="max-w-3xl mx-auto px-4">
           <RevealCard className="text-center mb-14">
             <h2 className="text-3xl font-bold mb-3">

@@ -1,38 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
-import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
 import { Button } from "@/shared/components/ui/button";
-import { ExternalLink, FolderOpen, ArrowRight, BarChart3, Layers, Globe } from "lucide-react";
+import { ExternalLink, FolderOpen, ArrowRight, Briefcase } from "lucide-react";
 import { cn } from "@/shared/utils/utils";
 import { Link } from "react-router-dom";
-
-function useCounter(target: number, duration = 2000) {
-  const [count, setCount] = useState(0);
-  const { ref, isVisible } = useScrollReveal(0.3);
-  const started = useRef(false);
-  useEffect(() => {
-    if (!isVisible || started.current) return;
-    started.current = true;
-    const start = performance.now();
-    const step = (now: number) => {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(eased * target));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [isVisible, target, duration]);
-  return { ref, count };
-}
-
-const portfolioStats = [
-  { value: 100, suffix: "+", label: "Proyek Selesai", icon: BarChart3, color: "from-primary to-primary/70" },
-  { value: 20, suffix: "+", label: "Teknologi", icon: Layers, color: "from-secondary to-secondary/70" },
-  { value: 10, suffix: "+", label: "Industri Dilayani", icon: Globe, color: "from-accent to-accent/70" },
-];
 
 export default function PortfolioPage() {
   const [activeCategory, setActiveCategory] = useState("Semua");
@@ -69,26 +43,6 @@ export default function PortfolioPage() {
               Proyek-proyek yang telah kami kerjakan untuk klien di berbagai industri.
             </p>
           </RevealCard>
-        </div>
-      </section>
-
-      {/* Stats Banner */}
-      <section className="py-14 border-y border-border bg-gradient-to-br from-muted/30 via-background to-muted/30">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-3 gap-8">
-            {portfolioStats.map((s, i) => {
-              const { ref, count } = useCounter(s.value);
-              return (
-                <div key={i} ref={ref} className="text-center">
-                  <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center mx-auto mb-3 shadow-lg`}>
-                    <s.icon className="h-6 w-6 text-primary-foreground" />
-                  </div>
-                  <div className="text-2xl sm:text-3xl font-extrabold text-foreground tabular-nums">{count}{s.suffix}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{s.label}</div>
-                </div>
-              );
-            })}
-          </div>
         </div>
       </section>
 
@@ -182,19 +136,24 @@ export default function PortfolioPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-95" />
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-white/5" style={{ animation: "float-slow 8s ease-in-out infinite" }} />
-        <div className="absolute bottom-10 right-10 w-24 h-24 rounded-full bg-white/5" style={{ animation: "float-medium 6s ease-in-out infinite 1s" }} />
-
-        <div className="relative max-w-3xl mx-auto px-4 text-center text-primary-foreground">
+      {/* CTA - Unique card-based design (not gradient full-width) */}
+      <section className="py-20 sm:py-28 bg-gradient-to-br from-muted/30 via-background to-accent/5 border-t border-border">
+        <div className="max-w-4xl mx-auto px-4">
           <RevealCard>
-            <h2 className="text-3xl font-bold mb-4">Ingin Proyek Seperti Ini?</h2>
-            <p className="opacity-90 mb-8 text-lg">Mari wujudkan ide Anda menjadi website yang memukau.</p>
-            <Button asChild size="lg" className="gap-2 bg-white text-primary hover:bg-white/90 text-lg px-8 shadow-lg">
-              <Link to="/landing/contact">Mulai Proyek Anda <ArrowRight className="h-5 w-5" /></Link>
-            </Button>
+            <div className="flex flex-col md:flex-row items-center gap-8 p-10 rounded-2xl glass-card border border-border">
+              <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-xl flex-shrink-0">
+                <Briefcase className="h-10 w-10 text-primary-foreground" />
+              </div>
+              <div className="text-center md:text-left flex-1">
+                <h2 className="text-2xl font-bold mb-2">Ingin Proyek Seperti Ini?</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  Mari wujudkan ide Anda menjadi website yang memukau. Konsultasikan kebutuhan Anda dengan tim kami.
+                </p>
+              </div>
+              <Button asChild size="lg" className="gap-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90 border-0 shadow-lg colored-shadow-primary flex-shrink-0">
+                <Link to="/landing/contact">Mulai Proyek <ArrowRight className="h-5 w-5" /></Link>
+              </Button>
+            </div>
           </RevealCard>
         </div>
       </section>

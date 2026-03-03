@@ -1,32 +1,11 @@
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
 import { useScrollReveal } from "@/features/storefront/hooks/useScrollReveal";
+import { useCounter } from "@/shared/hooks/useCounter";
 import { Button } from "@/shared/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Code2, Palette, Server, Shield, Star, Users, Globe, Zap, Monitor, Tablet, Smartphone, Search, Layers, Wrench, Briefcase, Image } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-
-/* Animated counter hook */
-function useCounter(target: number, duration = 2000) {
-  const [count, setCount] = useState(0);
-  const { ref, isVisible } = useScrollReveal(0.3);
-  const started = useRef(false);
-
-  useEffect(() => {
-    if (!isVisible || started.current) return;
-    started.current = true;
-    const start = performance.now();
-    const step = (now: number) => {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(eased * target));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [isVisible, target, duration]);
-
-  return { ref, count };
-}
+import { useState } from "react";
 
 const stats = [
   { value: 50, suffix: "+", label: "Klien Aktif", icon: Users, color: "from-primary to-primary/70" },
@@ -331,26 +310,44 @@ export default function LandingHome() {
         </div>
       </section>
 
-      {/* CTA - directs to Storefront */}
-      <section className="py-20 sm:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-95" />
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-white/5" style={{ animation: "float-slow 8s ease-in-out infinite" }} />
-        <div className="absolute bottom-10 right-10 w-24 h-24 rounded-full bg-white/5" style={{ animation: "float-medium 6s ease-in-out infinite 1s" }} />
-        <div className="absolute top-1/2 left-1/3 w-16 h-16 rounded-full bg-white/5" style={{ animation: "float-slow 10s ease-in-out infinite 2s" }} />
-
-        <div className="relative max-w-3xl mx-auto px-4 text-center text-primary-foreground">
-          <RevealCard>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Siap Memulai Proyek Digital Anda?</h2>
-            <p className="opacity-90 mb-8 text-lg">Kunjungi storefront kami untuk melihat template atau konsultasikan kebutuhan custom Anda.</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="gap-2 bg-white text-primary hover:bg-white/90 text-lg px-8 shadow-lg">
-                <Link to="/templates">Kunjungi Storefront <ArrowRight className="h-5 w-5" /></Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10 text-lg px-8">
-                <Link to="/landing/contact">Konsultasi Gratis</Link>
-              </Button>
-            </div>
-          </RevealCard>
+      {/* CTA - Unique side-by-side layout (different from storefront gradient CTA) */}
+      <section className="py-20 sm:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <RevealCard>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                Siap <span className="gradient-text">Memulai?</span>
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-8">
+                Jelajahi template website kami di storefront atau konsultasikan kebutuhan custom Anda dengan tim kami. Kami siap membantu bisnis Anda tampil profesional secara online.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button asChild size="lg" className="gap-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity border-0 shadow-lg colored-shadow-primary">
+                  <Link to="/templates">Kunjungi Storefront <ArrowRight className="h-5 w-5" /></Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="hover:bg-primary/5">
+                  <Link to="/landing/contact">Konsultasi Gratis</Link>
+                </Button>
+              </div>
+            </RevealCard>
+            <RevealCard delay={200}>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { icon: Briefcase, label: "50+ Klien Puas", color: "from-primary to-primary/70" },
+                  { icon: Globe, label: "100+ Website Live", color: "from-secondary to-secondary/70" },
+                  { icon: Shield, label: "Garansi Kualitas", color: "from-accent to-accent/70" },
+                  { icon: Zap, label: "Support 24/7", color: "from-destructive to-destructive/70" },
+                ].map((item, i) => (
+                  <div key={i} className="p-5 rounded-xl glass-card border border-border hover-lift text-center">
+                    <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center mx-auto mb-3 shadow-lg`}>
+                      <item.icon className="h-6 w-6 text-primary-foreground" />
+                    </div>
+                    <p className="text-sm font-medium text-foreground">{item.label}</p>
+                  </div>
+                ))}
+              </div>
+            </RevealCard>
+          </div>
         </div>
       </section>
     </LandingLayout>
