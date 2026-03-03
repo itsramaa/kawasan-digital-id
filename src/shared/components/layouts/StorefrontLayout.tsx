@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/shared/utils/utils";
-import { Globe, Menu, X, ShoppingCart, ArrowUp, Package } from "lucide-react";
+import { Globe, Menu, X, ShoppingCart, ArrowUp } from "lucide-react";
 import { useCart } from "@/features/storefront/hooks/useCart";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -18,6 +18,13 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { itemCount } = useCart();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -36,13 +43,20 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-lg border-b border-border">
-        <div className="max-w-6xl mx-auto px-4 lg:px-8 flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <Globe className="w-4 h-4 text-primary-foreground" />
+      <header
+        className={cn(
+          "sticky top-0 z-40 transition-all duration-300",
+          scrolled
+            ? "bg-background/95 backdrop-blur-xl border-b border-border shadow-sm"
+            : "bg-transparent border-b border-transparent"
+        )}
+      >
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 flex items-center justify-between h-16">
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center group-hover:scale-105 transition-transform">
+              <Globe className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="font-bold text-lg tracking-tight">Kawasan Digital</span>
+            <span className="font-bold text-lg tracking-tight gradient-text">Kawasan Digital</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">
@@ -51,16 +65,16 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
                 key={link.label}
                 to={link.path}
                 className={cn(
-                  "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  "relative px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                  "after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:rounded-full after:transition-all after:duration-300",
                   isActive(link)
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    ? "text-primary after:w-6 after:bg-primary"
+                    : "text-muted-foreground hover:text-foreground after:w-0 hover:after:w-6 after:bg-secondary"
                 )}
               >
                 {link.label}
               </Link>
             ))}
-            
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
@@ -82,7 +96,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
             ) : (
               <Link
                 to="/templates"
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:opacity-90 transition-opacity border-0"
               >
                 Get Started
               </Link>
@@ -100,7 +114,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
             </Link>
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="p-2 hover:bg-muted rounded-lg"
+              className="p-2 hover:bg-muted rounded-lg transition-colors"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -108,14 +122,14 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
         </div>
 
         {mobileOpen && (
-          <div className="md:hidden border-t border-border bg-card px-4 py-3 space-y-1">
+          <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-xl px-4 py-3 space-y-1 animate-fade-in">
             {navLinks.map((link) => (
               <Link
                 key={link.label}
                 to={link.path}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                  "block px-4 py-2.5 rounded-md text-sm font-medium transition-colors",
                   isActive(link) ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
                 )}
               >
@@ -126,7 +140,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
               <Link
                 to="/dashboard"
                 onClick={() => setMobileOpen(false)}
-                className="block px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted"
+                className="block px-4 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:bg-muted"
               >
                 My Dashboard
               </Link>
@@ -134,7 +148,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
               <Link
                 to="/templates"
                 onClick={() => setMobileOpen(false)}
-                className="block px-3 py-2.5 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+                className="block px-4 py-2.5 rounded-md text-sm font-medium bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:opacity-90 border-0"
               >
                 Get Started
               </Link>
@@ -146,22 +160,20 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
       <main className="flex-1">{children}</main>
 
       <footer className="border-t border-border bg-card">
-        <div className="max-w-6xl mx-auto px-4 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-            {/* About */}
             <div className="col-span-2 md:col-span-1 space-y-3">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded bg-primary flex items-center justify-center">
-                  <Globe className="w-3 h-3 text-primary-foreground" />
+                <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                  <Globe className="w-3.5 h-3.5 text-primary-foreground" />
                 </div>
-                <span className="text-sm font-bold">Kawasan Digital</span>
+                <span className="text-sm font-bold gradient-text">Kawasan Digital</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Solusi website profesional untuk bisnis Anda. Template siap pakai atau custom sesuai kebutuhan.
               </p>
             </div>
 
-            {/* Services */}
             <div className="space-y-3">
               <h4 className="text-sm font-semibold text-foreground">Services</h4>
               <div className="space-y-2">
@@ -171,7 +183,6 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
               </div>
             </div>
 
-            {/* Help */}
             <div className="space-y-3">
               <h4 className="text-sm font-semibold text-foreground">Help</h4>
               <div className="space-y-2">
@@ -181,7 +192,6 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
               </div>
             </div>
 
-            {/* Legal */}
             <div className="space-y-3">
               <h4 className="text-sm font-semibold text-foreground">Legal</h4>
               <div className="space-y-2">
@@ -202,7 +212,6 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
       </footer>
-      {/* Back to Top */}
       <BackToTop />
     </div>
   );
@@ -222,7 +231,7 @@ function BackToTop() {
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:bg-primary/90 transition-all animate-fade-in"
+      className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground shadow-lg flex items-center justify-center hover:opacity-90 transition-all animate-fade-in"
       aria-label="Back to top"
     >
       <ArrowUp className="w-4 h-4" />
