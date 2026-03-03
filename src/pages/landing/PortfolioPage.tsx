@@ -1,10 +1,10 @@
 import { useState } from "react";
-// De-duplicated: stats section removed (kept in LandingHome only)
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
 import { FloatingElements } from "@/shared/components/common/FloatingElements";
+import { DiagonalLinesPattern, ImageOverlay } from "@/shared/components/common/BackgroundPatterns";
 import { Button } from "@/shared/components/ui/button";
 import { ExternalLink, FolderOpen, ArrowRight, Briefcase } from "lucide-react";
 import { cn } from "@/shared/utils/utils";
@@ -33,6 +33,7 @@ export default function PortfolioPage() {
     <LandingLayout>
       <FloatingElements variant="creative" />
       <section className="relative py-20 sm:py-28 text-center overflow-hidden">
+        <ImageOverlay src="https://images.unsplash.com/photo-1542744094-3a31f272c490?w=1920&q=20&blur=20" />
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-10 left-1/3 w-72 h-72 bg-secondary/8 rounded-full blur-3xl" style={{ animation: "float-slow 8s ease-in-out infinite" }} />
           <div className="absolute bottom-10 right-1/3 w-60 h-60 bg-accent/8 rounded-full blur-3xl" style={{ animation: "float-medium 6s ease-in-out infinite 1s" }} />
@@ -49,7 +50,8 @@ export default function PortfolioPage() {
         </div>
       </section>
 
-      <section className="py-20 sm:pb-28">
+      <section className="relative py-20 sm:pb-28">
+        <DiagonalLinesPattern />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {categories.length > 1 && (
             <div className="flex flex-wrap gap-2 justify-center mb-12">
@@ -139,7 +141,7 @@ export default function PortfolioPage() {
         </div>
       </section>
 
-      {/* CTA - Unique card-based design (not gradient full-width) */}
+      {/* CTA */}
       <section className="py-20 sm:py-28 bg-gradient-to-br from-muted/30 via-background to-accent/5 border-t border-border">
         <div className="max-w-4xl mx-auto px-4">
           <RevealCard>

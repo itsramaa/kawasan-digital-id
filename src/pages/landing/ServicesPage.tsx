@@ -1,6 +1,7 @@
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
 import { FloatingElements } from "@/shared/components/common/FloatingElements";
+import { CircuitPattern, GridLinesPattern, AbstractBlobPattern, ImageOverlay } from "@/shared/components/common/BackgroundPatterns";
 import { Button } from "@/shared/components/ui/button";
 import { Link } from "react-router-dom";
 import {
@@ -84,6 +85,7 @@ export default function ServicesPage() {
       <FloatingElements variant="tech" />
       {/* Hero */}
       <section className="relative py-20 sm:py-28 text-center overflow-hidden">
+        <ImageOverlay src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1920&q=20&blur=20" />
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-10 right-1/4 w-72 h-72 bg-primary/8 rounded-full blur-3xl" style={{ animation: "float-slow 8s ease-in-out infinite" }} />
           <div className="absolute bottom-10 left-1/4 w-60 h-60 bg-accent/8 rounded-full blur-3xl" style={{ animation: "float-medium 6s ease-in-out infinite 1s" }} />
@@ -100,8 +102,9 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Services Grid — 3 services matching storefront */}
-      <section className="pb-20 sm:pb-28">
+      {/* Services Grid */}
+      <section className="relative pb-20 sm:pb-28">
+        <GridLinesPattern />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-3 gap-8">
           {services.map((s, i) => {
             const c = colorConfig[s.color];
@@ -139,8 +142,9 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Add-ons — matching storefront AddOnSection */}
-      <section className="py-20 bg-gradient-to-br from-muted/30 via-background to-secondary/5 border-y border-border">
+      {/* Add-ons */}
+      <section className="relative py-20 bg-gradient-to-br from-muted/30 via-background to-secondary/5 border-y border-border">
+        <AbstractBlobPattern />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealCard className="text-center mb-14">
             <h2 className="text-3xl font-bold mb-3">
@@ -175,7 +179,8 @@ export default function ServicesPage() {
       </section>
 
       {/* Tech Stack */}
-      <section className="py-20 border-b border-border">
+      <section className="relative py-20 border-b border-border">
+        <CircuitPattern />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealCard className="text-center mb-14">
             <h2 className="text-3xl font-bold mb-3">

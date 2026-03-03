@@ -1,6 +1,7 @@
 import LandingLayout from "@/shared/components/layouts/LandingLayout";
 import { RevealCard } from "@/shared/components/common/RevealCard";
 import { FloatingElements } from "@/shared/components/common/FloatingElements";
+import { AbstractBlobPattern, TopographyPattern, ImageOverlay } from "@/shared/components/common/BackgroundPatterns";
 import { Target, Eye, Heart, Lightbulb, Users, Award, Linkedin, Github } from "lucide-react";
 
 const values = [
@@ -40,6 +41,7 @@ export default function AboutPage() {
       <FloatingElements variant="organic" />
       {/* Hero */}
       <section className="relative py-20 sm:py-28 text-center overflow-hidden">
+        <ImageOverlay src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=20&blur=20" />
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-10 left-1/4 w-72 h-72 bg-primary/8 rounded-full blur-3xl" style={{ animation: "float-slow 8s ease-in-out infinite" }} />
           <div className="absolute bottom-10 right-1/4 w-60 h-60 bg-secondary/8 rounded-full blur-3xl" style={{ animation: "float-medium 6s ease-in-out infinite 1s" }} />
@@ -91,7 +93,8 @@ export default function AboutPage() {
       </section>
 
       {/* Values */}
-      <section className="py-20 bg-gradient-to-br from-muted/30 via-background to-primary/5 border-y border-border">
+      <section className="relative py-20 bg-gradient-to-br from-muted/30 via-background to-primary/5 border-y border-border">
+        <AbstractBlobPattern />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealCard className="text-center mb-14">
             <h2 className="text-3xl font-bold mb-3">
@@ -165,7 +168,8 @@ export default function AboutPage() {
       </section>
 
       {/* Timeline */}
-      <section className="py-20 bg-gradient-to-br from-muted/30 via-background to-secondary/5 border-t border-border">
+      <section className="relative py-20 bg-gradient-to-br from-muted/30 via-background to-secondary/5 border-t border-border">
+        <TopographyPattern />
         <div className="max-w-3xl mx-auto px-4">
           <RevealCard className="text-center mb-14">
             <h2 className="text-3xl font-bold mb-3">
