@@ -7,6 +7,7 @@ import { cn } from "@/src/lib/utils";
 import { Globe, Menu, X, ShoppingCart, ArrowUp } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useCart } from "@/src/features/storefront/hooks/useCart";
+import { useSession } from "next-auth/react";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -16,12 +17,58 @@ const navLinks = [
   { label: "Help & FAQ", path: "/help" },
 ];
 
+const INTERNAL_ROLES = [
+  "super_admin",
+  "sales",
+  "project_manager",
+  "developer",
+  "finance",
+  "support",
+  "infra",
+];
+
+const CLIENT_ROLES = ["client_admin", "client_contact"];
+
+function DashboardLink({
+  role,
+  className,
+  onClick,
+}: {
+  role: string | undefined;
+  className: string;
+  onClick?: () => void;
+}) {
+  if (role === "super_admin") {
+    return (
+      <Link href="/admin" className={className} onClick={onClick}>
+        Admin Panel
+      </Link>
+    );
+  }
+  if (role && INTERNAL_ROLES.includes(role)) {
+    return (
+      <Link href="/dashboard" className={className} onClick={onClick}>
+        Dashboard
+      </Link>
+    );
+  }
+  if (role && CLIENT_ROLES.includes(role)) {
+    return (
+      <Link href="/client" className={className} onClick={onClick}>
+        My Portal
+      </Link>
+    );
+  }
+  return null;
+}
+
 export function StorefrontLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { itemCount } = useCart();
-  // ponytail: replace with cookie-based session check when needed
-  const isLoggedIn = false;
+  const { data: session } = useSession();
+  const isLoggedIn = !!session;
+  const userRole = (session?.user as any)?.role as string | undefined;
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -82,12 +129,10 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
               )}
             </Link>
             {isLoggedIn ? (
-              <Link
-                href="/client"
+              <DashboardLink
+                role={userRole}
                 className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                My Dashboard
-              </Link>
+              />
             ) : (
               <Link
                 href="/templates"
@@ -132,13 +177,11 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
               </Link>
             ))}
             {isLoggedIn ? (
-              <Link
-                href="/client"
-                onClick={() => setMobileOpen(false)}
+              <DashboardLink
+                role={userRole}
                 className="block px-4 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:bg-muted"
-              >
-                My Dashboard
-              </Link>
+                onClick={() => setMobileOpen(false)}
+              />
             ) : (
               <Link
                 href="/templates"
