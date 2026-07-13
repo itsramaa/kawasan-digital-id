@@ -168,6 +168,1218 @@
       "filename": "app/actions/storefront.ts",
       "exportedName": "getRelatedTemplates"
     },
+    "002ab92e1b0c496113eb5a539a1a055401c98d1a33": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getSystemSettings",
+          "filename": "app/actions/admin.ts"
+        },
+        "app/admin/templates/page": {
+          "moduleId": 21454,
+          "async": false,
+          "exportedName": "getSystemSettings",
+          "filename": "app/actions/admin.ts"
+        },
+        "app/admin/users/page": {
+          "moduleId": 1879,
+          "async": false,
+          "exportedName": "getSystemSettings",
+          "filename": "app/actions/admin.ts"
+        }
+      },
+      "filename": "app/actions/admin.ts",
+      "exportedName": "getSystemSettings"
+    },
+    "00a87ecde5c96fa5c46400bb04ba8971f0f158596f": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getAdminStats",
+          "filename": "app/actions/admin.ts"
+        },
+        "app/admin/templates/page": {
+          "moduleId": 21454,
+          "async": false,
+          "exportedName": "getAdminStats",
+          "filename": "app/actions/admin.ts"
+        },
+        "app/admin/users/page": {
+          "moduleId": 1879,
+          "async": false,
+          "exportedName": "getAdminStats",
+          "filename": "app/actions/admin.ts"
+        }
+      },
+      "filename": "app/actions/admin.ts",
+      "exportedName": "getAdminStats"
+    },
+    "00b217ebabc4d778f9482819101e5b659896f17919": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getAllTemplates",
+          "filename": "app/actions/admin.ts"
+        },
+        "app/admin/templates/page": {
+          "moduleId": 21454,
+          "async": false,
+          "exportedName": "getAllTemplates",
+          "filename": "app/actions/admin.ts"
+        },
+        "app/admin/users/page": {
+          "moduleId": 1879,
+          "async": false,
+          "exportedName": "getAllTemplates",
+          "filename": "app/actions/admin.ts"
+        }
+      },
+      "filename": "app/actions/admin.ts",
+      "exportedName": "getAllTemplates"
+    },
+    "4092c16c1a860e08b377906ee9f318eefce4f246c9": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getUsers",
+          "filename": "app/actions/admin.ts"
+        },
+        "app/admin/templates/page": {
+          "moduleId": 21454,
+          "async": false,
+          "exportedName": "getUsers",
+          "filename": "app/actions/admin.ts"
+        },
+        "app/admin/users/page": {
+          "moduleId": 1879,
+          "async": false,
+          "exportedName": "getUsers",
+          "filename": "app/actions/admin.ts"
+        }
+      },
+      "filename": "app/actions/admin.ts",
+      "exportedName": "getUsers"
+    },
+    "40c16f57ba515a188f470cbdae4b9307369c6bc288": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getUserById",
+          "filename": "app/actions/admin.ts"
+        },
+        "app/admin/templates/page": {
+          "moduleId": 21454,
+          "async": false,
+          "exportedName": "getUserById",
+          "filename": "app/actions/admin.ts"
+        },
+        "app/admin/users/page": {
+          "moduleId": 1879,
+          "async": false,
+          "exportedName": "getUserById",
+          "filename": "app/actions/admin.ts"
+        }
+      },
+      "filename": "app/actions/admin.ts",
+      "exportedName": "getUserById"
+    },
+    "000c1999fce6991620972fab85b1d010dac53a1ec8": {
+      "workers": {
+        "app/admin/clients/page": {
+          "moduleId": 96067,
+          "async": false,
+          "exportedName": "getPayments",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getPayments",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/page": {
+          "moduleId": 77367,
+          "async": false,
+          "exportedName": "getPayments",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/payments/page": {
+          "moduleId": 90734,
+          "async": false,
+          "exportedName": "getPayments",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/infrastructure/page": {
+          "moduleId": 96700,
+          "async": false,
+          "exportedName": "getPayments",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/page": {
+          "moduleId": 59274,
+          "async": false,
+          "exportedName": "getPayments",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/[id]/page": {
+          "moduleId": 76693,
+          "async": false,
+          "exportedName": "getPayments",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/page": {
+          "moduleId": 76486,
+          "async": false,
+          "exportedName": "getPayments",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/clients/page": {
+          "moduleId": 89641,
+          "async": false,
+          "exportedName": "getPayments",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/contracts/page": {
+          "moduleId": 79478,
+          "async": false,
+          "exportedName": "getPayments",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/page": {
+          "moduleId": 67378,
+          "async": false,
+          "exportedName": "getPayments",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/quotations/page": {
+          "moduleId": 84436,
+          "async": false,
+          "exportedName": "getPayments",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/support/page": {
+          "moduleId": 42238,
+          "async": false,
+          "exportedName": "getPayments",
+          "filename": "app/actions/dashboard.ts"
+        }
+      },
+      "filename": "app/actions/dashboard.ts",
+      "exportedName": "getPayments"
+    },
+    "001cd0c48526be435992ebf0a1cf7b92d0fb5b9303": {
+      "workers": {
+        "app/admin/clients/page": {
+          "moduleId": 96067,
+          "async": false,
+          "exportedName": "getHostings",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getHostings",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/page": {
+          "moduleId": 77367,
+          "async": false,
+          "exportedName": "getHostings",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/payments/page": {
+          "moduleId": 90734,
+          "async": false,
+          "exportedName": "getHostings",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/infrastructure/page": {
+          "moduleId": 96700,
+          "async": false,
+          "exportedName": "getHostings",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/page": {
+          "moduleId": 59274,
+          "async": false,
+          "exportedName": "getHostings",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/[id]/page": {
+          "moduleId": 76693,
+          "async": false,
+          "exportedName": "getHostings",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/page": {
+          "moduleId": 76486,
+          "async": false,
+          "exportedName": "getHostings",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/clients/page": {
+          "moduleId": 89641,
+          "async": false,
+          "exportedName": "getHostings",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/contracts/page": {
+          "moduleId": 79478,
+          "async": false,
+          "exportedName": "getHostings",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/page": {
+          "moduleId": 67378,
+          "async": false,
+          "exportedName": "getHostings",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/quotations/page": {
+          "moduleId": 84436,
+          "async": false,
+          "exportedName": "getHostings",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/support/page": {
+          "moduleId": 42238,
+          "async": false,
+          "exportedName": "getHostings",
+          "filename": "app/actions/dashboard.ts"
+        }
+      },
+      "filename": "app/actions/dashboard.ts",
+      "exportedName": "getHostings"
+    },
+    "00442dbcd2bdb7b08b5e0a8385d716f99404c5c084": {
+      "workers": {
+        "app/admin/clients/page": {
+          "moduleId": 96067,
+          "async": false,
+          "exportedName": "getDashboardStats",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getDashboardStats",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/page": {
+          "moduleId": 77367,
+          "async": false,
+          "exportedName": "getDashboardStats",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/payments/page": {
+          "moduleId": 90734,
+          "async": false,
+          "exportedName": "getDashboardStats",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/infrastructure/page": {
+          "moduleId": 96700,
+          "async": false,
+          "exportedName": "getDashboardStats",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/page": {
+          "moduleId": 59274,
+          "async": false,
+          "exportedName": "getDashboardStats",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/[id]/page": {
+          "moduleId": 76693,
+          "async": false,
+          "exportedName": "getDashboardStats",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/page": {
+          "moduleId": 76486,
+          "async": false,
+          "exportedName": "getDashboardStats",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/clients/page": {
+          "moduleId": 89641,
+          "async": false,
+          "exportedName": "getDashboardStats",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/contracts/page": {
+          "moduleId": 79478,
+          "async": false,
+          "exportedName": "getDashboardStats",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/page": {
+          "moduleId": 67378,
+          "async": false,
+          "exportedName": "getDashboardStats",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/quotations/page": {
+          "moduleId": 84436,
+          "async": false,
+          "exportedName": "getDashboardStats",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/support/page": {
+          "moduleId": 42238,
+          "async": false,
+          "exportedName": "getDashboardStats",
+          "filename": "app/actions/dashboard.ts"
+        }
+      },
+      "filename": "app/actions/dashboard.ts",
+      "exportedName": "getDashboardStats"
+    },
+    "0097ad2b6aad9307fae859fafa54c949fbb0d4e9ba": {
+      "workers": {
+        "app/admin/clients/page": {
+          "moduleId": 96067,
+          "async": false,
+          "exportedName": "getDomains",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getDomains",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/page": {
+          "moduleId": 77367,
+          "async": false,
+          "exportedName": "getDomains",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/payments/page": {
+          "moduleId": 90734,
+          "async": false,
+          "exportedName": "getDomains",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/infrastructure/page": {
+          "moduleId": 96700,
+          "async": false,
+          "exportedName": "getDomains",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/page": {
+          "moduleId": 59274,
+          "async": false,
+          "exportedName": "getDomains",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/[id]/page": {
+          "moduleId": 76693,
+          "async": false,
+          "exportedName": "getDomains",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/page": {
+          "moduleId": 76486,
+          "async": false,
+          "exportedName": "getDomains",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/clients/page": {
+          "moduleId": 89641,
+          "async": false,
+          "exportedName": "getDomains",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/contracts/page": {
+          "moduleId": 79478,
+          "async": false,
+          "exportedName": "getDomains",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/page": {
+          "moduleId": 67378,
+          "async": false,
+          "exportedName": "getDomains",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/quotations/page": {
+          "moduleId": 84436,
+          "async": false,
+          "exportedName": "getDomains",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/support/page": {
+          "moduleId": 42238,
+          "async": false,
+          "exportedName": "getDomains",
+          "filename": "app/actions/dashboard.ts"
+        }
+      },
+      "filename": "app/actions/dashboard.ts",
+      "exportedName": "getDomains"
+    },
+    "40117556f4542bca436c2a0302cd4aa3bb3e09b2b5": {
+      "workers": {
+        "app/admin/clients/page": {
+          "moduleId": 96067,
+          "async": false,
+          "exportedName": "getContracts",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getContracts",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/page": {
+          "moduleId": 77367,
+          "async": false,
+          "exportedName": "getContracts",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/payments/page": {
+          "moduleId": 90734,
+          "async": false,
+          "exportedName": "getContracts",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/infrastructure/page": {
+          "moduleId": 96700,
+          "async": false,
+          "exportedName": "getContracts",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/page": {
+          "moduleId": 59274,
+          "async": false,
+          "exportedName": "getContracts",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/[id]/page": {
+          "moduleId": 76693,
+          "async": false,
+          "exportedName": "getContracts",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/page": {
+          "moduleId": 76486,
+          "async": false,
+          "exportedName": "getContracts",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/clients/page": {
+          "moduleId": 89641,
+          "async": false,
+          "exportedName": "getContracts",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/contracts/page": {
+          "moduleId": 79478,
+          "async": false,
+          "exportedName": "getContracts",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/page": {
+          "moduleId": 67378,
+          "async": false,
+          "exportedName": "getContracts",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/quotations/page": {
+          "moduleId": 84436,
+          "async": false,
+          "exportedName": "getContracts",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/support/page": {
+          "moduleId": 42238,
+          "async": false,
+          "exportedName": "getContracts",
+          "filename": "app/actions/dashboard.ts"
+        }
+      },
+      "filename": "app/actions/dashboard.ts",
+      "exportedName": "getContracts"
+    },
+    "401ae30f2d928ff054e355e9d449b1224f8fbe8afb": {
+      "workers": {
+        "app/admin/clients/page": {
+          "moduleId": 96067,
+          "async": false,
+          "exportedName": "getTickets",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getTickets",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/page": {
+          "moduleId": 77367,
+          "async": false,
+          "exportedName": "getTickets",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/payments/page": {
+          "moduleId": 90734,
+          "async": false,
+          "exportedName": "getTickets",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/infrastructure/page": {
+          "moduleId": 96700,
+          "async": false,
+          "exportedName": "getTickets",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/page": {
+          "moduleId": 59274,
+          "async": false,
+          "exportedName": "getTickets",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/[id]/page": {
+          "moduleId": 76693,
+          "async": false,
+          "exportedName": "getTickets",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/page": {
+          "moduleId": 76486,
+          "async": false,
+          "exportedName": "getTickets",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/clients/page": {
+          "moduleId": 89641,
+          "async": false,
+          "exportedName": "getTickets",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/contracts/page": {
+          "moduleId": 79478,
+          "async": false,
+          "exportedName": "getTickets",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/page": {
+          "moduleId": 67378,
+          "async": false,
+          "exportedName": "getTickets",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/quotations/page": {
+          "moduleId": 84436,
+          "async": false,
+          "exportedName": "getTickets",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/support/page": {
+          "moduleId": 42238,
+          "async": false,
+          "exportedName": "getTickets",
+          "filename": "app/actions/dashboard.ts"
+        }
+      },
+      "filename": "app/actions/dashboard.ts",
+      "exportedName": "getTickets"
+    },
+    "4031f5c26b34ac201e7ad05c15c5c8692fdbfe90b5": {
+      "workers": {
+        "app/admin/clients/page": {
+          "moduleId": 96067,
+          "async": false,
+          "exportedName": "getClients",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getClients",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/page": {
+          "moduleId": 77367,
+          "async": false,
+          "exportedName": "getClients",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/payments/page": {
+          "moduleId": 90734,
+          "async": false,
+          "exportedName": "getClients",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/infrastructure/page": {
+          "moduleId": 96700,
+          "async": false,
+          "exportedName": "getClients",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/page": {
+          "moduleId": 59274,
+          "async": false,
+          "exportedName": "getClients",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/[id]/page": {
+          "moduleId": 76693,
+          "async": false,
+          "exportedName": "getClients",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/page": {
+          "moduleId": 76486,
+          "async": false,
+          "exportedName": "getClients",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/clients/page": {
+          "moduleId": 89641,
+          "async": false,
+          "exportedName": "getClients",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/contracts/page": {
+          "moduleId": 79478,
+          "async": false,
+          "exportedName": "getClients",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/page": {
+          "moduleId": 67378,
+          "async": false,
+          "exportedName": "getClients",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/quotations/page": {
+          "moduleId": 84436,
+          "async": false,
+          "exportedName": "getClients",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/support/page": {
+          "moduleId": 42238,
+          "async": false,
+          "exportedName": "getClients",
+          "filename": "app/actions/dashboard.ts"
+        }
+      },
+      "filename": "app/actions/dashboard.ts",
+      "exportedName": "getClients"
+    },
+    "403cf08270977e0ec3508dac3e5041936714b3fe61": {
+      "workers": {
+        "app/admin/clients/page": {
+          "moduleId": 96067,
+          "async": false,
+          "exportedName": "getQuotations",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getQuotations",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/page": {
+          "moduleId": 77367,
+          "async": false,
+          "exportedName": "getQuotations",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/payments/page": {
+          "moduleId": 90734,
+          "async": false,
+          "exportedName": "getQuotations",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/infrastructure/page": {
+          "moduleId": 96700,
+          "async": false,
+          "exportedName": "getQuotations",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/page": {
+          "moduleId": 59274,
+          "async": false,
+          "exportedName": "getQuotations",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/[id]/page": {
+          "moduleId": 76693,
+          "async": false,
+          "exportedName": "getQuotations",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/page": {
+          "moduleId": 76486,
+          "async": false,
+          "exportedName": "getQuotations",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/clients/page": {
+          "moduleId": 89641,
+          "async": false,
+          "exportedName": "getQuotations",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/contracts/page": {
+          "moduleId": 79478,
+          "async": false,
+          "exportedName": "getQuotations",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/page": {
+          "moduleId": 67378,
+          "async": false,
+          "exportedName": "getQuotations",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/quotations/page": {
+          "moduleId": 84436,
+          "async": false,
+          "exportedName": "getQuotations",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/support/page": {
+          "moduleId": 42238,
+          "async": false,
+          "exportedName": "getQuotations",
+          "filename": "app/actions/dashboard.ts"
+        }
+      },
+      "filename": "app/actions/dashboard.ts",
+      "exportedName": "getQuotations"
+    },
+    "403fe53bd4b7876ef290a8f290ac16d7d8cb872f92": {
+      "workers": {
+        "app/admin/clients/page": {
+          "moduleId": 96067,
+          "async": false,
+          "exportedName": "getInquiries",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getInquiries",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/page": {
+          "moduleId": 77367,
+          "async": false,
+          "exportedName": "getInquiries",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/payments/page": {
+          "moduleId": 90734,
+          "async": false,
+          "exportedName": "getInquiries",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/infrastructure/page": {
+          "moduleId": 96700,
+          "async": false,
+          "exportedName": "getInquiries",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/page": {
+          "moduleId": 59274,
+          "async": false,
+          "exportedName": "getInquiries",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/[id]/page": {
+          "moduleId": 76693,
+          "async": false,
+          "exportedName": "getInquiries",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/page": {
+          "moduleId": 76486,
+          "async": false,
+          "exportedName": "getInquiries",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/clients/page": {
+          "moduleId": 89641,
+          "async": false,
+          "exportedName": "getInquiries",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/contracts/page": {
+          "moduleId": 79478,
+          "async": false,
+          "exportedName": "getInquiries",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/page": {
+          "moduleId": 67378,
+          "async": false,
+          "exportedName": "getInquiries",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/quotations/page": {
+          "moduleId": 84436,
+          "async": false,
+          "exportedName": "getInquiries",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/support/page": {
+          "moduleId": 42238,
+          "async": false,
+          "exportedName": "getInquiries",
+          "filename": "app/actions/dashboard.ts"
+        }
+      },
+      "filename": "app/actions/dashboard.ts",
+      "exportedName": "getInquiries"
+    },
+    "40809266b143913a9bea534980ed0db8edc7173fb4": {
+      "workers": {
+        "app/admin/clients/page": {
+          "moduleId": 96067,
+          "async": false,
+          "exportedName": "getProjectById",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getProjectById",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/page": {
+          "moduleId": 77367,
+          "async": false,
+          "exportedName": "getProjectById",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/payments/page": {
+          "moduleId": 90734,
+          "async": false,
+          "exportedName": "getProjectById",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/infrastructure/page": {
+          "moduleId": 96700,
+          "async": false,
+          "exportedName": "getProjectById",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/page": {
+          "moduleId": 59274,
+          "async": false,
+          "exportedName": "getProjectById",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/[id]/page": {
+          "moduleId": 76693,
+          "async": false,
+          "exportedName": "getProjectById",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/page": {
+          "moduleId": 76486,
+          "async": false,
+          "exportedName": "getProjectById",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/clients/page": {
+          "moduleId": 89641,
+          "async": false,
+          "exportedName": "getProjectById",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/contracts/page": {
+          "moduleId": 79478,
+          "async": false,
+          "exportedName": "getProjectById",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/page": {
+          "moduleId": 67378,
+          "async": false,
+          "exportedName": "getProjectById",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/quotations/page": {
+          "moduleId": 84436,
+          "async": false,
+          "exportedName": "getProjectById",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/support/page": {
+          "moduleId": 42238,
+          "async": false,
+          "exportedName": "getProjectById",
+          "filename": "app/actions/dashboard.ts"
+        }
+      },
+      "filename": "app/actions/dashboard.ts",
+      "exportedName": "getProjectById"
+    },
+    "409d595e9a00cc32f0b5f9145e291d641fbf404b3d": {
+      "workers": {
+        "app/admin/clients/page": {
+          "moduleId": 96067,
+          "async": false,
+          "exportedName": "getProjects",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getProjects",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/page": {
+          "moduleId": 77367,
+          "async": false,
+          "exportedName": "getProjects",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/payments/page": {
+          "moduleId": 90734,
+          "async": false,
+          "exportedName": "getProjects",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/infrastructure/page": {
+          "moduleId": 96700,
+          "async": false,
+          "exportedName": "getProjects",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/page": {
+          "moduleId": 59274,
+          "async": false,
+          "exportedName": "getProjects",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/[id]/page": {
+          "moduleId": 76693,
+          "async": false,
+          "exportedName": "getProjects",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/page": {
+          "moduleId": 76486,
+          "async": false,
+          "exportedName": "getProjects",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/clients/page": {
+          "moduleId": 89641,
+          "async": false,
+          "exportedName": "getProjects",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/contracts/page": {
+          "moduleId": 79478,
+          "async": false,
+          "exportedName": "getProjects",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/page": {
+          "moduleId": 67378,
+          "async": false,
+          "exportedName": "getProjects",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/quotations/page": {
+          "moduleId": 84436,
+          "async": false,
+          "exportedName": "getProjects",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/support/page": {
+          "moduleId": 42238,
+          "async": false,
+          "exportedName": "getProjects",
+          "filename": "app/actions/dashboard.ts"
+        }
+      },
+      "filename": "app/actions/dashboard.ts",
+      "exportedName": "getProjects"
+    },
+    "40d1310319037748ef63289c97579baebb7ec8e74e": {
+      "workers": {
+        "app/admin/clients/page": {
+          "moduleId": 96067,
+          "async": false,
+          "exportedName": "getInvoices",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getInvoices",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/page": {
+          "moduleId": 77367,
+          "async": false,
+          "exportedName": "getInvoices",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/payments/page": {
+          "moduleId": 90734,
+          "async": false,
+          "exportedName": "getInvoices",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/infrastructure/page": {
+          "moduleId": 96700,
+          "async": false,
+          "exportedName": "getInvoices",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/page": {
+          "moduleId": 59274,
+          "async": false,
+          "exportedName": "getInvoices",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/[id]/page": {
+          "moduleId": 76693,
+          "async": false,
+          "exportedName": "getInvoices",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/page": {
+          "moduleId": 76486,
+          "async": false,
+          "exportedName": "getInvoices",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/clients/page": {
+          "moduleId": 89641,
+          "async": false,
+          "exportedName": "getInvoices",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/contracts/page": {
+          "moduleId": 79478,
+          "async": false,
+          "exportedName": "getInvoices",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/page": {
+          "moduleId": 67378,
+          "async": false,
+          "exportedName": "getInvoices",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/quotations/page": {
+          "moduleId": 84436,
+          "async": false,
+          "exportedName": "getInvoices",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/support/page": {
+          "moduleId": 42238,
+          "async": false,
+          "exportedName": "getInvoices",
+          "filename": "app/actions/dashboard.ts"
+        }
+      },
+      "filename": "app/actions/dashboard.ts",
+      "exportedName": "getInvoices"
+    },
+    "40fda852e7b850e96ee69ec4bc4d307ec0e91f8a8c": {
+      "workers": {
+        "app/admin/clients/page": {
+          "moduleId": 96067,
+          "async": false,
+          "exportedName": "getProjectTasks",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/admin/page": {
+          "moduleId": 74502,
+          "async": false,
+          "exportedName": "getProjectTasks",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/page": {
+          "moduleId": 77367,
+          "async": false,
+          "exportedName": "getProjectTasks",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/finance/payments/page": {
+          "moduleId": 90734,
+          "async": false,
+          "exportedName": "getProjectTasks",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/infrastructure/page": {
+          "moduleId": 96700,
+          "async": false,
+          "exportedName": "getProjectTasks",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/page": {
+          "moduleId": 59274,
+          "async": false,
+          "exportedName": "getProjectTasks",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/[id]/page": {
+          "moduleId": 76693,
+          "async": false,
+          "exportedName": "getProjectTasks",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/projects/page": {
+          "moduleId": 76486,
+          "async": false,
+          "exportedName": "getProjectTasks",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/clients/page": {
+          "moduleId": 89641,
+          "async": false,
+          "exportedName": "getProjectTasks",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/contracts/page": {
+          "moduleId": 79478,
+          "async": false,
+          "exportedName": "getProjectTasks",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/page": {
+          "moduleId": 67378,
+          "async": false,
+          "exportedName": "getProjectTasks",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/sales/quotations/page": {
+          "moduleId": 84436,
+          "async": false,
+          "exportedName": "getProjectTasks",
+          "filename": "app/actions/dashboard.ts"
+        },
+        "app/dashboard/support/page": {
+          "moduleId": 42238,
+          "async": false,
+          "exportedName": "getProjectTasks",
+          "filename": "app/actions/dashboard.ts"
+        }
+      },
+      "filename": "app/actions/dashboard.ts",
+      "exportedName": "getProjectTasks"
+    },
     "60ca17ba2d34fd5def9286fadf8548668865be6206": {
       "workers": {
         "app/auth/register/page": {
