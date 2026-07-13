@@ -1,5 +1,18 @@
 {
-  "node": {},
+  "node": {
+    "60ca17ba2d34fd5def9286fadf8548668865be6206": {
+      "workers": {
+        "app/auth/register/page": {
+          "moduleId": 19427,
+          "async": false,
+          "exportedName": "registerUser",
+          "filename": "app/auth/register/actions.ts"
+        }
+      },
+      "filename": "app/auth/register/actions.ts",
+      "exportedName": "registerUser"
+    }
+  },
   "edge": {},
   "encryptionKey": "x8SkH+81LobrroEOuhivyULtQTl9bf3j/nDtxErOJmI="
 }

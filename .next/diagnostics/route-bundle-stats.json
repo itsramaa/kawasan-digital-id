@@ -236,11 +236,11 @@
   },
   {
     "route": "/auth/register",
-    "firstLoadUncompressedJsBytes": 565702,
+    "firstLoadUncompressedJsBytes": 566460,
     "firstLoadChunkPaths": [
       ".next/static/chunks/2yrp1ekehhyti.js",
       ".next/static/chunks/1h9h3xsaki20e.js",
-      ".next/static/chunks/3m6uhizvr0xlf.js",
+      ".next/static/chunks/0uuntirmu39h3.js",
       ".next/static/chunks/0eoc4kvejg_qy.js",
       ".next/static/chunks/39o2cslacziu-.js",
       ".next/static/chunks/3pxk8wi8vg82t.js",
