@@ -1,7 +1,10 @@
 export const dynamic = 'force-dynamic'
 
-import CheckoutPage from './checkout-client'
-
-export default function Page() {
-  return <CheckoutPage />
+export default function CheckoutPage() {
+  return (
+    <div className="max-w-5xl mx-auto px-4 py-10">
+      <h1 className="text-2xl font-bold mb-6">Checkout</h1>
+      <p className="text-muted-foreground">Coming soon.</p>
+    </div>
+  )
 }
