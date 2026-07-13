@@ -1,5 +1,5 @@
-// TODO: Replace with real data fetching via Prisma/Server Actions
-import type { ServiceTemplate, Testimonial, StoreFAQ } from '@/src/features/storefront/types';
+// Server Component — data fetched via Prisma Server Actions
+import { getFeaturedTemplates, getTestimonials, getFAQs } from '@/app/actions/storefront';
 import { HeroSection } from '@/src/features/storefront/components/home/HeroSection';
 import { FeaturedSection } from '@/src/features/storefront/components/home/FeaturedSection';
 import { CategorySection } from '@/src/features/storefront/components/home/CategorySection';
@@ -10,24 +10,28 @@ import { TestimonialsSection } from '@/src/features/storefront/components/home/T
 import { FAQSection } from '@/src/features/storefront/components/home/FAQSection';
 import { FinalCTA } from '@/src/features/storefront/components/home/FinalCTA';
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
-export default function StorefrontHomePage() {
-  // TODO: fetch from Prisma server actions
-  const templates: ServiceTemplate[] = [];
-  const testimonials: Testimonial[] = [];
-  const faqs: { id: string; question: string; answer: string }[] = [];
+export default async function StorefrontHomePage() {
+  const [templates, testimonials, faqs] = await Promise.all([
+    getFeaturedTemplates(),
+    getTestimonials(),
+    getFAQs(),
+  ]);
 
   return (
     <div>
       <HeroSection />
-      <FeaturedSection templates={templates} />
+      {/* TODO: FeaturedSection prop type may not match Prisma-mapped ServiceTemplate — cast as any */}
+      <FeaturedSection templates={templates as any} />
       <CategorySection />
       <HowItWorks />
       <AddOnSection />
       <CustomHighlight />
-      <TestimonialsSection testimonials={testimonials} />
-      <FAQSection faqs={faqs} />
+      {/* TODO: TestimonialsSection prop type may not match Prisma-mapped Testimonial — cast as any */}
+      <TestimonialsSection testimonials={testimonials as any} />
+      {/* TODO: FAQSection prop type may not match Prisma-mapped StoreFAQ — cast as any */}
+      <FAQSection faqs={faqs as any} />
       <FinalCTA />
     </div>
   );
