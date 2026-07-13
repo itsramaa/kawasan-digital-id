@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Globe, Mail, Lock, Eye, EyeOff } from 'lucide-react';
@@ -32,7 +32,21 @@ export default function LoginPage() {
     if (result?.error) {
       setError('Email atau password salah.');
     } else {
-      router.push('/dashboard');
+      const INTERNAL_ROLES = ['sales', 'project_manager', 'developer', 'finance', 'support', 'infra'];
+      const CLIENT_ROLES = ['client_admin', 'client_contact'];
+
+      const session = await getSession();
+      const role = (session?.user as { role?: string } | null | undefined)?.role;
+
+      if (role === 'super_admin') {
+        router.push('/admin');
+      } else if (role && INTERNAL_ROLES.includes(role)) {
+        router.push('/dashboard');
+      } else if (role && CLIENT_ROLES.includes(role)) {
+        router.push('/client');
+      } else {
+        router.push('/');
+      }
     }
   };
 
