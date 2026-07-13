@@ -1,3 +1,5 @@
+'use client'
+
 "use client";
 import { useState } from "react";
 import { Monitor, Smartphone, ExternalLink, Sparkles, Star } from "lucide-react";

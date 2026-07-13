@@ -1,3 +1,5 @@
+'use client'
+
 "use client";
 import { useScrollReveal } from "@/src/features/storefront/hooks/useScrollReveal";
 import { Badge } from "@/components/ui/badge";

@@ -1,3 +1,5 @@
+'use client'
+
 import Link from "next/link";
 import { ChevronRight, CheckCircle2, Palette, ShieldCheck, Search, Code2, Headphones, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";

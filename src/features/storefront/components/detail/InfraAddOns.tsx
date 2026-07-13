@@ -1,3 +1,5 @@
+'use client'
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info, Server } from "lucide-react";

@@ -1,3 +1,5 @@
+'use client'
+
 import Link from "next/link";
 import { Clock, ArrowRight, ExternalLink, Check, ShoppingCart, Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";

@@ -1,3 +1,5 @@
+'use client'
+
 import { Palette, Search, KeyRound, Headphones } from "lucide-react";
 import { useScrollReveal } from "../../hooks/useScrollReveal";
 import { cn } from "@/src/lib/utils";

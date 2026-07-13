@@ -1,3 +1,5 @@
+'use client'
+
 import { Check, Package } from "lucide-react";
 import { useScrollReveal } from "../../hooks/useScrollReveal";
 import { cn } from "@/src/lib/utils";

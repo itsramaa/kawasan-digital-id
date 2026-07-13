@@ -1,3 +1,5 @@
+'use client'
+
 import { Star, Quote } from "lucide-react";
 import { useScrollReveal } from "@/src/features/storefront/hooks/useScrollReveal";
 import type { Testimonial } from "@/src/features/storefront/types";

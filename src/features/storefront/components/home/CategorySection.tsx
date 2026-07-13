@@ -1,3 +1,5 @@
+'use client'
+
 import Link from "next/link";
 import { ShoppingBag, Building2, Layers, Briefcase, PenTool, Store } from "lucide-react";
 import { useScrollReveal } from "@/src/features/storefront/hooks/useScrollReveal";

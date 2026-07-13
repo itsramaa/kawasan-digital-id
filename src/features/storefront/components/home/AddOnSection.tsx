@@ -1,3 +1,5 @@
+'use client'
+
 import { Zap, FileText, Gauge, Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useScrollReveal } from "@/src/features/storefront/hooks/useScrollReveal";

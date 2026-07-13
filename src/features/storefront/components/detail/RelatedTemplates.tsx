@@ -1,3 +1,5 @@
+'use client'
+
 import Link from "next/link";
 import { Sparkles, Star, Clock } from "lucide-react";
 import { useScrollReveal } from "../../hooks/useScrollReveal";
