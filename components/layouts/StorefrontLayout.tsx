@@ -7,7 +7,6 @@ import { cn } from "@/src/lib/utils";
 import { Globe, Menu, X, ShoppingCart, ArrowUp } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useCart } from "@/src/features/storefront/hooks/useCart";
-import { useSession } from "next-auth/react";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -21,8 +20,8 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { itemCount } = useCart();
-  const { data: session } = useSession();
-  const isLoggedIn = !!session;
+  // ponytail: replace with cookie-based session check when needed
+  const isLoggedIn = false;
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
