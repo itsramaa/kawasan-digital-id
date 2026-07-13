@@ -191,7 +191,7 @@ self.__SERVER_FILES_MANIFEST={
       "parallelServerCompiles": false,
       "parallelServerBuildTraces": false,
       "ppr": false,
-      "authInterrupts": false,
+      "authInterrupts": true,
       "webpackMemoryOptimizations": false,
       "optimizeServerReact": true,
       "strictRouteTypes": false,

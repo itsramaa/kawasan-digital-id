@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 import { cn } from "@/src/lib/utils";
 import { Globe, Menu, X, ShoppingCart, ArrowUp } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { useCart } from "@/src/features/storefront/hooks/useCart";
 import { useSession } from "next-auth/react";
 
@@ -72,6 +73,7 @@ export function StorefrontLayout({ children }: { children: ReactNode }) {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             <Link href="/cart" className="relative p-2 hover:bg-muted rounded-lg transition-colors">
               <ShoppingCart className="w-5 h-5 text-muted-foreground" />
               {itemCount > 0 && (
