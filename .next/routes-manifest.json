@@ -87,6 +87,12 @@
       "namedRegex": "^/admin(?:/)?$"
     },
     {
+      "page": "/api/orders/track",
+      "regex": "^/api/orders/track(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/orders/track(?:/)?$"
+    },
+    {
       "page": "/auth/login",
       "regex": "^/auth/login(?:/)?$",
       "routeKeys": {},

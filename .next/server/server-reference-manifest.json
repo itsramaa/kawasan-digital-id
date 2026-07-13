@@ -1,5 +1,173 @@
 {
   "node": {
+    "002303f6b65d91dcd14e5582f85e66d0a7f6f1cd20": {
+      "workers": {
+        "app/(public)/page": {
+          "moduleId": 2182,
+          "async": false,
+          "exportedName": "getTestimonials",
+          "filename": "app/actions/storefront.ts"
+        },
+        "app/(public)/templates/[id]/page": {
+          "moduleId": 63066,
+          "async": false,
+          "exportedName": "getTestimonials",
+          "filename": "app/actions/storefront.ts"
+        },
+        "app/(public)/templates/page": {
+          "moduleId": 9007,
+          "async": false,
+          "exportedName": "getTestimonials",
+          "filename": "app/actions/storefront.ts"
+        }
+      },
+      "filename": "app/actions/storefront.ts",
+      "exportedName": "getTestimonials"
+    },
+    "003ec010ec66ae21dda7eb4cbcd62f52e2ffc989bf": {
+      "workers": {
+        "app/(public)/page": {
+          "moduleId": 2182,
+          "async": false,
+          "exportedName": "getFeaturedTemplates",
+          "filename": "app/actions/storefront.ts"
+        },
+        "app/(public)/templates/[id]/page": {
+          "moduleId": 63066,
+          "async": false,
+          "exportedName": "getFeaturedTemplates",
+          "filename": "app/actions/storefront.ts"
+        },
+        "app/(public)/templates/page": {
+          "moduleId": 9007,
+          "async": false,
+          "exportedName": "getFeaturedTemplates",
+          "filename": "app/actions/storefront.ts"
+        }
+      },
+      "filename": "app/actions/storefront.ts",
+      "exportedName": "getFeaturedTemplates"
+    },
+    "0065814787f64141fe4120734f63ec3a8afb39fd95": {
+      "workers": {
+        "app/(public)/page": {
+          "moduleId": 2182,
+          "async": false,
+          "exportedName": "getTemplateCategories",
+          "filename": "app/actions/storefront.ts"
+        },
+        "app/(public)/templates/[id]/page": {
+          "moduleId": 63066,
+          "async": false,
+          "exportedName": "getTemplateCategories",
+          "filename": "app/actions/storefront.ts"
+        },
+        "app/(public)/templates/page": {
+          "moduleId": 9007,
+          "async": false,
+          "exportedName": "getTemplateCategories",
+          "filename": "app/actions/storefront.ts"
+        }
+      },
+      "filename": "app/actions/storefront.ts",
+      "exportedName": "getTemplateCategories"
+    },
+    "4003a0e8c426384e64e0709ee00fe28e78ae4963a1": {
+      "workers": {
+        "app/(public)/page": {
+          "moduleId": 2182,
+          "async": false,
+          "exportedName": "getServiceTemplates",
+          "filename": "app/actions/storefront.ts"
+        },
+        "app/(public)/templates/[id]/page": {
+          "moduleId": 63066,
+          "async": false,
+          "exportedName": "getServiceTemplates",
+          "filename": "app/actions/storefront.ts"
+        },
+        "app/(public)/templates/page": {
+          "moduleId": 9007,
+          "async": false,
+          "exportedName": "getServiceTemplates",
+          "filename": "app/actions/storefront.ts"
+        }
+      },
+      "filename": "app/actions/storefront.ts",
+      "exportedName": "getServiceTemplates"
+    },
+    "409912d04355e8735bca52dff296e4ac76bcd246d7": {
+      "workers": {
+        "app/(public)/page": {
+          "moduleId": 2182,
+          "async": false,
+          "exportedName": "getTemplateById",
+          "filename": "app/actions/storefront.ts"
+        },
+        "app/(public)/templates/[id]/page": {
+          "moduleId": 63066,
+          "async": false,
+          "exportedName": "getTemplateById",
+          "filename": "app/actions/storefront.ts"
+        },
+        "app/(public)/templates/page": {
+          "moduleId": 9007,
+          "async": false,
+          "exportedName": "getTemplateById",
+          "filename": "app/actions/storefront.ts"
+        }
+      },
+      "filename": "app/actions/storefront.ts",
+      "exportedName": "getTemplateById"
+    },
+    "40ef40523fddfe775c658ac1554f8c155d8a779b97": {
+      "workers": {
+        "app/(public)/page": {
+          "moduleId": 2182,
+          "async": false,
+          "exportedName": "getFAQs",
+          "filename": "app/actions/storefront.ts"
+        },
+        "app/(public)/templates/[id]/page": {
+          "moduleId": 63066,
+          "async": false,
+          "exportedName": "getFAQs",
+          "filename": "app/actions/storefront.ts"
+        },
+        "app/(public)/templates/page": {
+          "moduleId": 9007,
+          "async": false,
+          "exportedName": "getFAQs",
+          "filename": "app/actions/storefront.ts"
+        }
+      },
+      "filename": "app/actions/storefront.ts",
+      "exportedName": "getFAQs"
+    },
+    "60315490cfc1f5d02725e727ce20c37473bef52ee0": {
+      "workers": {
+        "app/(public)/page": {
+          "moduleId": 2182,
+          "async": false,
+          "exportedName": "getRelatedTemplates",
+          "filename": "app/actions/storefront.ts"
+        },
+        "app/(public)/templates/[id]/page": {
+          "moduleId": 63066,
+          "async": false,
+          "exportedName": "getRelatedTemplates",
+          "filename": "app/actions/storefront.ts"
+        },
+        "app/(public)/templates/page": {
+          "moduleId": 9007,
+          "async": false,
+          "exportedName": "getRelatedTemplates",
+          "filename": "app/actions/storefront.ts"
+        }
+      },
+      "filename": "app/actions/storefront.ts",
+      "exportedName": "getRelatedTemplates"
+    },
     "60ca17ba2d34fd5def9286fadf8548668865be6206": {
       "workers": {
         "app/auth/register/page": {

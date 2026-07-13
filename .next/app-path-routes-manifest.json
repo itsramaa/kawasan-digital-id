@@ -20,6 +20,7 @@
   "/_not-found/page": "/_not-found",
   "/admin/page": "/admin",
   "/api/auth/[...nextauth]/route": "/api/auth/[...nextauth]",
+  "/api/orders/track/route": "/api/orders/track",
   "/auth/login/page": "/auth/login",
   "/auth/register/page": "/auth/register",
   "/client/account/page": "/client/account",
@@ -45,6 +46,5 @@
   "/dashboard/sales/quotations/page": "/dashboard/sales/quotations",
   "/dashboard/settings/page": "/dashboard/settings",
   "/dashboard/support/page": "/dashboard/support",
-  "/favicon.ico/route": "/favicon.ico",
-  "/page": "/"
+  "/favicon.ico/route": "/favicon.ico"
 }
