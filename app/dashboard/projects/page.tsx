@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getProjects } from '@/app/actions/dashboard';
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
-export default function ProjectsPage() {
-  // TODO: fetch projects from Prisma
-  const projects: { id: string; name: string; status: string }[] = [];
+export default async function ProjectsPage() {
+  const projects = await getProjects();
 
   return (
     <div className="space-y-6">
@@ -17,7 +17,7 @@ export default function ProjectsPage() {
       {projects.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            No projects found. {/* TODO: wire up data */}
+            No projects found.
           </CardContent>
         </Card>
       ) : (
@@ -27,7 +27,11 @@ export default function ProjectsPage() {
               <CardHeader>
                 <CardTitle>{p.name}</CardTitle>
               </CardHeader>
-              <CardContent>{p.status}</CardContent>
+              <CardContent className="flex items-center gap-4 text-sm text-muted-foreground">
+                <span>{p.status}</span>
+                <span>Progress: {p.progress}%</span>
+                {p.client && <span>Client: {p.client.name}</span>}
+              </CardContent>
             </Card>
           ))}
         </div>
