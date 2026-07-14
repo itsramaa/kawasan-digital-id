@@ -1,20 +1,16 @@
-import { Mail, Phone, MapPin, MessageSquare } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Mail, Phone, MapPin } from 'lucide-react';
+import ContactForm from '@/components/contact-form';
 
 export const dynamic = 'force-dynamic'
-
 export const metadata = { title: 'Kontak — Kawasan Digital' };
 
-// TODO: wire form submission to Server Action
+const contacts = [
+  { icon: Mail,  label: 'Email',     value: 'info@kawasandigital.com', href: 'mailto:info@kawasandigital.com' },
+  { icon: Phone, label: 'WhatsApp',  value: '+62 812 3456 7890',        href: 'https://wa.me/6281234567890' },
+  { icon: MapPin,label: 'Lokasi',    value: 'Jakarta, Indonesia',        href: null },
+];
 
 export default function ContactPage() {
-  const contacts = [
-    { icon: Mail, label: 'Email', value: 'info@kawasandigital.com', href: 'mailto:info@kawasandigital.com' },
-    { icon: Phone, label: 'WhatsApp', value: '+62 812 3456 7890', href: 'https://wa.me/6281234567890' },
-    { icon: MapPin, label: 'Lokasi', value: 'Jakarta, Indonesia', href: null },
-  ];
-
   return (
     <div className="max-w-5xl mx-auto px-4 lg:px-8 py-16 space-y-12">
       <div className="text-center space-y-4">
@@ -25,7 +21,6 @@ export default function ContactPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {/* Contact info */}
         <div className="space-y-6">
           <h2 className="text-xl font-semibold">Informasi Kontak</h2>
           <div className="space-y-4">
@@ -47,28 +42,7 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* Contact form */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-primary" /> Kirim Pesan
-          </h2>
-          {/* TODO: wire to Server Action with 'use server' */}
-          <form className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <Input placeholder="Nama Anda" required />
-              <Input type="email" placeholder="Email Anda" required />
-            </div>
-            <Input placeholder="Subjek" />
-            <textarea
-              className="w-full min-h-[120px] rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
-              placeholder="Ceritakan kebutuhan Anda..."
-              required
-            />
-            <Button type="submit" className="w-full bg-gradient-to-r from-primary to-secondary border-0">
-              Kirim Pesan
-            </Button>
-          </form>
-        </div>
+        <ContactForm />
       </div>
     </div>
   );
