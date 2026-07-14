@@ -3,8 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
-import { signIn, getSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { Globe, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -28,25 +27,14 @@ export default function LoginPage() {
       password,
       redirect: false,
     });
-    setLoading(false);
     if (result?.error) {
+      setLoading(false);
       setError('Email atau password salah.');
     } else {
-      const INTERNAL_ROLES = ['sales', 'project_manager', 'developer', 'finance', 'support', 'infra'];
-      const CLIENT_ROLES = ['client_admin', 'client_contact'];
-
-      const session = await getSession();
-      const role = (session?.user as { role?: string } | null | undefined)?.role;
-
-      if (role === 'super_admin') {
-        router.push('/admin');
-      } else if (role && INTERNAL_ROLES.includes(role)) {
-        router.push('/dashboard');
-      } else if (role && CLIENT_ROLES.includes(role)) {
-        router.push('/client');
-      } else {
-        router.push('/');
-      }
+      // Cookie sudah ter-set — biarkan server middleware yang redirect berdasarkan role
+      // Arahkan ke /api/auth/me yang akan di-handle middleware
+      const callbackUrl = new URLSearchParams(window.location.search).get('callbackUrl');
+      window.location.href = callbackUrl ?? '/auth/redirect';
     }
   };
 
