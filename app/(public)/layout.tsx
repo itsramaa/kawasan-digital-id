@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/src/lib/utils';
 import { Globe, Menu, X, ShoppingCart, ArrowUp } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 const navLinks = [
   { label: 'Home', path: '/' },
@@ -86,6 +87,7 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             <Link href="/cart" className="relative p-2 hover:bg-muted rounded-lg transition-colors">
               <ShoppingCart className="w-5 h-5 text-muted-foreground" />
             </Link>
@@ -98,6 +100,7 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
           </div>
 
           <div className="flex md:hidden items-center gap-2">
+            <ThemeToggle />
             <Link href="/cart" className="relative p-2 hover:bg-muted rounded-lg transition-colors">
               <ShoppingCart className="w-5 h-5 text-muted-foreground" />
             </Link>
