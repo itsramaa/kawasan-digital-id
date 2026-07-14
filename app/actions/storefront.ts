@@ -157,6 +157,42 @@ export async function getFAQs(category?: string): Promise<StoreFAQ[]> {
   }
 }
 
+export async function createInquiry(data: {
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  serviceType?: string;
+  message: string;
+  budget?: string;
+}): Promise<boolean> {
+  try {
+    // Use CustomInquiry for public contact form — no clientId required
+    await prisma.customInquiry.create({
+      data: {
+        industry: data.company ?? 'Unknown',
+        websiteType: data.serviceType ?? 'Other',
+        estimatedPages: 1,
+        selectedFeatures: JSON.stringify([]),
+        budgetRange: data.budget ?? null,
+        status: 'new',
+        // Store name/email/phone/message in deadline field as JSON (no dedicated columns)
+        // Instead use the closest available fields
+        deadline: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          phone: data.phone ?? null,
+          message: data.message,
+        }),
+      },
+    });
+    return true;
+  } catch (err) {
+    console.error('[createInquiry]', err);
+    return false;
+  }
+}
+
 // NOTE: No TemplateCategory model in schema — derive unique categories from ServiceTemplate.category
 export async function getTemplateCategories(): Promise<string[]> {
   try {

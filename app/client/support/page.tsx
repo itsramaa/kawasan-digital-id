@@ -3,15 +3,16 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { auth } from '@/src/auth'
 import { getClientTickets } from '@/app/actions/client-portal'
+import CreateTicketForm from '@/components/create-ticket-form'
 
 export const dynamic = 'force-dynamic'
 
 function ticketBadgeVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
   switch (status) {
-    case 'OPEN': return 'destructive'
-    case 'IN_PROGRESS': return 'default'
-    case 'RESOLVED':
-    case 'CLOSED': return 'secondary'
+    case 'Open': return 'destructive'
+    case 'In_Progress': return 'default'
+    case 'Resolved':
+    case 'Closed': return 'secondary'
     default: return 'outline'
   }
 }
@@ -43,7 +44,7 @@ export default async function ClientSupportPage() {
               <CardContent className="py-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-1">
-                    <p className="font-semibold">{t.subject ?? t.title}</p>
+                    <p className="font-semibold">{t.subject}</p>
                     <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                       {t.priority && <span>Prioritas: {t.priority}</span>}
                       <span>Dibuat: {t.createdAt ? new Date(t.createdAt).toLocaleDateString('id-ID') : '—'}</span>
@@ -59,6 +60,8 @@ export default async function ClientSupportPage() {
           ))}
         </div>
       )}
+
+      <CreateTicketForm clientId={clientId} />
     </div>
   )
 }
