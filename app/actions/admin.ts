@@ -68,3 +68,16 @@ export async function getSystemSettings(): Promise<any[]> {
     return []
   }
 }
+
+export async function updateSystemSetting(key: string, value: string): Promise<any | null> {
+  try {
+    // @ts-ignore – model may not exist yet
+    return await (prisma as any).systemSetting.upsert({
+      where: { key },
+      update: { value },
+      create: { key, value },
+    })
+  } catch {
+    return null
+  }
+}
