@@ -4,7 +4,28 @@ import Link from 'next/link';
 import { CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export const dynamic = 'force-dynamic';
+const confettiDots = [
+  { id: 1,  size: '10px', left: '10%',  top: '5%',  color: '#3b82f6', delay: '0s',    duration: '3.2s' },
+  { id: 2,  size: '8px',  left: '20%',  top: '2%',  color: '#10b981', delay: '0.2s',  duration: '2.8s' },
+  { id: 3,  size: '12px', left: '30%',  top: '8%',  color: '#f59e0b', delay: '0.1s',  duration: '3.5s' },
+  { id: 4,  size: '7px',  left: '40%',  top: '1%',  color: '#ef4444', delay: '0.4s',  duration: '2.6s' },
+  { id: 5,  size: '9px',  left: '50%',  top: '4%',  color: '#8b5cf6', delay: '0.3s',  duration: '3.1s' },
+  { id: 6,  size: '11px', left: '60%',  top: '7%',  color: '#06b6d4', delay: '0.15s', duration: '3.4s' },
+  { id: 7,  size: '8px',  left: '70%',  top: '3%',  color: '#f97316', delay: '0.5s',  duration: '2.9s' },
+  { id: 8,  size: '10px', left: '80%',  top: '6%',  color: '#ec4899', delay: '0.25s', duration: '3.3s' },
+  { id: 9,  size: '7px',  left: '90%',  top: '2%',  color: '#84cc16', delay: '0.35s', duration: '2.7s' },
+  { id: 10, size: '9px',  left: '15%',  top: '10%', color: '#3b82f6', delay: '0.45s', duration: '3.0s' },
+  { id: 11, size: '12px', left: '25%',  top: '3%',  color: '#10b981', delay: '0.6s',  duration: '3.6s' },
+  { id: 12, size: '8px',  left: '35%',  top: '9%',  color: '#f59e0b', delay: '0.05s', duration: '2.5s' },
+  { id: 13, size: '10px', left: '45%',  top: '1%',  color: '#ef4444', delay: '0.55s', duration: '3.2s' },
+  { id: 14, size: '7px',  left: '55%',  top: '5%',  color: '#8b5cf6', delay: '0.4s',  duration: '2.8s' },
+  { id: 15, size: '11px', left: '65%',  top: '8%',  color: '#06b6d4', delay: '0.2s',  duration: '3.5s' },
+  { id: 16, size: '9px',  left: '75%',  top: '2%',  color: '#f97316', delay: '0.3s',  duration: '3.0s' },
+  { id: 17, size: '8px',  left: '85%',  top: '6%',  color: '#ec4899', delay: '0.1s',  duration: '2.9s' },
+  { id: 18, size: '10px', left: '95%',  top: '4%',  color: '#84cc16', delay: '0.5s',  duration: '3.3s' },
+  { id: 19, size: '12px', left: '5%',   top: '7%',  color: '#3b82f6', delay: '0.35s', duration: '3.7s' },
+  { id: 20, size: '7px',  left: '48%',  top: '3%',  color: '#10b981', delay: '0.65s', duration: '2.6s' },
+];
 
 export default function OrderSuccessPage() {
   return (
@@ -68,25 +89,3 @@ export default function OrderSuccessPage() {
   );
 }
 
-const confettiDots = [
-  { id: 1,  size: '10px', left: '10%',  top: '5%',  color: '#3b82f6', delay: '0s',    duration: '3.2s' },
-  { id: 2,  size: '8px',  left: '20%',  top: '2%',  color: '#10b981', delay: '0.2s',  duration: '2.8s' },
-  { id: 3,  size: '12px', left: '30%',  top: '8%',  color: '#f59e0b', delay: '0.1s',  duration: '3.5s' },
-  { id: 4,  size: '7px',  left: '40%',  top: '1%',  color: '#ef4444', delay: '0.4s',  duration: '2.6s' },
-  { id: 5,  size: '9px',  left: '50%',  top: '4%',  color: '#8b5cf6', delay: '0.3s',  duration: '3.1s' },
-  { id: 6,  size: '11px', left: '60%',  top: '7%',  color: '#06b6d4', delay: '0.15s', duration: '3.4s' },
-  { id: 7,  size: '8px',  left: '70%',  top: '3%',  color: '#f97316', delay: '0.5s',  duration: '2.9s' },
-  { id: 8,  size: '10px', left: '80%',  top: '6%',  color: '#ec4899', delay: '0.25s', duration: '3.3s' },
-  { id: 9,  size: '7px',  left: '90%',  top: '2%',  color: '#84cc16', delay: '0.35s', duration: '2.7s' },
-  { id: 10, size: '9px',  left: '15%',  top: '10%', color: '#3b82f6', delay: '0.45s', duration: '3.0s' },
-  { id: 11, size: '12px', left: '25%',  top: '3%',  color: '#10b981', delay: '0.6s',  duration: '3.6s' },
-  { id: 12, size: '8px',  left: '35%',  top: '9%',  color: '#f59e0b', delay: '0.05s', duration: '2.5s' },
-  { id: 13, size: '10px', left: '45%',  top: '1%',  color: '#ef4444', delay: '0.55s', duration: '3.2s' },
-  { id: 14, size: '7px',  left: '55%',  top: '5%',  color: '#8b5cf6', delay: '0.4s',  duration: '2.8s' },
-  { id: 15, size: '11px', left: '65%',  top: '8%',  color: '#06b6d4', delay: '0.2s',  duration: '3.5s' },
-  { id: 16, size: '9px',  left: '75%',  top: '2%',  color: '#f97316', delay: '0.3s',  duration: '3.0s' },
-  { id: 17, size: '8px',  left: '85%',  top: '6%',  color: '#ec4899', delay: '0.1s',  duration: '2.9s' },
-  { id: 18, size: '10px', left: '95%',  top: '4%',  color: '#84cc16', delay: '0.5s',  duration: '3.3s' },
-  { id: 19, size: '12px', left: '5%',   top: '7%',  color: '#3b82f6', delay: '0.35s', duration: '3.7s' },
-  { id: 20, size: '7px',  left: '48%',  top: '3%',  color: '#10b981', delay: '0.65s', duration: '2.6s' },
-];

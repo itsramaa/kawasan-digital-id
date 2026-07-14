@@ -34,12 +34,19 @@ function saveToStorage(items: CartItem[]): void {
 }
 
 export function useCart() {
-  const [items, setItems] = useState<CartItem[]>(() => loadFromStorage());
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [mounted, setMounted] = useState(false);
 
-  // Keep localStorage in sync whenever items change
+  // Load from localStorage after mount to avoid SSR hydration mismatch
   useEffect(() => {
-    saveToStorage(items);
-  }, [items]);
+    setItems(loadFromStorage());
+    setMounted(true);
+  }, []);
+
+  // Keep localStorage in sync whenever items change (after mount)
+  useEffect(() => {
+    if (mounted) saveToStorage(items);
+  }, [items, mounted]);
 
   function addItem(item: CartItem): void {
     setItems((prev) => {
@@ -71,7 +78,8 @@ export function useCart() {
 
   return {
     items,
-    isLoading: false,
+    mounted,
+    isLoading: !mounted,
     addItem,
     removeItem,
     clearCart,
