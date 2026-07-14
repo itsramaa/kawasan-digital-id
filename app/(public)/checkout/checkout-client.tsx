@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CheckoutStepper } from '@/src/features/storefront/components/CheckoutStepper';
@@ -22,10 +23,32 @@ const emptyForm: ContactForm = { name: '', email: '', phone: '', company: '', no
 
 export default function CheckoutClient() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const { items, totalPrice, clearCart } = useCart();
-  const [step, setStep] = useState(0); // 0 = contact info, 1 = review
+  const [step, setStep] = useState(0);
   const [form, setForm] = useState<ContactForm>(emptyForm);
   const [loading, setLoading] = useState(false);
+
+  // Belum login → redirect ke login dengan callbackUrl
+  if (status === 'unauthenticated') {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-20 text-center space-y-4">
+        <p className="text-muted-foreground text-lg">Kamu perlu login dulu untuk checkout.</p>
+        <Button asChild className="bg-gradient-to-r from-primary to-secondary border-0">
+          <Link href="/auth/login?callbackUrl=/checkout">Masuk Sekarang</Link>
+        </Button>
+      </div>
+    );
+  }
+
+  // Loading session
+  if (status === 'loading') {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-20 text-center">
+        <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (
