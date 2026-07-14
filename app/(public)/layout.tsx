@@ -92,10 +92,10 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
               <ShoppingCart className="w-5 h-5 text-muted-foreground" />
             </Link>
             <Link
-              href="/templates"
+              href="/auth/login"
               className="px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:opacity-90 transition-opacity border-0"
             >
-              Get Started
+              Masuk
             </Link>
           </div>
 

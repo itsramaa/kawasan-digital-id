@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import type { ServiceTemplate, TemplateFeature } from '@/src/features/storefront/types';
+import { useCart } from '@/src/features/storefront/hooks/useCart';
 import { DetailBreadcrumb } from './DetailBreadcrumb';
 import { DetailGallery } from './DetailGallery';
 import { DetailInfoPanel } from './DetailInfoPanel';
@@ -46,6 +49,35 @@ export function TemplateDetailClient({
     return next;
   }
 
+  const router = useRouter();
+  const { addItem } = useCart();
+
+  function buildCartItem() {
+    return {
+      template_id: template.id,
+      template_name: template.name,
+      base_price: totalPrice,
+      category: template.category ?? '',
+      thumbnail_url: template.thumbnail_url ?? null,
+      estimated_days: template.estimated_days ?? null,
+      selected_features: [...selectedScope, ...selectedInfra].map((f) => ({
+        id: f.id,
+        name: f.name,
+        price: f.price,
+      })),
+    };
+  }
+
+  function handleAddToCart() {
+    addItem(buildCartItem());
+    toast.success('Ditambahkan ke keranjang!');
+  }
+
+  function handleCheckout() {
+    addItem(buildCartItem());
+    router.push('/checkout');
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
       <DetailBreadcrumb category={template.category} templateName={template.name} />
@@ -74,12 +106,8 @@ export function TemplateDetailClient({
             selectedScope={selectedScope}
             selectedInfra={selectedInfra}
             totalPrice={totalPrice}
-            onAddToCart={() => {
-              /* TODO: wire cart */
-            }}
-            onCheckout={() => {
-              /* TODO: wire checkout */
-            }}
+            onAddToCart={handleAddToCart}
+            onCheckout={handleCheckout}
           />
         </div>
       </div>
