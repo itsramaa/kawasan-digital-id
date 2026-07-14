@@ -1,5 +1,8 @@
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
+import Google from 'next-auth/providers/google'
+import GitHub from 'next-auth/providers/github'
+import Discord from 'next-auth/providers/discord'
 import { prisma } from '@/src/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
@@ -45,12 +48,44 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       },
     }),
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+    }),
+    GitHub({
+      clientId: process.env.GITHUB_ID ?? '',
+      clientSecret: process.env.GITHUB_SECRET ?? '',
+    }),
+    Discord({
+      clientId: process.env.DISCORD_CLIENT_ID ?? '',
+      clientSecret: process.env.DISCORD_CLIENT_SECRET ?? '',
+    }),
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider !== 'credentials') {
+        // OAuth — upsert user in DB
+        await prisma.user.upsert({
+          where: { email: user.email! },
+          update: { name: user.name, image: user.image },
+          create: {
+            email: user.email!,
+            name: user.name,
+            image: user.image,
+            role: 'client_contact', // default role for OAuth users
+            isActive: true,
+          },
+        })
+      }
+      return true
+    },
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as any).role
-        token.clientId = (user as any).clientId
+        // On sign in, fetch role from DB
+        const dbUser = await prisma.user.findUnique({ where: { email: token.email! } })
+        token.role = dbUser?.role
+        token.clientId = dbUser?.clientId
+        token.sub = dbUser?.id ?? token.sub
       }
       return token
     },
