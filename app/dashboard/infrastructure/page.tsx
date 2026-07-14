@@ -28,9 +28,9 @@ export default async function InfrastructurePage() {
                   <CardTitle className="text-base">{d.domainName}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex gap-4 text-sm text-muted-foreground">
-                  <span>{d.client?.name}</span>
+                  <span>{d.client?.name ?? '—'}</span>
                   {d.registrar && <span>Registrar: {d.registrar}</span>}
-                  <span>Expires: {new Date(d.expiryDate).toLocaleDateString('id-ID')}</span>
+                  {d.expiryDate && <span>Expires: {new Date(d.expiryDate).toLocaleDateString('id-ID')}</span>}
                   <span>{d.status}</span>
                 </CardContent>
               </Card>
@@ -54,7 +54,7 @@ export default async function InfrastructurePage() {
                   <CardTitle className="text-base">{h.name}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex gap-4 text-sm text-muted-foreground">
-                  <span>{h.client?.name}</span>
+                  <span>{h.client?.name ?? '—'}</span>
                   {h.provider && <span>Provider: {h.provider}</span>}
                   {h.serverType && <span>Type: {h.serverType}</span>}
                   {h.ipAddress && <span>IP: {h.ipAddress}</span>}
