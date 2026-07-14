@@ -9,6 +9,7 @@ import {
   Globe, Menu, X, Server, ShoppingBag, Search, ChevronDown, User, LogOut,
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 interface ClientLayoutProps {
   children: ReactNode;
@@ -84,37 +85,57 @@ export function ClientLayout({ children }: ClientLayoutProps) {
             </div>
           </div>
 
-          {/* Right: Avatar Dropdown */}
-          <div className="relative shrink-0" ref={dropdownRef}>
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-2 p-1.5 hover:bg-muted rounded-lg transition-colors"
+          {/* Right: ThemeToggle + Lihat Toko link + Avatar Dropdown */}
+          <div className="flex items-center gap-1 shrink-0">
+            <Link
+              href="/"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-xs font-semibold text-primary-foreground">
-                C
-              </div>
-              <span className="text-sm font-medium hidden sm:inline max-w-[120px] truncate">Client</span>
-              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground hidden sm:block" />
-            </button>
+              <Globe className="w-3.5 h-3.5" />
+              <span>Lihat Toko</span>
+            </Link>
 
-            {dropdownOpen && (
-              <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-border bg-popover shadow-lg z-50 py-1">
-                <button
-                  onClick={() => { router.push('/client/account'); setDropdownOpen(false); }}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-muted transition-colors"
-                >
-                  <User className="w-4 h-4" />
-                  Profil
-                </button>
-                <button
-                  onClick={() => { signOut({ callbackUrl: '/auth/login' }); setDropdownOpen(false); }}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-sm text-destructive hover:bg-muted transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Keluar
-                </button>
-              </div>
-            )}
+            <ThemeToggle />
+
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center gap-2 p-1.5 hover:bg-muted rounded-lg transition-colors"
+              >
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-xs font-semibold text-primary-foreground">
+                  C
+                </div>
+                <span className="text-sm font-medium hidden sm:inline max-w-[120px] truncate">Client</span>
+                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground hidden sm:block" />
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-border bg-popover shadow-lg z-50 py-1">
+                  <button
+                    onClick={() => { router.push('/client/account'); setDropdownOpen(false); }}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-muted transition-colors"
+                  >
+                    <User className="w-4 h-4" />
+                    Profil
+                  </button>
+                  <Link
+                    href="/"
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-muted transition-colors sm:hidden"
+                  >
+                    <Globe className="w-4 h-4" />
+                    Lihat Toko
+                  </Link>
+                  <button
+                    onClick={() => { signOut({ callbackUrl: '/auth/login' }); setDropdownOpen(false); }}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-destructive hover:bg-muted transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Keluar
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -161,6 +182,14 @@ export function ClientLayout({ children }: ClientLayoutProps) {
               </Link>
             );
           })}
+          <Link
+            href="/"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:bg-muted transition-colors"
+          >
+            <Globe className="w-4 h-4" />
+            Lihat Toko
+          </Link>
         </div>
       )}
 

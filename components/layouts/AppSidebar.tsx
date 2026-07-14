@@ -10,6 +10,7 @@ import {
   Globe, Server, Menu, X, LogOut,
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 interface NavItem {
   label: string;
@@ -164,15 +165,26 @@ export function AppSidebar() {
         })}
       </nav>
 
-      {/* User section */}
-      <div className="border-t border-sidebar-border px-4 py-4">
+      {/* Footer */}
+      <div className="border-t border-sidebar-border px-4 py-4 space-y-3">
+        {/* Lihat Toko */}
+        <Link
+          href="/"
+          className="flex items-center gap-2 px-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <Globe className="w-3.5 h-3.5 shrink-0" />
+          <span>Lihat Toko</span>
+        </Link>
+
+        {/* User row + theme toggle */}
         <div className="flex items-center justify-between gap-3">
-          <div className="w-8 h-8 rounded-full bg-sidebar-primary/20 flex items-center justify-center text-xs font-bold text-sidebar-primary">
+          <div className="w-8 h-8 rounded-full bg-sidebar-primary/20 flex items-center justify-center text-xs font-bold text-sidebar-primary shrink-0">
             U
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-sidebar-accent-foreground truncate">Staff</p>
           </div>
+          <ThemeToggle />
           <button
             onClick={() => signOut({ callbackUrl: '/auth/login' })}
             className="p-1.5 hover:bg-sidebar-accent rounded-md text-sidebar-muted hover:text-sidebar-accent-foreground"
@@ -213,7 +225,7 @@ export function AppSidebar() {
         </div>
       )}
 
-      <aside className="hidden lg:flex w-64 shrink-0 flex-col bg-sidebar border-r border-sidebar-border h-screen">
+      <aside className="hidden lg:flex w-64 shrink-0 flex-col bg-sidebar border-r border-border h-screen sticky top-0">
         {sidebarContent}
       </aside>
     </>
