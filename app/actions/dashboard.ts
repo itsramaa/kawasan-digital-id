@@ -1,7 +1,7 @@
 'use server';
 
 import { prisma } from '@/src/lib/prisma';
-import { Prisma } from '@prisma/client';
+import { Prisma, TaskPriority } from '@prisma/client';
 
 // ─── Projects ────────────────────────────────────────────────────────────────
 
@@ -49,6 +49,30 @@ export async function getProjectTasks(projectId: string) {
     });
   } catch {
     return [];
+  }
+}
+
+export async function createTask(data: {
+  projectId: string;
+  title: string;
+  description?: string;
+  priority?: string;
+  dueDate?: string;
+  assignedTo?: string;
+}) {
+  try {
+    return await prisma.task.create({
+      data: {
+        projectId: data.projectId,
+        title: data.title,
+        description: data.description,
+        priority: data.priority as TaskPriority | undefined,
+        dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+        assignedTo: data.assignedTo,
+      },
+    });
+  } catch {
+    return null;
   }
 }
 

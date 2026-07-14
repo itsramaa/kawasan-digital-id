@@ -11,6 +11,30 @@ import type {
   Client,
 } from '@prisma/client'
 
+export async function createTicket(data: {
+  clientId: string
+  subject: string
+  description: string
+  priority: string
+}): Promise<SupportTicket | null> {
+  try {
+    const ticketNumber = `TKT-${Date.now()}`
+    return await prisma.supportTicket.create({
+      data: {
+        ticketNumber,
+        clientId: data.clientId,
+        subject: data.subject,
+        description: data.description,
+        priority: data.priority as any,
+        status: 'Open',
+      },
+    })
+  } catch (err) {
+    console.error('[createTicket]', err)
+    return null
+  }
+}
+
 export async function getClientProjects(clientId: string): Promise<Project[]> {
   try {
     return await prisma.project.findMany({
