@@ -1,12 +1,13 @@
 'use server'
 
 import { prisma } from '@/src/lib/prisma'
+import { InvoiceStatus, UserRole } from '@prisma/client'
 import type { User, ServiceTemplate } from '@prisma/client'
 
 export async function getUsers(role?: string): Promise<User[]> {
   try {
     return await prisma.user.findMany({
-      where: role ? { role: role as any } : undefined,
+      where: role ? { role: role as UserRole } : undefined,
       orderBy: { createdAt: 'desc' },
     })
   } catch {
@@ -35,7 +36,7 @@ export async function getAdminStats(): Promise<{
       prisma.serviceTemplate.count(),
       prisma.invoice.aggregate({
         _sum: { amount: true },
-        where: { status: 'Paid' as any },
+        where: { status: InvoiceStatus.Paid },
       }),
     ])
     return {
@@ -59,25 +60,12 @@ export async function getAllTemplates(): Promise<ServiceTemplate[]> {
   }
 }
 
-// SystemSetting is not in the schema — return empty array gracefully
-export async function getSystemSettings(): Promise<any[]> {
-  try {
-    // @ts-ignore – model may not exist yet; safe fallback
-    return await (prisma as any).systemSetting.findMany()
-  } catch {
-    return []
-  }
+// ponytail: SystemSetting model not in schema yet — returns static fallback
+export async function getSystemSettings(): Promise<[]> {
+  return []
 }
 
-export async function updateSystemSetting(key: string, value: string): Promise<any | null> {
-  try {
-    // @ts-ignore – model may not exist yet
-    return await (prisma as any).systemSetting.upsert({
-      where: { key },
-      update: { value },
-      create: { key, value },
-    })
-  } catch {
-    return null
-  }
+// ponytail: SystemSetting model not in schema yet — returns static fallback
+export async function updateSystemSetting(_key: string, _value: string): Promise<null> {
+  return null
 }

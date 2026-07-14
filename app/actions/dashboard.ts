@@ -1,7 +1,7 @@
 'use server';
 
 import { prisma } from '@/src/lib/prisma';
-import { Prisma, TaskPriority } from '@prisma/client';
+import { InvoiceStatus, Prisma, TaskPriority } from '@prisma/client';
 
 // ─── Projects ────────────────────────────────────────────────────────────────
 
@@ -89,6 +89,7 @@ export async function getDashboardStats() {
       totalClients,
       openTickets,
       monthlyRevenueResult,
+      overdueInvoices,
     ] = await Promise.all([
       prisma.project.count(),
       prisma.project.count({ where: { status: 'In_Progress' } }),
@@ -101,6 +102,7 @@ export async function getDashboardStats() {
           paymentDate: { gte: startOfMonth },
         },
       }),
+      prisma.invoice.count({ where: { status: InvoiceStatus.Overdue } }),
     ]);
 
     return {
@@ -109,6 +111,7 @@ export async function getDashboardStats() {
       totalClients,
       openTickets,
       monthlyRevenue: monthlyRevenueResult._sum.amount ?? new Prisma.Decimal(0),
+      overdueInvoices,
     };
   } catch {
     return {
@@ -117,6 +120,7 @@ export async function getDashboardStats() {
       totalClients: 0,
       openTickets: 0,
       monthlyRevenue: 0,
+      overdueInvoices: 0,
     };
   }
 }
@@ -194,7 +198,7 @@ export async function getContracts(status?: string) {
 
 // ─── Finance ──────────────────────────────────────────────────────────────────
 
-export async function getInvoices(status?: string) {
+export async function getInvoices(status?: string, limit = 50, offset = 0) {
   try {
     const where: Prisma.InvoiceWhereInput = {};
     if (status) {
@@ -204,6 +208,8 @@ export async function getInvoices(status?: string) {
       where,
       include: { client: true, project: true },
       orderBy: { createdAt: 'desc' },
+      take: limit,
+      skip: offset,
     });
   } catch {
     return [];
@@ -223,7 +229,7 @@ export async function getPayments() {
 
 // ─── Support ──────────────────────────────────────────────────────────────────
 
-export async function getTickets(status?: string) {
+export async function getTickets(status?: string, limit = 50, offset = 0) {
   try {
     const where: Prisma.SupportTicketWhereInput = {};
     if (status) {
@@ -233,6 +239,8 @@ export async function getTickets(status?: string) {
       where,
       include: { client: true, assignee: true, project: true },
       orderBy: { createdAt: 'desc' },
+      take: limit,
+      skip: offset,
     });
   } catch {
     return [];

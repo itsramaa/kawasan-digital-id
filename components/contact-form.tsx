@@ -46,18 +46,16 @@ export default function ContactForm() {
       const result = await createInquiry({
         name: form.name.trim(),
         email: form.email.trim(),
-        phone: form.phone.trim() || undefined,
         company: form.company.trim() || undefined,
-        serviceType: form.serviceType || undefined,
+        subject: form.serviceType || undefined,
         message: form.message.trim(),
-        budget: form.budget.trim() || undefined,
       })
 
-      if (result) {
+      if (result.success) {
         toast.success('Pesan Anda telah terkirim. Kami akan segera menghubungi Anda.')
         setForm(INITIAL_STATE)
       } else {
-        toast.error('Gagal mengirim pesan. Silakan coba lagi.')
+        toast.error(result.error ?? 'Gagal mengirim pesan. Silakan coba lagi.')
       }
     })
   }

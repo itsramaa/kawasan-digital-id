@@ -1,7 +1,23 @@
 'use server';
 
 import { prisma } from '@/src/lib/prisma';
-import type { ServiceTemplate, Testimonial, StoreFAQ } from '@/src/features/storefront/types';
+import { contactSchema } from '@/src/lib/validations';
+import type { ServiceTemplate, TemplateFeature, Testimonial, StoreFAQ } from '@/src/features/storefront/types';
+
+// Helper: map Prisma TemplateFeature to storefront TemplateFeature type
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapFeature(f: any): TemplateFeature {
+  return {
+    id: f.id,
+    template_id: f.templateId,
+    name: f.name,
+    description: f.description ?? null,
+    price: Number(f.price),
+    is_included: f.isIncluded,
+    display_order: f.displayOrder,
+    category: f.category ?? 'scope',
+  };
+}
 
 // Helper: map Prisma ServiceTemplate to storefront ServiceTemplate type
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,6 +37,7 @@ function mapTemplate(t: any): ServiceTemplate {
     demo_url: t.demoUrl ?? null,
     revision_limit: t.revisionLimit ?? null,
     gallery_images: Array.isArray(t.galleryImages) ? t.galleryImages : [],
+    features: Array.isArray(t.features) ? t.features.map(mapFeature) : undefined,
   };
 }
 
@@ -160,36 +177,44 @@ export async function getFAQs(category?: string): Promise<StoreFAQ[]> {
 export async function createInquiry(data: {
   name: string;
   email: string;
-  phone?: string;
   company?: string;
-  serviceType?: string;
+  subject?: string;
   message: string;
-  budget?: string;
-}): Promise<boolean> {
+}): Promise<{ success: boolean; error?: string }> {
+  const parsed = contactSchema.safeParse({
+    name: data.name,
+    email: data.email,
+    subject: data.subject ?? data.company ?? 'Inquiry',
+    message: data.message,
+  });
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? 'Validation failed' };
+  }
   try {
-    // Use CustomInquiry for public contact form — no clientId required
-    await prisma.customInquiry.create({
+    await prisma.contactMessage.create({
       data: {
-        industry: data.company ?? 'Unknown',
-        websiteType: data.serviceType ?? 'Other',
-        estimatedPages: 1,
-        selectedFeatures: JSON.stringify([]),
-        budgetRange: data.budget ?? null,
-        status: 'new',
-        // Store name/email/phone/message in deadline field as JSON (no dedicated columns)
-        // Instead use the closest available fields
-        deadline: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          phone: data.phone ?? null,
-          message: data.message,
-        }),
+        name: parsed.data.name,
+        email: parsed.data.email,
+        subject: parsed.data.subject,
+        message: parsed.data.message,
+        status: 'Unread',
       },
     });
-    return true;
+    return { success: true };
   } catch (err) {
     console.error('[createInquiry]', err);
-    return false;
+    return { success: false, error: 'Failed to submit inquiry' };
+  }
+}
+
+export async function getOrderByNumber(orderNumber: string) {
+  try {
+    return await prisma.order.findUnique({
+      where: { orderNumber },
+      include: { template: true },
+    })
+  } catch {
+    return null
   }
 }
 

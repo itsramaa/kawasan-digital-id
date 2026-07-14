@@ -13,6 +13,7 @@ export interface ServiceTemplate {
   demo_url: string | null;
   revision_limit: number | null;
   gallery_images: string[];
+  features?: TemplateFeature[];
 }
 
 export interface TemplateFeature {

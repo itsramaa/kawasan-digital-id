@@ -43,8 +43,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role,
-          clientId: user.clientId,
+          role: user.role ?? undefined,
+          clientId: user.clientId ?? undefined,
         }
       },
     }),
@@ -83,8 +83,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         // On sign in, fetch role from DB
         const dbUser = await prisma.user.findUnique({ where: { email: token.email! } })
-        token.role = dbUser?.role
-        token.clientId = dbUser?.clientId
+        token.role = dbUser?.role ?? undefined
+        token.clientId = dbUser?.clientId ?? undefined
         token.sub = dbUser?.id ?? token.sub
       }
       return token
@@ -92,8 +92,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.sub!
-        ;(session.user as any).role = token.role
-        ;(session.user as any).clientId = token.clientId
+        session.user.role = token.role
+        session.user.clientId = token.clientId
       }
       return session
     },
