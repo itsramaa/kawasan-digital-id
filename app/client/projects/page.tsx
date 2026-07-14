@@ -10,8 +10,10 @@ export default async function ClientProjectsPage() {
   const session = await auth()
   if (!session) redirect('/auth/login')
 
-  const clientId = (session.user as any).clientId as string
-  const projects = await getClientProjects(clientId)
+  const clientId = (session.user as any).clientId as string | undefined
+  if (!clientId) redirect('/auth/login')
+
+  const projects = (await getClientProjects(clientId)) ?? []
 
   return (
     <div className="space-y-6">
@@ -33,7 +35,7 @@ export default async function ClientProjectsPage() {
               <CardContent className="py-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 space-y-1">
-                    <p className="font-semibold">{p.name}</p>
+                    <p className="font-semibold">{p.name ?? '—'}</p>
                     <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                       <span>Mulai: {p.startDate ? new Date(p.startDate).toLocaleDateString('id-ID') : '—'}</span>
                       <span>Tenggat: {p.dueDate ? new Date(p.dueDate).toLocaleDateString('id-ID') : '—'}</span>
@@ -53,7 +55,7 @@ export default async function ClientProjectsPage() {
                       </div>
                     )}
                   </div>
-                  <Badge variant="outline">{p.status}</Badge>
+                  <Badge variant="outline">{p.status ?? '—'}</Badge>
                 </div>
               </CardContent>
             </Card>

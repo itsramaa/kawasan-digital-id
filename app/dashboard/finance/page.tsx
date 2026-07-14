@@ -54,8 +54,8 @@ export default async function FinancePage() {
             {/* TODO: replace with InvoiceTable client component */}
             {(invoices as any[]).slice(0, 10).map((inv) => (
               <div key={inv.id} className="flex items-center justify-between py-2 text-sm">
-                <span>{inv.invoiceNumber}</span>
-                <span>{inv.client?.name}</span>
+                <span>{inv.invoiceNumber ?? '—'}</span>
+                <span>{inv.client?.name ?? '—'}</span>
                 <span>Rp {Number(inv.amount).toLocaleString('id-ID')}</span>
                 <span className="text-muted-foreground">{inv.status}</span>
               </div>

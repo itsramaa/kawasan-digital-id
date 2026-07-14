@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { auth } from '@/src/auth'
 import { getClientDomains, getClientHostings } from '@/app/actions/client-portal'
@@ -10,11 +10,16 @@ export default async function ClientInfrastructurePage() {
   const session = await auth()
   if (!session) redirect('/auth/login')
 
-  const clientId = (session.user as any).clientId as string
+  const clientId = (session.user as any).clientId as string | undefined
+  if (!clientId) redirect('/auth/login')
+
   const [domains, hostings] = await Promise.all([
     getClientDomains(clientId),
     getClientHostings(clientId),
   ])
+
+  const safeDomainsArr = domains ?? []
+  const safeHostingsArr = hostings ?? []
 
   return (
     <div className="space-y-6">
@@ -26,19 +31,19 @@ export default async function ClientInfrastructurePage() {
       {/* Domains */}
       <div className="space-y-3">
         <h2 className="text-lg font-semibold">Domain</h2>
-        {domains.length === 0 ? (
+        {safeDomainsArr.length === 0 ? (
           <Card>
             <CardContent className="py-8 text-center text-muted-foreground">
               Tidak ada domain ditemukan.
             </CardContent>
           </Card>
         ) : (
-          domains.map((d: any) => (
+          safeDomainsArr.map((d: any) => (
             <Card key={d.id}>
               <CardContent className="py-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-1">
-                    <p className="font-semibold">{d.name ?? d.domainName}</p>
+                    <p className="font-semibold">{d.name ?? d.domainName ?? '—'}</p>
                     <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                       {d.expiresAt && (
                         <span>Kadaluarsa: {new Date(d.expiresAt).toLocaleDateString('id-ID')}</span>
@@ -57,19 +62,19 @@ export default async function ClientInfrastructurePage() {
       {/* Hostings */}
       <div className="space-y-3">
         <h2 className="text-lg font-semibold">Hosting</h2>
-        {hostings.length === 0 ? (
+        {safeHostingsArr.length === 0 ? (
           <Card>
             <CardContent className="py-8 text-center text-muted-foreground">
               Tidak ada hosting ditemukan.
             </CardContent>
           </Card>
         ) : (
-          hostings.map((h: any) => (
+          safeHostingsArr.map((h: any) => (
             <Card key={h.id}>
               <CardContent className="py-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-1">
-                    <p className="font-semibold">{h.name ?? h.packageName}</p>
+                    <p className="font-semibold">{h.name ?? h.packageName ?? '—'}</p>
                     <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                       {h.expiresAt && (
                         <span>Kadaluarsa: {new Date(h.expiresAt).toLocaleDateString('id-ID')}</span>

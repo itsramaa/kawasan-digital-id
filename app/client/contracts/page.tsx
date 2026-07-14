@@ -10,8 +10,10 @@ export default async function ClientContractsPage() {
   const session = await auth()
   if (!session) redirect('/auth/login')
 
-  const clientId = (session.user as any).clientId as string
-  const contracts = await getClientContracts(clientId)
+  const clientId = (session.user as any).clientId as string | undefined
+  if (!clientId) redirect('/auth/login')
+
+  const contracts = (await getClientContracts(clientId)) ?? []
 
   return (
     <div className="space-y-6">
@@ -33,7 +35,7 @@ export default async function ClientContractsPage() {
               <CardContent className="py-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-1">
-                    <p className="font-semibold">{c.title}</p>
+                    <p className="font-semibold">{c.title ?? '—'}</p>
                     <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                       {c.signedAt && (
                         <span>Ditandatangani: {new Date(c.signedAt).toLocaleDateString('id-ID')}</span>
@@ -43,7 +45,7 @@ export default async function ClientContractsPage() {
                       )}
                     </div>
                   </div>
-                  <Badge variant="outline">{c.status}</Badge>
+                  <Badge variant="outline">{c.status ?? '—'}</Badge>
                 </div>
               </CardContent>
             </Card>

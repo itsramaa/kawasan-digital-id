@@ -27,7 +27,7 @@ export default async function ContractsPage() {
                 <CardTitle className="text-base">{c.title}</CardTitle>
               </CardHeader>
               <CardContent className="flex gap-4 text-sm text-muted-foreground">
-                <span>{c.client?.name}</span>
+                <span>{c.client?.name ?? '—'}</span>
                 <span>Status: {c.status}</span>
                 <span>
                   Value: Rp {Number(c.totalValue).toLocaleString('id-ID')}

@@ -10,8 +10,10 @@ export default async function ClientOrdersPage() {
   const session = await auth()
   if (!session) redirect('/auth/login')
 
-  const clientId = (session.user as any).clientId as string
-  const orders = await getClientOrders(clientId)
+  const clientId = (session.user as any).clientId as string | undefined
+  if (!clientId) redirect('/auth/login')
+
+  const orders = (await getClientOrders(clientId)) ?? []
 
   return (
     <div className="space-y-6">
@@ -39,7 +41,7 @@ export default async function ClientOrdersPage() {
                       <span>Tanggal: {o.createdAt ? new Date(o.createdAt).toLocaleDateString('id-ID') : '—'}</span>
                     </div>
                   </div>
-                  <Badge variant="outline">{o.status}</Badge>
+                  <Badge variant="outline">{o.status ?? '—'}</Badge>
                 </div>
               </CardContent>
             </Card>

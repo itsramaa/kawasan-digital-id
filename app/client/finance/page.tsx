@@ -9,8 +9,10 @@ export default async function ClientFinancePage() {
   const session = await auth()
   if (!session) redirect('/auth/login')
 
-  const clientId = (session.user as any).clientId as string
-  const invoices = await getClientInvoices(clientId)
+  const clientId = (session.user as any).clientId as string | undefined
+  if (!clientId) redirect('/auth/login')
+
+  const invoices = (await getClientInvoices(clientId)) ?? []
 
   const totalTagihan = invoices.reduce((sum: number, i: any) => sum + Number(i.amount ?? 0), 0)
   const sudahDibayar = invoices

@@ -15,7 +15,8 @@ export default async function ClientDashboardPage() {
   const session = await auth()
   if (!session) redirect('/auth/login')
 
-  const clientId = (session.user as any).clientId as string
+  const clientId = (session.user as any).clientId as string | undefined
+  if (!clientId) redirect('/auth/login')
 
   const [projects, invoices, tickets, domains, hostings] = await Promise.all([
     getClientProjects(clientId),
@@ -25,10 +26,10 @@ export default async function ClientDashboardPage() {
     getClientHostings(clientId),
   ])
 
-  const activeProjects = projects.filter((p: any) => p.status === 'ACTIVE' || p.status === 'IN_PROGRESS').length
-  const unpaidInvoices = invoices.filter((i: any) => i.status !== 'PAID').length
-  const openTickets = tickets.filter((t: any) => t.status === 'OPEN' || t.status === 'IN_PROGRESS').length
-  const servicesCount = domains.length + hostings.length
+  const activeProjects = (projects ?? []).filter((p: any) => p.status === 'ACTIVE' || p.status === 'IN_PROGRESS').length
+  const unpaidInvoices = (invoices ?? []).filter((i: any) => i.status !== 'PAID').length
+  const openTickets = (tickets ?? []).filter((t: any) => t.status === 'OPEN' || t.status === 'IN_PROGRESS').length
+  const servicesCount = (domains ?? []).length + (hostings ?? []).length
 
   const stats = [
     { title: 'Active Projects', value: String(activeProjects) },

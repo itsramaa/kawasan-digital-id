@@ -15,7 +15,7 @@ interface Props {
 
 export function QuickViewDialog({ template, onClose }: Props) {
   const { features, isLoading: featuresLoading } = useTemplateDetail(template?.id);
-  const includedFeatures = features.filter((f) => f.is_included);
+  const includedFeatures = (features ?? []).filter((f) => f.is_included);
 
   return (
     <Dialog open={!!template} onOpenChange={(open) => !open && onClose()}>

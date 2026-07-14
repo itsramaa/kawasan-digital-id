@@ -21,8 +21,10 @@ export default async function ClientSupportPage() {
   const session = await auth()
   if (!session) redirect('/auth/login')
 
-  const clientId = (session.user as any).clientId as string
-  const tickets = await getClientTickets(clientId)
+  const clientId = (session.user as any).clientId as string | undefined
+  if (!clientId) redirect('/auth/login')
+
+  const tickets = (await getClientTickets(clientId)) ?? []
 
   return (
     <div className="space-y-6">
@@ -53,7 +55,7 @@ export default async function ClientSupportPage() {
                       )}
                     </div>
                   </div>
-                  <Badge variant={ticketBadgeVariant(t.status)}>{t.status}</Badge>
+                  <Badge variant={ticketBadgeVariant(t.status ?? '')}>{t.status ?? '—'}</Badge>
                 </div>
               </CardContent>
             </Card>
